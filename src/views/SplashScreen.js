@@ -217,6 +217,7 @@ export default class SplashScreen extends React.Component {
                                                                 global.ButtonEvents.emit({ name: global.const.AR_DELETE_ALL_POINTS });
                                                             });
                                                         } else if (params.v === "welcome-workflow") {
+                                                            console.log('welcome-workflow')
                                                             this.props.navigation.dispatch(this.Global.resetNavigation('GuidedView'));
                                                         }
                                                     } else {
@@ -375,7 +376,7 @@ export default class SplashScreen extends React.Component {
 
     //Show if found already registerd any network
     clearAllWorkOrders = (params) => {
-        new Message().sendAlertWithOptionForDeepLink(global.t.get$("HEADER.CHANGE_SERVICE_PROVIDER"), global.t.get$("STATUS.CHANGE_INTERNET_SERVICE_PROVIDER"), "Continue", () => {
+        new Message().sendAlertWithOption(global.t.get$("HEADER.CHANGE_SERVICE_PROVIDER"), global.t.get$("STATUS.CHANGE_INTERNET_SERVICE_PROVIDER"), "Continue", () => {
 
             // Clear the global options
            // alert(params.s)
