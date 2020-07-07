@@ -485,12 +485,12 @@ export default class SplashScreen extends React.Component {
 
                     if (flowList.includes(params.v)) {
                         if (params.v === "ar-workflow") {
-                            this.props.navigation.dispatch(this.Global.resetNavigation('AR'));
-                            // global.state.ARMode = "PLAYGROUND_MODE";
-                            // global.state.exitFlows(() => {
-                            //     this.props.controller.navigateToView("AR");
-                            //     global.ButtonEvents.emit({ name: global.const.AR_DELETE_ALL_POINTS });
-                            // });
+                           // this.props.navigation.dispatch(this.Global.resetNavigation('AR'));
+                            global.state.ARMode = "PLAYGROUND_MODE";
+                            global.state.exitFlows(() => {
+                                this.props.controller.navigateToView("AR");
+                                global.ButtonEvents.emit({ name: global.const.AR_DELETE_ALL_POINTS });
+                            });
                         } else if (params.v === "welcome-workflow") {
                             this.props.navigation.dispatch(this.Global.resetNavigation('GuidedView'));
                         }

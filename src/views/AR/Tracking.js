@@ -8,7 +8,7 @@ import {View, Text} from "react-native";
 
 // Animations
 //import Animation from 'lottie-react-native';
-
+var Calibrting='';
 export default class TrackingView extends React.Component {
 
     // Local state
@@ -22,6 +22,7 @@ export default class TrackingView extends React.Component {
     }
 
     componentDidMount(){
+       Calibrting= global.t.get$("AR.CALIBRATING")
         //Animated.spring(this.state.slide_x, { toValue: 0 }).start();
     }
 
@@ -58,7 +59,7 @@ export default class TrackingView extends React.Component {
                 backgroundColor: 'transparent'
             }}>
                 <View style={{width: 200, height: 200}}>
-                    <Text style={{textAlign: 'center', fontSize: 16, color: '#ffffff'}}>{global.t.$.AR.CALIBRATING}</Text>
+                    <Text style={{textAlign: 'center', fontSize: 16, color: '#ffffff'}}>{Calibrting}</Text>
                 </View>
             </View>
         )
