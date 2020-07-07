@@ -19,6 +19,7 @@
     "@fortawesome/react-native-fontawesome": "^0.1.0",
     "@react-native-community/geolocation": "^2.0.2",
     "@react-native-community/netinfo": "^2.0.4",
+    "@react-native-community/toolbar-android": "0.1.0-rc.2",
     "@unimodules/core": "^3.0.2",
     "buffer": "^5.2.1",
     "cheerio": "^0.20.0",

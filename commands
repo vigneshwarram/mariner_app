@@ -1,0 +1,59 @@
+build:
+react-native run-android
+
+Debug with ADB
+adb logcat *:E
+
+link:
+react-native link
+
+gesture fix:
+npm i jetifier
+npx jetify
+
+build Gradle:
+def useIntlJsc = false
+
+gradle properties file:
+android.useAndroidX=true
+android.enableJetifier=true
+
+clear cache:
+delete build folders (android, ios)
+react-native eject
+copy local.properties to android
+
+
+abd
+export PATH=~/Library/Android/sdk/tools:$PATH
+export PATH=~/Library/Android/sdk/platform-tools:$PATH
+
+
+missingDimensionStrategy 'react-native-camera', 'mlkit'
+missingDimensionStrategy 'react-native-camera', 'general'
+
+
+react-native link react-native-gesture-handler
+react-native link react-native-vector-icons
+react-native link react-native-camera
+
+<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+
+
+npm config set @fortawesome:registry https://npm.fontawesome.com/240FF65E-E61A-4F91-BA30-18B8C17190AB
+
+
+IOS
+react-native bundle --entry-file index.js --platform ios --dev false --bundle-output ios/main.jsbundle --assets-dest ios
+
+react-native run-ios --simulator='iPhone 11'
+
+@implementation AppDelegate
+NSString *const RCTJSNavigationScheme = @"react-js-navigation";
+- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions{
+
+ANDROID
+react-native bundle --platform android --dev false --entry-file index.js --bundle-output android/app/src/main/assets/index.android.bundle --assets-dest android/app/src/main/res
+rm -rf android/app/src/main/res/drawable-*
+rm -rf android/app/src/main/res/raw
+cd android && ./gradlew assembleRelease
