@@ -210,13 +210,12 @@ export default class SplashScreen extends React.Component {
 
                                                     if (flowList.includes(params.v)) {
                                                         if (params.v === "ar-workflow") {
+        
                                                             global.state.ARMode = "PLAYGROUND_MODE";
-                                                            this.props.navigation.dispatch(this.Global.resetNavigation('AR'));
-                                                            // global.state.ARMode = "PLAYGROUND_MODE";
-                                                            // global.state.exitFlows(() => {
-                                                            //     this.props.controller.navigateToView("AR");
-                                                            //     global.ButtonEvents.emit({ name: global.const.AR_DELETE_ALL_POINTS });
-                                                            // });
+                                                            global.state.exitFlows(() => {
+                                                                this.props.navigation.dispatch(this.Global.resetNavigation('AR'));
+                                                                global.ButtonEvents.emit({ name: global.const.AR_DELETE_ALL_POINTS });
+                                                            });
                                                         } else if (params.v === "welcome-workflow") {
                                                             this.props.navigation.dispatch(this.Global.resetNavigation('GuidedView'));
                                                         }
@@ -228,12 +227,12 @@ export default class SplashScreen extends React.Component {
                                                 }
                                                 else {
                                                     this.setState({ form_submitted: false });
-                                                    this.Message.sendAlert('Registration', global.t.get('STATUS.VT_REGISTRATION_ERROR'), 'OK');
+                                                    this.Message.sendAlert('Registration', global.t.get$('STATUS.VT_REGISTRATION_ERROR'), 'OK');
                                                 }
                                             }
                                             else {
                                                 this.setState({ form_submitted: false });
-                                                this.Message.sendAlert('Registration', global.t.get('STATUS', 'VT_REGISTRATION_COMMUNICATION_ERROR'), 'OK');
+                                                this.Message.sendAlert('Registration', global.t.get$('STATUS', 'VT_REGISTRATION_COMMUNICATION_ERROR'), 'OK');
                                             }
                                         });
                                     } else {
@@ -290,12 +289,12 @@ export default class SplashScreen extends React.Component {
 
                                     if (flowList.includes(params.v)) {
                                         if (params.v === "ar-workflow") {
-                                            this.props.navigation.dispatch(this.Global.resetNavigation('AR'));
-                                            // global.state.ARMode = "PLAYGROUND_MODE";
-                                            // global.state.exitFlows(() => {
-                                            //     this.props.controller.navigateToView("AR");
-                                            //     global.ButtonEvents.emit({ name: global.const.AR_DELETE_ALL_POINTS });
-                                            // });
+                                            //this.props.navigation.dispatch(this.Global.resetNavigation('AR'));
+                                            global.state.ARMode = "PLAYGROUND_MODE";
+                                            global.state.exitFlows(() => {
+                                                this.props.navigation.dispatch(this.Global.resetNavigation('AR'));
+                                                global.ButtonEvents.emit({ name: global.const.AR_DELETE_ALL_POINTS });
+                                            });
                                         } else if (params.v === "welcome-workflow") {
                                             this.props.navigation.dispatch(this.Global.resetNavigation('GuidedView'));
                                         }
@@ -379,6 +378,8 @@ export default class SplashScreen extends React.Component {
         new Message().sendAlertWithOptionForDeepLink(global.t.get$("HEADER.CHANGE_SERVICE_PROVIDER"), global.t.get$("STATUS.CHANGE_INTERNET_SERVICE_PROVIDER"), "Continue", () => {
 
             // Clear the global options
+           // alert(params.s)
+            this.loadDeepLinkNetwork(params);
             global.state.clearWorkOrders();
             global.configuration.reset();
             global.storage.multiClear([
@@ -388,14 +389,11 @@ export default class SplashScreen extends React.Component {
                 global.const.STORAGE_KEY_LANGUAGE,
                 global.const.STORAGE_KEY_APP_VERSION,
                 global.const.STORAGE_KEY_BUILD_NUMBER
-            ]);
-
-            this.loadDeepLinkNetwork(params)
+            ]);          
 
         }, "Cancel", () => {
-            this.loadPreviousRegisterNetwork()
+            this.loadPreviousRegisterNetwork();
         });
-
     }
 
     // Load Previous Register Network
@@ -456,6 +454,7 @@ export default class SplashScreen extends React.Component {
     loadDeepLinkNetwork = (params) => {
 
         //Register with url s params
+        console.log('params.s',params.s)
         this.Http.get(this.Register.generate(params.s), (response) => {
 
             if (response != null && response.responseCode === 200 && response.configuration != null) {
@@ -486,11 +485,11 @@ export default class SplashScreen extends React.Component {
                     if (flowList.includes(params.v)) {
                         if (params.v === "ar-workflow") {
                            // this.props.navigation.dispatch(this.Global.resetNavigation('AR'));
-                            global.state.ARMode = "PLAYGROUND_MODE";
-                            global.state.exitFlows(() => {
-                                this.props.controller.navigateToView("AR");
-                                global.ButtonEvents.emit({ name: global.const.AR_DELETE_ALL_POINTS });
-                            });
+                           global.state.ARMode = "PLAYGROUND_MODE";
+                           global.state.exitFlows(() => {
+                               this.props.navigation.dispatch(this.Global.resetNavigation('AR'));
+                               global.ButtonEvents.emit({ name: global.const.AR_DELETE_ALL_POINTS });
+                           });
                         } else if (params.v === "welcome-workflow") {
                             this.props.navigation.dispatch(this.Global.resetNavigation('GuidedView'));
                         }
@@ -508,7 +507,7 @@ export default class SplashScreen extends React.Component {
             }
             else {
                 this.setState({ form_submitted: false });
-                this.Message.sendAlert('Registration', global.t.get('STATUS', 'VT_REGISTRATION_COMMUNICATION_ERROR'), 'OK');
+                this.Message.sendAlert('Registration', global.t.get$('STATUS', 'VT_REGISTRATION_COMMUNICATION_ERROR'), 'OK');
             }
         });
     }
@@ -545,17 +544,11 @@ export default class SplashScreen extends React.Component {
 
                                         if (flowList.includes(params.v)) {
                                             if (params.v === "ar-workflow") {
-                                                this.props.navigation.dispatch(this.Global.resetNavigation('AR'));
-                                                //global.state.ARMode = "PLAYGROUND_MODE";
-                                                //this.props.navigation.dispatch(this.Global.resetNavigation('AR'));
-                                                //global.ButtonEvents.emit({ name: global.const.AR_DELETE_ALL_POINTS });
-                                                
-                                                // global.state.ARMode = "PLAYGROUND_MODE";
-                                                // global.state.exitFlows(() => {
-                                                //     this.props.controller.navigateToView("AR");
-                                                //     global.ButtonEvents.emit({ name: global.const.AR_DELETE_ALL_POINTS });
-                                                   
-                                                // });
+                                                global.state.ARMode = "PLAYGROUND_MODE";
+                                                            global.state.exitFlows(() => {
+                                                                this.props.navigation.dispatch(this.Global.resetNavigation('AR'));
+                                                                global.ButtonEvents.emit({ name: global.const.AR_DELETE_ALL_POINTS });
+                                                            });
                                             } else if (params.v === "welcome-workflow") {
                                                 this.props.navigation.dispatch(this.Global.resetNavigation('GuidedView'));
                                             }
