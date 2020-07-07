@@ -31,7 +31,8 @@ import AppPermissions from "../boot/permissions";
 
 import _ispList from '../res/ispList';
 import { contains } from "cheerio";
-
+var service_value=''
+var service_message=''
 export default class SplashScreen extends React.Component {
 
     // Global state
@@ -68,6 +69,8 @@ export default class SplashScreen extends React.Component {
     componentDidMount() {
         //load language immediately
         // alert("Hi this fgfdggfgfgdfgfgfgf")
+        service_value=global.t.get$("HEADER.CHANGE_SERVICE_PROVIDER")
+        service_message=global.t.get$("STATUS.CHANGE_INTERNET_SERVICE_PROVIDER")
         Linking.addEventListener('url', this.handleUrl);
         Linking.getInitialURL().then(url => {
             if (url !== null) {
@@ -376,7 +379,7 @@ export default class SplashScreen extends React.Component {
 
     //Show if found already registerd any network
     clearAllWorkOrders = (params) => {
-        new Message().sendAlertWithOption(global.t.get$("HEADER.CHANGE_SERVICE_PROVIDER"), global.t.get$("STATUS.CHANGE_INTERNET_SERVICE_PROVIDER"), "Continue", () => {
+        new Message().sendAlertWithOption(service_value, service_message, "Continue", () => {
 
             // Clear the global options
            // alert(params.s)
