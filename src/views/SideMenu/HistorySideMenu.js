@@ -8,7 +8,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { faHistory } from '@fortawesome/pro-regular-svg-icons';
 
 import Style from '../../styles/base/index';
-
+var privacy_policy=''
 export default class HistorySideMenuComponent extends React.Component {
     // Check to see if the test history is enabled
     isEnabled() {
@@ -16,6 +16,9 @@ export default class HistorySideMenuComponent extends React.Component {
     }
 
     // Theme system updates
+    componentDidMount(){
+        privacy_policy= global.t.get$("TITLE.PRIVACY_POLICY")
+    }
     componentDidUpdate(prevProps, prevState, snapshot) {
         styles = new Style().get();
     }
@@ -34,7 +37,7 @@ export default class HistorySideMenuComponent extends React.Component {
                             />
                             <Label style={[styles.side_label, {flex: 0, marginTop: 10}]}
                                    onPress={() => this.props.controller.navigateByPopup("History")}
-                            >{global.t.get$("TITLE.PRIVACY_POLICY")}</Label>
+                            >{privacy_policy}</Label>
                         </View>
                     </View>
                 </TouchableOpacity>

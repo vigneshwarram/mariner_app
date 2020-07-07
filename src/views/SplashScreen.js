@@ -69,8 +69,6 @@ export default class SplashScreen extends React.Component {
         //load language immediately
         // alert("Hi this fgfdggfgfgdfgfgfgf")
         Linking.addEventListener('url', this.handleUrl);
-
-
         Linking.getInitialURL().then(url => {
             if (url !== null) {
                 this.navigate(url);
@@ -139,6 +137,7 @@ export default class SplashScreen extends React.Component {
         //alert(url)
     }
     navigate = (url) => {
+        console.log('url---',url)
         const { navigate } = this.props.navigation;
         var regex = /[?&]([^=#]+)=([^&#]*)/g,
             params = {},
@@ -229,7 +228,7 @@ export default class SplashScreen extends React.Component {
                                                 }
                                                 else {
                                                     this.setState({ form_submitted: false });
-                                                    this.Message.sendAlert('Registration', global.t.get$('STATUS.VT_REGISTRATION_ERROR'), 'OK');
+                                                    this.Message.sendAlert('Registration', global.t.get('STATUS.VT_REGISTRATION_ERROR'), 'OK');
                                                 }
                                             }
                                             else {

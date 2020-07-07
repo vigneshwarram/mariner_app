@@ -8,14 +8,16 @@ import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { faTrashAlt } from '@fortawesome/pro-light-svg-icons';
 
 import Style from '../../styles/base/index';
-
+var service_Provider=''
 export default class AboutSideMenuComponent extends React.Component {
 
     // Theme system updates
     componentDidUpdate(prevProps, prevState, snapshot) {
         styles = new Style().get();
     }
-
+  componentDidMount(){
+     service_Provider=global.t.get$("ACTION.CHANGE_SERVICE_PROVIDER");
+  }
     render() {
         console.disableYellowBox = true;
 
@@ -28,7 +30,7 @@ export default class AboutSideMenuComponent extends React.Component {
                         />
                         <Label style={[styles.side_label, {flex: 0, marginTop: 10}]}
                                onPress={() => this.props.controller.clearAllWorkOrders()}
-                        >{global.t.get$("ACTION.CHANGE_SERVICE_PROVIDER")}</Label>
+                        >{service_Provider}</Label>
                     </View>
                 </View>
             </TouchableOpacity>
