@@ -1,0 +1,42 @@
+{
+  "HEADER": {
+    "REGISTER": "Deba Aha",
+    "HOME": "Home"
+  },
+  "LABEL": {
+    "REGISTRATION_CODE": "Koodu Ndebanye",
+    "TECH_ID": "Nyocha Technician",
+    "WORKORDER_ID": "Nchịkọta ọrụ",
+    "CUSTOMER_ID": "Nyocha ahịa",
+    "SELECT_SITETYPE": "Saịtị"
+  },
+  "BUTTON": {
+    "REGISTER": "Deba Aha",
+    "OPEN": "Meghee",
+    "CLOSE": "Mechie",
+    "SEARCH": "Chọọ",
+    "SITE_SURVEY": "Site Survey",
+    "CERTIFICATION": "Asambodo",
+    "SUMMARY": "Nchịkọta",
+    "TROUBLESHOOTING": "Nchọpụta nsogbu",
+    "SUBMIT": "Nyefee Iwu Oru"
+  },
+  "COMMON": {
+    "TYPE": "Ụdị",
+    "NUMOFTESTS": "Ọnụ ọgụgụ nke ule"
+  },
+  "SITE_TYPE": {
+    "M": "Multi Dwelling Unit \n Minimum number of tests: {0})",
+    "R": "Single Family Unit \n Minimum number of tests: {0})"
+  },
+  "REASON_CODES": {
+    "NO_REASON_SELECTED": "Nothing selected",
+    "CUSTOMER_WONT_MOVE_GATEWAY": "Failed: Customer declined to move gateway",
+    "GATEWAY_SWAPPED": "Passed: Replaced gateway",
+    "MESH_REFUSED": "Failed: Customer declined mesh installation",
+    "MSH_MVE_GTWY_DCLND": "Failed: Mesh install and gateway move declined",
+    "MESH_ORDERED": "Failed: Mesh ordered for next work order",
+    "CONNECTION_NOT_ALLOWED": "Not Tested: Customer did not allow connection",
+    "PROVISIONING_DOWN": "Not Tested: Provisioning down"
+  }
+}

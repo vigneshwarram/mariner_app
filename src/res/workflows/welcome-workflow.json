@@ -1,0 +1,114 @@
+{
+  "id": "workflow-welcome",
+  "views": [
+    {
+      "type": "guide",
+      "id": "0",
+      "image": "https://online.alvernia.edu/wp-content/uploads/2019/02/800x440-201804-EmployeeOnboarding-header-ALV.png",
+      "title": "Troubleshooting Guides",
+      "description": "Interact with Virtual Tech though guided troubleshooting steps to diagnose and resolve your WiFi issues.",
+      "pagination": 1,
+      "skip": {"label": "Skip"},
+      "swipe": {
+        "left": "1"
+      },
+      "actionButtons": [
+        {
+          "position": 2,
+          "label": "Next",
+          "switch": "1",
+          "direction": "right"
+        }
+      ]
+    },
+    {
+      "type": "guide",
+      "id": "1",
+      "title": "See your WiFi",
+      "image": "image2",
+      "description": "Use Virtual Tech's Augmented Reality tools to visualize your WiFi",
+      "pagination": 2,
+      "skip": {"label": "Skip"},
+      "swipe": {
+        "left": "2",
+        "right": "0"
+      },
+      "actionButtons": [
+        {
+          "position": 1,
+          "label": "Back",
+          "switch": "0",
+          "direction": "left"
+        },
+        {
+          "position": 2,
+          "label": "Next",
+          "switch": "2",
+          "direction": "right"
+        }
+      ]
+    },
+    {
+      "type": "guideFinish",
+      "id": "2",
+      "title": "Share your Coverage Map",
+      "image": "image3",
+      "description": "Build a virtual WiFi heatmap of your home, save it and share it with your service provider or your friends.",
+      "pagination": 3,
+      "skip": {"label": "Skip"},
+      "swipe": {
+        "left": "3",
+        "right": "1"
+      },
+      "actionButtons": [
+        {
+          "position": 1,
+          "label": "Back",
+          "switch": "1",
+          "direction": "left"
+        }
+      ]
+    },
+    {
+      "type": "default",
+      "id": "5",
+      "title": "Replacing Wifi Mesh Pods",
+      "image": "image6",
+      "description": "The Plume system can replace your current router, but is flexible enough to also work ... You need to connect one of the Plume SuperPods by Ethernet to your ISP modem or ... If your ISP modem has Wi-Fi, don't forget to turn that off as well. ... static mesh functionality and your pods will continue to receive firmware updates.",
+      "actionButtons": [
+        {
+          "position": 2,
+          "label": "Finished",
+          "switch": "exit"
+        },
+        {
+          "position": 4,
+          "label": "Summary",
+          "switch": "6",
+          "direction": "right"
+        }
+      ]
+    },
+    {
+      "type": "summary",
+      "id": "6",
+      "title": "Your Results Summary",
+      "image": "image6",
+      "description_pass": "TEXT.RESULTS_SUMMARY_PASS",
+      "description_fail": "TEXT.RESULTS_SUMMARY_FAIL",
+      "actionButtons": [
+        {
+          "position": 1,
+          "label": "back",
+          "switch": "5",
+          "direction": "left"
+        },
+        {
+          "position": 2,
+          "label": "Upload",
+          "switch": "exit"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,28 @@
+{
+  "ispList": [
+    {"name":  "", "regCode": ""},
+    {"name": "Altice", "regCode": "Altice"},
+    {"name": "AT&T", "regCode": "AT_T"},
+    {"name": "Bell Aliant", "regCode": "Bell_Aliant"},
+    {"name": "Bell Canada", "regCode": "Bell_Canada"},
+    {"name": "CenturyLink", "regCode": "CenturyLink"},
+    {"name": "Charter", "regCode": "Charter"},
+    {"name": "Comcast", "regCode": "Comcast"},
+    {"name": "Cox", "regCode": "Cox"},
+    {"name": "Eastlink", "regCode": "Eastlink"},
+    {"name": "Frontier", "regCode": "Frontier"},
+    {"name": "Mediacom", "regCode": "Mediacom"},
+    {"name": "MTS", "regCode": "MTS"},
+    {"name": "Northwestel", "regCode": "Northwestel"},
+    {"name": "Rogers", "regCode": "Rogers"},
+    {"name": "SaskTel", "regCode": "SaskTel"},
+    {"name": "Shaw", "regCode": "Shaw"},
+    {"name": "TDS", "regCode": "TDS"},
+    {"name": "Telus", "regCode": "Telus"},
+    {"name": "Verizon", "regCode": "Verizon"},
+    {"name": "Videotron", "regCode": "Videotron"},
+    {"name": "Windstream", "regCode": "Windstream"},
+    {"name": "Xplornet", "regCode": "Xplornet"},
+    {"name": "Other", "regCode": "Other"}
+  ]
+}
