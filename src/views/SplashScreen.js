@@ -150,6 +150,11 @@ export default class SplashScreen extends React.Component {
         }
         console.log(params);
         console.log("svvalue", params.s)
+        if(params.w != null && params.w !== ""){
+            console.log('params.w',params.w)
+            //store the w value for refrenece code
+            global.storage.storeData(global.const.STORAGE_KEY_W,params.w)
+        }
         if (params.s != null && params.s !== "") {
             let regOptions = [];
             for (let i = 0; i < this.ispList.length; i++) {
@@ -158,6 +163,7 @@ export default class SplashScreen extends React.Component {
                 );
             }
             // Checking , is URL s value present in ISP network List
+           
             if (regOptions.includes(params.s)) {
 
                 global.storage.getData(global.const.STORAGE_KEY_CONFIG, value => {

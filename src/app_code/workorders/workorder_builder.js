@@ -3,18 +3,24 @@
 import Thresholds from '../certifications/thresholds';
 import Device from '../diagnostics/deviceinfo';
 import WifiDetails from '../wifi/wifidetails';
-
+let workId='';
 export default class WorkorderBuilder {
     Device = new Device();
     Thresholds = new Thresholds();
     WifiDetails = new WifiDetails();
 
     constructor() {
-
+        global.storage.getData(global.const.STORAGE_KEY_W,(res)=>{
+            workId=res.toString()
+        })
     }
+    
 
     build() {
-        let woid = Math.random().toString(36).substr(2,6);
+        let  woid =workId;
+        if(woid==='' || woid===null){
+            woid = Math.random().toString(36).substr(2,6);
+        }
         global.state.work_orders.new(woid, 3, this.Device.uuid);
         let woDetails = global.state.work_orders.get(woid);
         woDetails.displayWhenActive = false;
