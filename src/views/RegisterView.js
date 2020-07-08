@@ -8,7 +8,7 @@ import RegisterViewComponent from "./Registration/RegisterView";
 import Style from '../styles/views/register';
 
 import Global_State from '../constants/global';
-
+import Translate from "../../src/constants/translate";
 import DeviceInformation from '../app_code/diagnostics/deviceinfo';
 import Register from '../app_code/registration/register';
 import Message from '../app_code/message/service';
@@ -57,6 +57,7 @@ export default class RegisterView extends React.Component {
     };
 
     componentDidMount(){
+        setLanguageSelection(0) 
         //this.regCodeInput._root.focus();
         //my attempt at getting correct language to display on startup, was holding up the build, will
         //get working properly after
@@ -159,7 +160,7 @@ export default class RegisterView extends React.Component {
      * Register the application
      */
     registerApplication() {
-
+       
         this.setState({form_submitted:true});
         if (this.state.registration_code != null && this.state.registration_code !== "") {
 

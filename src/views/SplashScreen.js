@@ -202,7 +202,7 @@ export default class SplashScreen extends React.Component {
 
                                                     this.Global.set("tech_id", this.DeviceInfo.uuid);
                                                     this.Global.set("registration_code", reg_code);
-                                                    this.Global.set("language", "EN");
+                                                    this.Global.set("language", "en");
 
                                                     // Store information
                                                     global.storage.storeData(global.const.STORAGE_KEY_CONFIG, JSON.stringify(response.configuration));
@@ -284,7 +284,7 @@ export default class SplashScreen extends React.Component {
 
                                     this.Global.set("tech_id", this.DeviceInfo.uuid);
                                     this.Global.set("registration_code", params.s);
-                                    this.Global.set("language", "EN");
+                                    this.Global.set("language", "en");
 
                                     // Store information
                                     global.storage.storeData(global.const.STORAGE_KEY_CONFIG, JSON.stringify(response.configuration));
@@ -478,7 +478,7 @@ export default class SplashScreen extends React.Component {
 
                     this.Global.set("tech_id", this.DeviceInfo.uuid);
                     this.Global.set("registration_code", params.s);
-                    this.Global.set("language", "EN");
+                    this.Global.set("language", "en");
 
                     // Store information
                     global.storage.storeData(global.const.STORAGE_KEY_CONFIG, JSON.stringify(response.configuration));
