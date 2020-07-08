@@ -177,6 +177,7 @@ export default class RegisterView extends React.Component {
 
                         // Store information
                         global.storage.storeData(global.const.STORAGE_KEY_W,'');
+                        global.storage.storeData(global.const.STORAGE_KEY_C,'');
                         global.storage.storeData(global.const.STORAGE_KEY_CONFIG,JSON.stringify(response.configuration));
                         global.storage.storeData(global.const.STORAGE_KEY_REG_CODE, this.state.registration_code);
                         //global.storage.storeData(global.const.STORAGE_KEY_TECHID, this.state.tech_id);
