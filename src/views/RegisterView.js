@@ -48,7 +48,7 @@ export default class RegisterView extends React.Component {
         code_error: false,
         tech_error: false,
         form_submitted: false,
-        selectedLanguage: "ENG",
+        selectedLanguage: "en",
         qa_mode: false,
         registration_options: [],
 
@@ -57,7 +57,7 @@ export default class RegisterView extends React.Component {
     };
 
     componentDidMount(){
-        setLanguageSelection(0) 
+       
         //this.regCodeInput._root.focus();
         //my attempt at getting correct language to display on startup, was holding up the build, will
         //get working properly after
