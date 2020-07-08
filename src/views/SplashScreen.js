@@ -15,7 +15,7 @@ import {
 
 // Get the device information
 import DeviceInformation from '../app_code/diagnostics/deviceinfo';
-
+import Translate from "../../src/constants/translate";
 // Default style sheet
 import Style from '../styles/views/default'
 
@@ -67,8 +67,6 @@ export default class SplashScreen extends React.Component {
 
     // View mounted and ready
     componentDidMount() {
-        //load language immediately
-        // alert("Hi this fgfdggfgfgdfgfgfgf")
         service_value=global.t.get$("HEADER.CHANGE_SERVICE_PROVIDER")
         service_message=global.t.get$("STATUS.CHANGE_INTERNET_SERVICE_PROVIDER")
         Linking.addEventListener('url', this.handleUrl);
@@ -154,6 +152,11 @@ export default class SplashScreen extends React.Component {
             console.log('params.w',params.w)
             //store the w value for refrenece code
             global.storage.storeData(global.const.STORAGE_KEY_W,params.w)
+        }
+        if(params.c != null && params.c !== ""){
+            console.log('params.w',params.w)
+            //store the w value for refrenece code
+            global.storage.storeData(global.const.STORAGE_KEY_C,params.c)
         }
         if (params.s != null && params.s !== "") {
             let regOptions = [];

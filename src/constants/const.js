@@ -56,6 +56,7 @@ export const STORAGE_KEY_LANGUAGE = "language";
 export const STORAGE_KEY_APP_VERSION = "app_version";
 export const STORAGE_KEY_BUILD_NUMBER = "build_number";
 export const STORAGE_KEY_W = "w_values";
+export const STORAGE_KEY_C = "c_values";
 
 // exclude kpi keys
 export const CO_CHANNEL = "coInterference";

@@ -170,12 +170,13 @@ export default class RegisterView extends React.Component {
                     if(this.Register.isLicensed(response.configuration)) {
                         this.Configuration.merge(response.configuration);
                         this.Workflows.update();
-
+                           
                         this.Global.set("tech_id", this.DeviceInfo.uuid);
                         this.Global.set("registration_code", this.state.registration_code);
                         this.Global.set("language", this.state.language);
 
                         // Store information
+                        global.storage.storeData(global.const.STORAGE_KEY_W,'');
                         global.storage.storeData(global.const.STORAGE_KEY_CONFIG,JSON.stringify(response.configuration));
                         global.storage.storeData(global.const.STORAGE_KEY_REG_CODE, this.state.registration_code);
                         //global.storage.storeData(global.const.STORAGE_KEY_TECHID, this.state.tech_id);
