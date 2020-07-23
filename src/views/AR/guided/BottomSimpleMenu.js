@@ -135,7 +135,8 @@ export default class BottomSimpleMenuComponent extends React.Component {
                             resizeMode: 'stretch'}}
                     >
 
-                    </ButtonTouchableComponent>}
+                    </ButtonTouchableComponent>
+                    }
                     {!this.state.liveMode && global.state.flowId === "ar-flow-page-2" &&
                     <ButtonTouchableComponent
                         source={global.ARimageResources.get('router-button')}

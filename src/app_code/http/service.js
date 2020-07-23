@@ -15,7 +15,7 @@ export default class HttpService {
             method: 'GET'
         }).then((response) => response.json())
         .then((responseJson) => {
-            console.log(responseJson);
+          
             callback(responseJson);
         }).catch(error => {
             console.log('Http Error:', error);

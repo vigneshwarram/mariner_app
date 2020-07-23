@@ -51,7 +51,7 @@ export default class SpeedTestViewComponent extends React.Component {
         else {
             this.usingOscium = true;
             if(this.props.controller.cancelled === false) {
-                console.log(">>>cancelled is: " + this.props.controller.cancelled);
+    
                 this.Oscium.getScanResults((results) => {
                     this.Oscium.getDeviceWifiInfo(results, null, (wifiInfo) => {
                         if(wifiInfo !== null) {
@@ -81,7 +81,7 @@ export default class SpeedTestViewComponent extends React.Component {
         this.props.controller.isOoklaReachable((reachable) => {
             if(!reachable) { //end test if we can't reach speedtest page
                 this.props.controller.setState({speedtestComplete: true}, () => {
-                      console.log("No internet connection, ending test.");
+                    
                       this.endTest();
                 });
             }

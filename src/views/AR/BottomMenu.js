@@ -4,7 +4,7 @@
  */
 
 import React from "react";
-import {View} from 'react-native';
+import {View,Alert} from 'react-native';
 
 import {
     faTrashAlt,
@@ -583,9 +583,21 @@ export default class BottomMenuComponent extends React.Component {
      * Add point to the AR scene
      */
     onAddPoint() {
-        global.state.processing = true;
-        global.TouchEvents.emit({name:global.const.AR_TOUCH});
-        this.props.controller.addPoint();
+        if(global.tracking.mapItems.length>19){
+            Alert.alert(
+                'Maximum Pins Dropped',
+                'you have reached the maxmimum number of pins you can drop',
+                [
+                    {text: 'ok', onPress: () => {
+                    }},
+                ],
+            );
+        } 
+        else{
+            global.state.processing = true;
+            global.TouchEvents.emit({name:global.const.AR_TOUCH});
+            this.props.controller.addPoint();
+        }   
     }
 
     /**

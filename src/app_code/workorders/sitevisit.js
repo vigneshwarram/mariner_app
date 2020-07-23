@@ -227,7 +227,6 @@ export default class SiteVisit {
                 })
             }
         }
-        console.log(this._site_visit);
 
         // Return the generated site visit
         return this._site_visit != null ? {SiteVisit:this._site_visit} : {SiteVisit:{}};

@@ -138,7 +138,7 @@ export default class SplashScreen extends React.Component {
         //alert(url)
     }
     navigate = (url) => {
-        console.log('url---',url)
+      
         const { navigate } = this.props.navigation;
         var regex = /[?&]([^=#]+)=([^&#]*)/g,
             params = {},
@@ -146,10 +146,9 @@ export default class SplashScreen extends React.Component {
         while (match = regex.exec(url)) {
             params[match[1]] = match[2];
         }
-        console.log(params);
-        console.log("svvalue", params.s)
+       
         if(params.w != null && params.w !== ""){
-            console.log('params.w',params.w)
+          
             //store the w value for refrenece code
             global.storage.storeData(global.const.STORAGE_KEY_W,params.w)
         }

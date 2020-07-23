@@ -456,10 +456,10 @@ class Scene extends React.Component {
      * @param transform
      * @private
      */
-    onTransformed(transform) {
+    onTransformed=(transform)=> {
+
         global.tracking.moving = (distance(transform, this.lastTransform) > 0) ? 1 : 0
         //if (this.wifi_animated_icon == null) return;
-
         // Check the rendering order and
         // update the latest transform
         this.checkLatestTransform(transform);
@@ -732,12 +732,14 @@ class Scene extends React.Component {
                 transformInformation.heatmapCoords = iParams.mapCoords  && iParams.mapCoords.length >= 1 ? iParams.mapCoords : global.tracking.heatmapNode;
                 transformInformation.style = nodeInformation.color;
                 transformInformation.pathStyle = nodeInformation.pathColor;
-                this.pointsCollected.push(transformInformation);
-
+                if(this.pointsCollected.length<20){
+                    this.pointsCollected.push(transformInformation);
+                    let allNodes = global.tracking.allNodeData;
+                    allNodes.push({time: global.functions.getCurrentTimeStamp(), data: nodeInformation, transform: transformInformation});
+                    global.tracking.allNodeData = allNodes;
+                }
                 // Send the point information to the tracking global class to be accessed later when upload the work order
-                let allNodes = global.tracking.allNodeData;
-                allNodes.push({time: global.functions.getCurrentTimeStamp(), data: nodeInformation, transform: transformInformation});
-                global.tracking.allNodeData = allNodes;
+               
             }
 
             // Put the latest map tracking items into the global tracking class
@@ -1075,7 +1077,7 @@ class Scene extends React.Component {
      */
     render() {
         return (
-            <ViroARScene ref="AR_SCENE" onClick={this.onScreenSelected} onTrackingUpdated={this.onInitialized} onCameraTransformUpdate={this.onTransformed}>
+            <ViroARScene ref="AR_SCENE" onClick={()=>this.onScreenSelected()} onTrackingUpdated={(state)=>this.onInitialized()} onCameraTransformUpdate={(transform)=>this.onTransformed(transform)}>
                 {this.state.nodeItems.map((wifiNode) => {
                     return(wifiNode.node)
                 })}

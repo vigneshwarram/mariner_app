@@ -56,7 +56,7 @@ export default class SideMenu extends React.Component {
     }
 
     componentDidMount() {
-        console.log('global.t.get$("CHANGE_SERVICE_PROVIDER")',global.t.get$("HEADER.CHANGE_SERVICE_PROVIDER"))
+     
         service_value=global.t.get$("HEADER.CHANGE_SERVICE_PROVIDER")
         service_message=global.t.get$("STATUS.CHANGE_INTERNET_SERVICE_PROVIDER")
         let flows = global.configuration.get("flows");
@@ -156,7 +156,7 @@ export default class SideMenu extends React.Component {
      * Delete all configuration information
      */
     clearAllWorkOrders() {
-       console.log('value-----',service_value)
+
         new Message().sendAlertWithOption(service_value, service_message, "Continue", () => {
 
             // Clear the global options

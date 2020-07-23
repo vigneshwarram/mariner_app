@@ -333,7 +333,7 @@ export default class HomeView extends React.Component {
             };
 
             this.Http.post(submitUrl, woHeaders, woPayload, (response) => {
-                console.log(response);
+        
                 if (response != null && response.status === 200) {
 
                     if (response.url != null && response.url.indexOf("login") > -1) {
