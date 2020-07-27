@@ -244,6 +244,7 @@
       "critical": 0,
       "major": 0
     },
+    "maximumPins":2,
     "signalStrengthMethod": "OS",
     "scanDetailsIntervalMs": 2000,
     "welcome-workflow" : {

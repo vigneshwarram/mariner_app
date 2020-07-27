@@ -145,6 +145,7 @@
         "BEST_CHOICE": "Best Choice",
         "BEST_LOCATION": "Best Location",
         "CHANGE_SERVICE_PROVIDER": "Change Service Provider",
+        "MAXIMUM_PINS_HEADER":"Maximum Pins Dropped",
         "CONFIG_VERSION": "Config Version",
         "DEVICE_INFO": "Device Information",
         "TEST_TYPE": "Network Type",
@@ -383,7 +384,8 @@
         "CONNECTION_TIMEOUT_ERROR": "Failed to connect to {{ssid}}, network was not able to be reached",
         "PRECONFIGURED_NETWORK": "Network appears to have been pre-configured outside of WaveGuide. This will cause issues when performing Gateway tests, it is recommended to open wifi settings and forget this network before continuing.",
         "VT_REGISTRATION_COMMUNICATION_ERROR": "Virtual Tech is not available for that Internet Service Provider at this time, please try again later",
-        "VT_REGISTRATION_ERROR": "Virtual Tech is not available for that Internet Service Provider at this time, please try again later"
+        "VT_REGISTRATION_ERROR": "Virtual Tech is not available for that Internet Service Provider at this time, please try again later",
+        "MAXIMUM_PINS_TEXT": "you have reached the maxmimum number of pins you can drop"
     },
     "TITLE": {
         "LOCATION_SELECTOR_TITLE": "Name Location Pin",

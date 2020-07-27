@@ -517,11 +517,13 @@ export default class ARSceneView extends React.Component {
      * Add new point to the screen
      */
     addPoint() {
+
         global.TouchEvents.emit({name:global.const.AR_TOUCH});
         if (global.state.ARMode === this.CONST.flowMode) {
             if (global.state.flowId === "ar-flow-page-2") {
                 if (!this.state.router) {
                     EventRegister.emit(this.CONST.addPoint);
+                    
                     this.setState({router: global.tracking.mapItems[0]});
                 }
                 global.state.setBumperNext(true);
@@ -540,6 +542,7 @@ export default class ARSceneView extends React.Component {
                 this.forceUpdate();
             }
         }
+        global.tracking.ButtonDisable=false;
     }
 
     /**

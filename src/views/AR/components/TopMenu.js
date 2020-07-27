@@ -171,7 +171,6 @@ export default class TopMenuSubComponent extends React.Component {
      * @returns {*}
      */
     render() {
-
         if (this.props.parent.state.menuOptionsVisible) {
             return (
                 <View style={{

@@ -139,6 +139,7 @@
         "BEST_CHOICE": "Meilleur choix",
         "BEST_LOCATION": "Meilleur endroit",
         "CHANGE_SERVICE_PROVIDER": "Changer de Fournisseur de Services",
+        "MAXIMUM_PINS_HEADER":"Maximum Pins Dropped",
         "CONFIG_VERSION": "Version de Configuration",
         "DEVICE_INFO": "Détails de l'Appareil",
         "TEST_TYPE": "Type de réseau",
@@ -377,7 +378,8 @@
         "RETRYCONNECTION": "Non connecté à: SSID {{ssid}} .. Essais restants {{retries}}",
         "CONNECTION_TIMEOUT_ERROR": "Connexion impossible sur {{ssid}}, impossible de se connecter au réseau",
         "VT_REGISTRATION_COMMUNICATION_ERROR": "Virtual Tech n'est pas disponible pour ce fournisseur de services Internet pour le moment, veuillez réessayer plus tard",
-        "VT_REGISTRATION_ERROR": "Virtual Tech n'est pas disponible pour ce fournisseur de services Internet pour le moment, veuillez réessayer plus tard"
+        "VT_REGISTRATION_ERROR": "Virtual Tech n'est pas disponible pour ce fournisseur de services Internet pour le moment, veuillez réessayer plus tard",
+        "MAXIMUM_PINS_TEXT": "you have reached the maxmimum number of pins you can drop"
     },
     "TITLE": {
         "LOCATION_SELECTOR_TITLE": "Name Location Pin",

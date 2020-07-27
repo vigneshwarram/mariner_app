@@ -732,11 +732,13 @@ class Scene extends React.Component {
                 transformInformation.heatmapCoords = iParams.mapCoords  && iParams.mapCoords.length >= 1 ? iParams.mapCoords : global.tracking.heatmapNode;
                 transformInformation.style = nodeInformation.color;
                 transformInformation.pathStyle = nodeInformation.pathColor;
-                if(this.pointsCollected.length<20){
+                let maximumPins=global.configuration.get("maximumPins");
+                if(this.pointsCollected.length<maximumPins){
                     this.pointsCollected.push(transformInformation);
                     let allNodes = global.tracking.allNodeData;
                     allNodes.push({time: global.functions.getCurrentTimeStamp(), data: nodeInformation, transform: transformInformation});
                     global.tracking.allNodeData = allNodes;
+                 
                 }
                 // Send the point information to the tracking global class to be accessed later when upload the work order
                
@@ -744,10 +746,12 @@ class Scene extends React.Component {
 
             // Put the latest map tracking items into the global tracking class
             global.tracking.mapItems = this.pointsCollected.slice(0);
+           
             EventRegister.emit(global.const.AR_UPDATE_HEAT_MAP_ITEMS);
 
             // Cool down the manager
             this.coolDownTimeout();
+            
         }
         catch(error) {this.coolDownTimeout();}
     }
@@ -1077,7 +1081,7 @@ class Scene extends React.Component {
      */
     render() {
         return (
-            <ViroARScene ref="AR_SCENE" onClick={()=>this.onScreenSelected()} onTrackingUpdated={(state)=>this.onInitialized()} onCameraTransformUpdate={(transform)=>this.onTransformed(transform)}>
+            <ViroARScene ref="AR_SCENE" onClick={()=>this.onScreenSelected()} onTrackingUpdated={(state)=>this.onInitialized(state)} onCameraTransformUpdate={(transform)=>this.onTransformed(transform)}>
                 {this.state.nodeItems.map((wifiNode) => {
                     return(wifiNode.node)
                 })}
