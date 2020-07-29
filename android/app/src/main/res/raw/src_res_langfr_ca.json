@@ -437,9 +437,7 @@
         "WELCOME": "Bienvenue",
         "TROUBLESHOOTING": "Dépannage"
     },
-    "MAXIMUMPINS":{
-        "MAXIMUM_PINS":19
-        },
+   
     "WIFI": {
         "ADJACENT_CHANNEL_INTERFERENCE": "Interférence des canaux adjacents",
         "BAND": "Band",

@@ -4,7 +4,6 @@
  */
 
 import React from "react";
-import {Alert, Platform} from 'react-native';
 import {
     ViroARScene,
     ViroConstants,
@@ -32,9 +31,8 @@ import SignalThresholds from '../../app_code/configuration/thresholds/signal';
 import Transforms from '../../app_code/ar/classes/transforms';
 import Node from './Node';
 import SimpleNode from './guided/SimpleNode';
-
 class Scene extends React.Component {
-
+  
     // Signal Thresholds
     signalThresholds = new SignalThresholds();
 
@@ -1081,7 +1079,8 @@ class Scene extends React.Component {
      */
     render() {
         return (
-            <ViroARScene ref="AR_SCENE" onClick={()=>this.onScreenSelected()} onTrackingUpdated={(state)=>this.onInitialized(state)} onCameraTransformUpdate={(transform)=>this.onTransformed(transform)}>
+         
+            <ViroARScene ref="AR_SCENE" onClick={this.onScreenSelected} onTrackingUpdated={this.onInitialized} onCameraTransformUpdate={this.onTransformed}>
                 {this.state.nodeItems.map((wifiNode) => {
                     return(wifiNode.node)
                 })}

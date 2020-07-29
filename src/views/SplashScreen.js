@@ -22,6 +22,7 @@ import Style from '../styles/views/default'
 // Import the main parts of each view
 import Splash from "../styles/components/splash";
 import AnimatedStackView from "../styles/components/stack_view";
+import Base64 from '../app_code/http/base64';
 
 import HttpService from '../app_code/http/service';
 import Register from '../app_code/registration/register';
@@ -67,6 +68,7 @@ export default class SplashScreen extends React.Component {
 
     // View mounted and ready
     componentDidMount() {
+        //this.loadDetails();
         service_value=global.t.get$("HEADER.CHANGE_SERVICE_PROVIDER")
         service_message=global.t.get$("STATUS.CHANGE_INTERNET_SERVICE_PROVIDER")
         Linking.addEventListener('url', this.handleUrl);
@@ -133,7 +135,22 @@ export default class SplashScreen extends React.Component {
         });
 
     }
+    async loadDetails() {
+        console.log('htmlString---');
+        let url = 'https://waveguide-qa.mpicorp.ca:18443/waveguideservicebroker/webresources/virtualtechcache?apples=oranges';
+        let headers = new Headers({
+            "Authorization": "Basic " + Base64.btoa(global.configuration.get("waveguide_gateway_username") + ":" + global.configuration.get("waveguide_gateway_password"))
+        })
+        console.log('htmlString---',headers);
+        return (await http.getWithHeaders(url, 20000, headers).then((response) => response.text()).then((htmlString) => {
 
+             console.log('htmlString---',htmlString);
+            
+        }).catch((e) => {
+            console.log("Could not retrieve device details: " + e);
+          
+        }));
+    }
     handleUrl({ url }) {
         //alert(url)
     }
