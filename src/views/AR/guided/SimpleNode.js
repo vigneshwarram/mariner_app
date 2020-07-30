@@ -3,7 +3,7 @@
  */
 
 import React from 'react';
-import {ViroFlexView, ViroImage, ViroNode} from 'react-viro';
+import {ViroFlexView, ViroImage, ViroNode, ViroText} from 'react-viro';
 
 // Import the style
 import Style from '../../../styles/views/arscene';
@@ -21,7 +21,8 @@ export default class SimpleNodes extends React.Component {
         position: [0,0,0],
         wifiNode: null,
         wifiNodeReady: false,
-        icons: []
+        icons: [],
+        location: ""
     };
 
     /**
@@ -32,6 +33,7 @@ export default class SimpleNodes extends React.Component {
 
         // Details have not been loaded
         this.wifiLoaded = false;
+        this.selectNode = this.selectNode.bind(this);
 
     }
 
@@ -56,6 +58,7 @@ export default class SimpleNodes extends React.Component {
 
             {id:this.props.wifiNode.key_value, name: global.const.AR_NODE_UPDATE, callback: () => {
                     this.setState({needsUpdate: true});
+                    this.loadPinDetails();
                     this.forceUpdate();}}
         ]);
     }
@@ -65,6 +68,19 @@ export default class SimpleNodes extends React.Component {
 
         // Remove event listener
         global.NodeEvents.remove(this.state.key);
+    }
+
+    /**
+     * Load the pin details
+     */
+    loadPinDetails() {
+        let mapItems = global.tracking.mapItems;
+        for (let i=0;i<mapItems.length;i++) {
+            if (mapItems[i].ID === this.props.wifiNode.key_value && mapItems[i].location != null && mapItems[i].location.length > 0) {
+                this.setState({location: mapItems[i].location[0].label === "Other" ? mapItems[i].location[0].text : mapItems[i].location[0].label});
+                break;
+            }
+        }
     }
 
     // Should the node update
@@ -105,6 +121,13 @@ export default class SimpleNodes extends React.Component {
         }
     }
 
+    /**
+     * Select node
+     */
+    selectNode() {
+        global.Events.emit({name:global.const.SELECTOR, data: {id: this.state.key}});
+    }
+
     // Add a highlight to injected nodes
     highlight() {
         // Return the image
@@ -130,15 +153,33 @@ export default class SimpleNodes extends React.Component {
 
         // Return the built node objects
         return (
-            <ViroNode key={this.state.wifiNode.child_keys[0]} style={{backgroundColor: 'transparent'}}
+            <ViroNode key={this.state.wifiNode.child_keys[0]} style={{backgroundColor: 'transparent'}} onClick={this.selectNode}
                       opacity={this.state.wifiNode.show && this.state.wifiNodeReady ? 0.9 : 0} position={this.state.wifiNode.position}
                       transformBehaviors={["billboardY"]} renderingOrder={this.state.renderOrder} animation={{name:'jumpAndLand', run:true}}
             >
-                <ViroFlexView opacity={0.95} renderingOrder={this.state.renderOrder}
-                    materials={this.state.wifiNode.material}
-                    height={1}
-                    width={0.7}
-                    style={styles.cardBorder}>
+                <ViroFlexView opacity={0.95} renderingOrder={this.state.renderOrder}>
+                    <ViroFlexView opacity={0.95} renderingOrder={this.state.renderOrder}
+                        materials={this.state.wifiNode.material}
+                        height={1}
+                        width={0.7}
+                        style={styles.cardBorder}>
+                    </ViroFlexView>
+                    <ViroText
+                        outerStroke={{type: "Outline", width: 1, color: '#000000'}}
+                        key={this.state.wifiNode.child_keys[3]}
+                        textClipMode="None"
+                        text={this.state.location}
+                        style={{
+                            flex: .2,
+                            fontFamily: 'Roboto',
+                            fontSize: 18,
+                            color: '#ffffff',
+                            textAlignVertical: 'right',
+                            textAlign: 'center',
+                            fontWeight: '400',
+                            paddingTop: .25
+                        }}
+                    />
                 </ViroFlexView>
                 {this.state.wifiNode.highlight && this.highlight()}
             </ViroNode>);

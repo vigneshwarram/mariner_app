@@ -43,8 +43,6 @@ import Thresholds from '../../app_code/certifications/thresholds';
 
 import WorkOrderBuilder from '../../app_code/workorders/workorder_builder';
 import UploadResults from "../../app_code/workorders/upload_results";
-var success_alert='';
-var success_message='';
 
 export default class SummaryView extends React.Component {
 
@@ -147,8 +145,6 @@ export default class SummaryView extends React.Component {
     // View mounted and ready
     componentDidMount(){
         styles = new Style().get("FLOWS");
-        success_alert= global.t.get$("TEXT.SUCCESSFUL_UPLOAD");
-        success_message= global.t.get$("TEXT.HERE_IS_CODE");
         this.setState({excellent: this.excellent, good: this.good, fair: this.fair, poor: this.poor, coverage: this.coverage, uploaded: this.uploaded});
     }
 
@@ -174,8 +170,8 @@ export default class SummaryView extends React.Component {
             global.upload_tracker.referenceData = {excellent: this.excellent, good: this.good, fair: this.fair, poor: this.poor, coverage: this.coverage, ref: this.wo.id};
             this.woid = this.wo.id;
             Alert.alert(
-                success_alert,
-                '' + success_message + this.wo.id.toUpperCase(),
+                global.t.get$("TEXT.SUCCESSFUL_UPLOAD"),
+                '' + global.t.get$("TEXT.HERE_IS_CODE") + this.wo.id.toUpperCase(),
                 [
                     {text: 'ok', onPress: () => {}},
                 ],

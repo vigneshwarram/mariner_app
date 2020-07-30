@@ -8,7 +8,7 @@ import RegisterViewComponent from "./Registration/RegisterView";
 import Style from '../styles/views/register';
 
 import Global_State from '../constants/global';
-import Translate from "../../src/constants/translate";
+
 import DeviceInformation from '../app_code/diagnostics/deviceinfo';
 import Register from '../app_code/registration/register';
 import Message from '../app_code/message/service';
@@ -48,7 +48,7 @@ export default class RegisterView extends React.Component {
         code_error: false,
         tech_error: false,
         form_submitted: false,
-        selectedLanguage: "en",
+        selectedLanguage: "ENG",
         qa_mode: false,
         registration_options: [],
 
@@ -57,7 +57,6 @@ export default class RegisterView extends React.Component {
     };
 
     componentDidMount(){
-       
         //this.regCodeInput._root.focus();
         //my attempt at getting correct language to display on startup, was holding up the build, will
         //get working properly after
@@ -160,7 +159,7 @@ export default class RegisterView extends React.Component {
      * Register the application
      */
     registerApplication() {
-       
+
         this.setState({form_submitted:true});
         if (this.state.registration_code != null && this.state.registration_code !== "") {
 
@@ -171,14 +170,12 @@ export default class RegisterView extends React.Component {
                     if(this.Register.isLicensed(response.configuration)) {
                         this.Configuration.merge(response.configuration);
                         this.Workflows.update();
-                           
+
                         this.Global.set("tech_id", this.DeviceInfo.uuid);
                         this.Global.set("registration_code", this.state.registration_code);
                         this.Global.set("language", this.state.language);
 
                         // Store information
-                        global.storage.storeData(global.const.STORAGE_KEY_W,'');
-                        global.storage.storeData(global.const.STORAGE_KEY_C,'');
                         global.storage.storeData(global.const.STORAGE_KEY_CONFIG,JSON.stringify(response.configuration));
                         global.storage.storeData(global.const.STORAGE_KEY_REG_CODE, this.state.registration_code);
                         //global.storage.storeData(global.const.STORAGE_KEY_TECHID, this.state.tech_id);

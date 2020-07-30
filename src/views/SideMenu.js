@@ -41,8 +41,7 @@ import HistoryView from '../views/HistoryView';
 
 // Flows
 import welcome_workflow from "../res/workflows/welcome-workflow";
-var service_value=''
-var service_message=''
+
 export default class SideMenu extends React.Component {
 
     // Local state
@@ -56,9 +55,6 @@ export default class SideMenu extends React.Component {
     }
 
     componentDidMount() {
-     
-        service_value=global.t.get$("HEADER.CHANGE_SERVICE_PROVIDER")
-        service_message=global.t.get$("STATUS.CHANGE_INTERNET_SERVICE_PROVIDER")
         let flows = global.configuration.get("flows");
         if (flows) {
             this.createFlows(flows);
@@ -156,8 +152,7 @@ export default class SideMenu extends React.Component {
      * Delete all configuration information
      */
     clearAllWorkOrders() {
-
-        new Message().sendAlertWithOption(service_value, service_message, "Continue", () => {
+        new Message().sendAlertWithOption(global.t.get$("HEADER.CHANGE_SERVICE_PROVIDER"), global.t.get$("STATUS.CHANGE_INTERNET_SERVICE_PROVIDER"), "Continue", () => {
 
             // Clear the global options
             global.state.clearWorkOrders();

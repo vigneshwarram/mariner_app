@@ -23,7 +23,7 @@ export default class WifiManage extends React.Component{
                 }
             )
             if (granted !== PermissionsAndroid.RESULTS.GRANTED) {
-            
+                console.log("You will not able to retrieve wifi available networks list");
             }
         }
         catch (err) {

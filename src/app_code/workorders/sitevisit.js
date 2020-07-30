@@ -138,7 +138,7 @@ export default class SiteVisit {
                             testResults: {
                                 kpis: kpis,
                                 networkType: certificationDetails.type,
-                                locationType: certificationDetails.pointType,
+                                locationType: test.pointType,
                                 serialNumber: certificationDetails.gateway,
                                 speedTestResults: [{
                                     score: null,
@@ -227,6 +227,7 @@ export default class SiteVisit {
                 })
             }
         }
+        console.log(this._site_visit);
 
         // Return the generated site visit
         return this._site_visit != null ? {SiteVisit:this._site_visit} : {SiteVisit:{}};

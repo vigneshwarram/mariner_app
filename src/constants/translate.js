@@ -150,7 +150,7 @@ export default class Translate {
                 _lang = Object.assign({}, lang, responseJson);
             })
             .catch(function(error) {
-             
+                console.log(error.message);
             });
     }
 

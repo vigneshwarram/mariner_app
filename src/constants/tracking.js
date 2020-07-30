@@ -81,7 +81,6 @@ export default class Tracking {
         this._previousRotation = null;
         this._loaded = true;
         this._mapItems = [];
-       
         this._allNodeData = [];
         this._geoLocation = null;
         this._path = [];
@@ -356,7 +355,7 @@ export default class Tracking {
     get loaded() {
         return this._loaded;
     }
- 
+
     /**
      * Set loaded
      * @param value

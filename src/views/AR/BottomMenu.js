@@ -583,6 +583,7 @@ export default class BottomMenuComponent extends React.Component {
      */
     onAddPoint() {      
             global.state.processing = true;
+            global.TouchEvents.emit({name:global.const.AR_TOUCH});
             this.props.controller.addPoint();
     }
 

@@ -9,6 +9,7 @@ import {EventRegister} from 'react-native-event-listeners';
 
 // Google Maps
 import geolocation from '@react-native-community/geolocation';
+
 // Style sheet
 import Style from '../../../../styles/views/ar';
 
@@ -65,11 +66,13 @@ export default class TopSimpleMenuSubComponent extends React.Component {
     constructor(props) {
         super(props);
     }
+
     /**
      * Start tracking
      */
     componentDidMount() {
         this.mounted = true;
+
         if (Platform.OS === 'android') {
             PermissionsAndroid.request(
                 PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION

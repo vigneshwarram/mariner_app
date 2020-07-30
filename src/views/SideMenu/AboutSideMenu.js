@@ -8,13 +8,10 @@ import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { faInfoCircle } from '@fortawesome/pro-light-svg-icons';
 
 import Style from '../../styles/base/index';
-var Virtual_tech=''
+
 export default class AboutSideMenuComponent extends React.Component {
 
     // Theme system updates
-    componentDidMount(){
-        Virtual_tech=global.t.get$("TITLE.ABOUT_VIRTUAL_TECH");
-    }
     componentDidUpdate(prevProps, prevState, snapshot) {
         styles = new Style().get();
     }
@@ -39,7 +36,7 @@ export default class AboutSideMenuComponent extends React.Component {
                             />
                             <Label style={[styles.side_label, {flex: 0, marginTop: 10}]}
                                    onPress={() => this.props.controller.navigateByPopup("About")}
-                            >{Virtual_tech}</Label>
+                            >{global.t.get$("TITLE.ABOUT_VIRTUAL_TECH")}</Label>
                         </View>
                 </View>
             </TouchableOpacity>

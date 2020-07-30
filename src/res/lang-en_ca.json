@@ -145,7 +145,7 @@
         "BEST_CHOICE": "Best Choice",
         "BEST_LOCATION": "Best Location",
         "CHANGE_SERVICE_PROVIDER": "Change Service Provider",
-
+        "MAXIMUM_PINS_HEADER":"Maximum Pins Dropped",
         "CONFIG_VERSION": "Config Version",
         "DEVICE_INFO": "Device Information",
         "TEST_TYPE": "Network Type",
