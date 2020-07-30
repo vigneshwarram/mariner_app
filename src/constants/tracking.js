@@ -81,7 +81,7 @@ export default class Tracking {
         this._previousRotation = null;
         this._loaded = true;
         this._mapItems = [];
-        this._ButtonDisable=false;
+       
         this._allNodeData = [];
         this._geoLocation = null;
         this._path = [];
@@ -356,21 +356,7 @@ export default class Tracking {
     get loaded() {
         return this._loaded;
     }
-  /**
-     * Get loaded
-     * @returns {boolean}
-     */
-    get ButtonDisable() {
-        return this._ButtonDisable;
-    }
-
-       /**
-     * Set loaded
-     * @param value
-     */
-    set ButtonDisable(value) {
-        this._ButtonDisable = value;
-    }
+ 
     /**
      * Set loaded
      * @param value
