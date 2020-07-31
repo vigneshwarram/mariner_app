@@ -52,7 +52,7 @@ let _AR_MODE = null;
 // Application processing events
 let _processing = false;
 //button disable
-this._ButtonDisable=false;
+this._arPinDropButtonDisable=false;
 
 /**
  * Check to see if the key exists
@@ -104,16 +104,16 @@ export default class Global_State extends React.Component {
      * Get loaded
      * @returns {boolean}
      */
-    get ButtonDisable() {
-        return _ButtonDisable;
+    get arPinDropButtonDisable() {
+        return _arPinDropButtonDisable;
     }
 
        /**
      * Set loaded
      * @param value
      */
-    set ButtonDisable(value) {
-        _ButtonDisable = value;
+    set arPinDropButtonDisable(value) {
+        _arPinDropButtonDisable = value;
     }
     /**
      * Get the flow

@@ -522,7 +522,7 @@ export default class ARSceneView extends React.Component {
             new Message().sendAlert(global.t.get$("HEADER.MAXIMUM_PINS_HEADER"), global.t.get$('STATUS.MAXIMUM_PINS_TEXT'), 'OK');
             return
         } 
-        global.state.ButtonDisable=true;
+        global.state.arPinDropButtonDisable=true;
         global.TouchEvents.emit({name:global.const.AR_TOUCH});
         if (global.state.ARMode === this.CONST.flowMode) {
             if (global.state.flowId === "ar-flow-page-2") {
@@ -547,7 +547,7 @@ export default class ARSceneView extends React.Component {
                 this.forceUpdate();
             }
         }
-        global.state.ButtonDisable=false;
+        global.state.arPinDropButtonDisable=false;
     }
 
     /**
