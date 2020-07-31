@@ -381,6 +381,9 @@
         "VT_REGISTRATION_ERROR": "Virtual Tech n'est pas disponible pour ce fournisseur de services Internet pour le moment, veuillez réessayer plus tard",
         "MAXIMUM_PINS_TEXT": "you have reached the maxmimum number of pins you can drop"
     },
+    "MAXIMUMPINS":{
+        "MAXIMUM_PINS":19
+        },
     "TITLE": {
         "LOCATION_SELECTOR_TITLE": "Name Location Pin",
         "AR_TOOLBOX": "Augmented Reality Toolbox",

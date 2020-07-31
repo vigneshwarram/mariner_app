@@ -51,7 +51,8 @@ let _AR_MODE = null;
 
 // Application processing events
 let _processing = false;
-
+//button disable
+this._ButtonDisable=false;
 
 /**
  * Check to see if the key exists
@@ -99,7 +100,21 @@ export default class Global_State extends React.Component {
     get processing() {
         return _processing;
     }
+ /**
+     * Get loaded
+     * @returns {boolean}
+     */
+    get ButtonDisable() {
+        return _ButtonDisable;
+    }
 
+       /**
+     * Set loaded
+     * @param value
+     */
+    set ButtonDisable(value) {
+        _ButtonDisable = value;
+    }
     /**
      * Get the flow
      * @returns {*}

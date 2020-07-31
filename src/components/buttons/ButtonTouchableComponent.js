@@ -41,7 +41,7 @@ class ButtonTouchableComponent extends React.Component {
 
     render() {
         return (
-            <TouchableHighlight underlayColor="#00000000" onPress={this.onPress} onLongPress={this.onLongPress} delayLongPress={500}>
+            <TouchableHighlight style={{opacity:global.state.ButtonDisable?0.3:1}} disabled={global.state.ButtonDisable} underlayColor="#00000000" onPress={this.onPress} onLongPress={this.onLongPress} delayLongPress={500}>
                 <View style={{
                     textAlign: 'center',
                     justifyContent: 'center',

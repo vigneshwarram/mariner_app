@@ -451,6 +451,9 @@
         "TROUBLESHOOTING": "Troubleshooting",
         "WELCOME": "Welcome"
     },
+    "MAXIMUMPINS":{
+        "MAXIMUM_PINS":19
+        },
     "WIFI": {
         "ADJACENT_CHANNEL_INTERFERENCE": "Adjacent Channel Interference",
         "BAND": "Band",

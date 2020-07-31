@@ -4,7 +4,7 @@
  */
 
 import React from "react";
-import {View} from 'react-native';
+import {View,Alert} from 'react-native';
 
 import {
     faTrashAlt,
@@ -16,6 +16,7 @@ import {faCog, faToggleOn, faToggleOff} from '@fortawesome/pro-light-svg-icons';
 
 // Event Listener
 import { EventRegister } from 'react-native-event-listeners';
+import Message from '../../app_code/message/service';
 // Style sheet
 import Style from '../../styles/base/index';
 
@@ -27,7 +28,9 @@ import StackedButtonTouchableIconComponent from '../../components/buttons/Stacke
 
 export default class BottomMenuComponent extends React.Component {
 
-    // Event listeners   
+    // Event listeners
+    Message = new Message();
+    
     toggleLiveListener;
     pauseLiveListener;
 
@@ -581,10 +584,18 @@ export default class BottomMenuComponent extends React.Component {
     /**
      * Add point to the AR scene
      */
-    onAddPoint() {      
+    onAddPoint() {
+        let maximumPins=global.configuration.get("maximumPins");
+        global.tracking.ButtonDisable=true;
+        if(global.tracking.mapItems.length>=maximumPins){
+            this.Message.sendAlert(global.t.get$("HEADER.MAXIMUM_PINS_HEADER"), global.t.get$('STATUS.MAXIMUM_PINS_TEXT'), 'OK');
+        } 
+        else{
             global.state.processing = true;
-            global.TouchEvents.emit({name:global.const.AR_TOUCH});
             this.props.controller.addPoint();
+           
+        }   
+       
     }
 
     /**
