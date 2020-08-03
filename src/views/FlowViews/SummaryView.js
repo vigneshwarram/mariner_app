@@ -42,7 +42,7 @@ import WifiDetails from '../../app_code/wifi/wifidetails';
 import Thresholds from '../../app_code/certifications/thresholds';
 
 import WorkOrderBuilder from '../../app_code/workorders/workorder_builder';
-import UploadResults from "../../app_code/workorders/upload_results";
+
 
 export default class SummaryView extends React.Component {
 
@@ -79,12 +79,9 @@ export default class SummaryView extends React.Component {
         scrollMargin:0
     };
 
-    // Constructor
-    constructor(props) {
+     // Constructor
+     constructor(props) {
         super(props);
-
-        this.uploadSiteVisitComplete = this.uploadSiteVisitComplete.bind(this);
-
         let modified = global.upload_tracker.hasBeenModified();
         if(modified) {
             let woDetails = this.WorkOrderBuilder.build();
@@ -141,12 +138,12 @@ export default class SummaryView extends React.Component {
             }
         }
     }
-
     // View mounted and ready
     componentDidMount(){
         styles = new Style().get("FLOWS");
         this.setState({excellent: this.excellent, good: this.good, fair: this.fair, poor: this.poor, coverage: this.coverage, uploaded: this.uploaded});
     }
+
 
     // View about to unmount
     componentWillUnmount() {
@@ -156,57 +153,7 @@ export default class SummaryView extends React.Component {
     componentDidUpdate(){
     }
 
-    /**
-     * Site visit upload results
-     * @param result
-     */
-    uploadSiteVisitComplete(result) {
-        if (result === "success") {
-            this.setState({uploaded: true});
-
-            //set modified to false until we drop more points
-            let allNodeData = global.tracking.allNodeData;
-            global.upload_tracker.lastUploaded = allNodeData;
-            global.upload_tracker.referenceData = {excellent: this.excellent, good: this.good, fair: this.fair, poor: this.poor, coverage: this.coverage, ref: this.wo.id};
-            this.woid = this.wo.id;
-            Alert.alert(
-                global.t.get$("TEXT.SUCCESSFUL_UPLOAD"),
-                '' + global.t.get$("TEXT.HERE_IS_CODE") + this.wo.id.toUpperCase(),
-                [
-                    {text: 'ok', onPress: () => {}},
-                ],
-            );
-            global.state.work_orders.remove(this.wo.id);
-        }
-        else {
-            Alert.alert(
-                global.t.get$("TEXT.FAILED_UPLOAD"),
-                global.t.get$("TEXT.ERROR_UPLOADING"),
-                [
-                    {text: 'ok', onPress: () => {}},
-                ],
-            );
-        }
-    }
-
-    /**
-     * Upload a site visit
-     */
-    uploadSiteVisit() {
-        new UploadResults().upload(this.wo, this.uploadSiteVisitComplete);
-    }
-
-    showRefCode() {
-        Alert.alert(
-            global.t.get$("HEADER.REFERENCE_CODE"),
-            '' + global.t.get$("TEXT.ALREADY_UPLOADED") + this.woid.toUpperCase(),
-            [
-                {text: 'ok', onPress: () => {}},
-            ],
-        );
-    }
-
-
+  
     // Render view components
     render() {
         console.disableYellowBox = true;
@@ -274,7 +221,7 @@ export default class SummaryView extends React.Component {
                         </ScrollView>
                     }
                     <CustomButtons navigation={this.props.navigation} parent={this.props.controller} create={this.props.info.actionButtons} inject={[
-                        {position: 2, label: global.t.get$("ACTION.SHARE_RESULTS"), route: () => (this.state.uploaded ? this.showRefCode() : this.uploadSiteVisit())}
+                        {position: 2, label: global.t.get$("ACTION.NEED_MORE_HELP"),switch:"Help",direction:"right", type: "Help",}, {position: 6, label: global.t.get$("ACTION.OPTIMIZE_WIFI"),switch:"WifiOptimize",direction:"right", type: "Help",}
                     ]} />
                 </View>
             </AnimatedStackView>

@@ -93,6 +93,7 @@
     ],
     "wsbRegistrationUrl": "https://waveguide.mpicorp.ca/wifiservicebroker-1.0/webresources/waveguide/registration",
     "ooklaSpeedTestUrl": "http://waveguide.mpicorp.ca/mpicorp/",
+    "wsbOptimizeUrl":"https://waveguide-qa.mpicorp.ca:18443/waveguideservicebroker/webresources/optimize",
     "postTimeout": 30000,
     "isOoklaReachableTimeout": 10000,
     "scanInProgressTimeout": 20000,
@@ -384,7 +385,7 @@
               "direction": "left"
             }
           ]
-        }
+        }    
       ]
     },
     "ar-workflow": {
@@ -401,7 +402,7 @@
           "actionButtons": [
             {
               "position": 4,
-              "label": "Check my WiFi signal",
+              "label": "Check",
               "switch": "ar-flow-page-instructions",
               "width": 305,
               "direction": "right"
@@ -555,8 +556,118 @@
           ]
         }
       ]
-    }
-
-
+    },
+    "wifi-optimize":[
+      {
+        "type": "Help",
+        "id": "Help",
+        "title": "More Help",
+        "image": "imageTemp",
+        "description": "To better assist you,  your signal coverage test results and recomendations can be shared with your service provider so they so they can be viewed when you contact them. This will speed up the time to resolve your issue.\n\nDon’t worry, only the wifi signal data will be sent, no video or pictures of your home or any of your private information.",
+        "actionButtons": [
+            {
+                "position": 1,
+                "label": "Back",
+                "switch": "summaryView",
+                "direction": "left"
+            },
+            {
+                "position": 2,
+                "label": "Contact my service provider",
+                "switch": "contact",
+                "direction": "right"
+            }
+        ]
+        
+      },
+      {
+        "id": "WifiOptimize",
+        "type": "optimize",
+        "title": "Optimize my WiFi",
+        "image": "imageTemp",
+        "description": "There are a couple of options to improve \nsignal coverage:\n\n1. Router Optimization\n\nYour router can be optimized where it currently is located but also moved to another location in your home.\n\n2. Adding WiFi mesh\n\nThese devices fill coverage gaps, but often cost money. Most Internet Service Providers sell these for a monthly fee or can be purchased outright.",
+        "actionButtons": [
+            {
+                "position": 1,
+                "label": "Back",
+                "switch": "summaryView",
+                "direction": "left"
+            },
+            {
+                "position": 4,
+                "label": "Router Optimization",
+                "switch": "routerOptimize",
+                "direction": "right"
+            },
+            {
+                "position": 2,
+                "label": "Adding WiFi Mesh",
+                "switch": "addingWifimesh",
+                "direction": "right"
+            }
+            
+        ]
+      },
+      {
+        "id": "routerOptimize",
+        "type": "routeroptimize",
+        "title": "Router Optimization",
+        "image": "imageTemp",
+        "description": "There are a couple of options to optimize \nyour router.\n\n1. Improve current router position\n\nThere are a few simple tips you can follow to optimize the router where it’s currently located in your home, however this still may leave you with coverage issues.\n\n2.Moving your router\n\nThis involves physically relocating your router to a new location in your home. I can show you a better location for your router if you’d like to see it, to do so, i’ll need to launch your camera again on the next step. ",
+        "actionButtons": [
+            {
+                "position": 1,
+                "label": "Back",
+                "switch": "WifiOptimize",
+                "direction": "left"
+            },
+            {
+                "position": 4,
+                "label": "View router position tips",
+                "switch": "routerTip1",
+                "direction": "right"
+            },
+            {
+                "position": 2,
+                "label": "I need more help",
+                "switch": "Help",
+                "direction": "right"
+            }
+        ]
+       },
+       {
+        "id": "addingWifimesh",
+        "type": "optimize",
+        "title": "Adding Wifi Mesh",
+        "image": "imageTemp",
+        "description": "In a nut shell, WiFi mesh is a system of “mini” WiFi routers that are placed around your home to extend the WiFi signal and fill dead-zones.\n\n\n\nI can show the the number of mesh devices you need and where they should go in your home, to do so,i need to access your camera for the next step.",
+        "actionButtons": [
+            {
+                "position": 1,
+                "label": "Back",
+                "switch": "WifiOptimize",
+                "direction": "left"
+            },
+            {
+                "position": 6,
+                "label": "View mesh location",
+                "switch": "",
+                "direction": "right"
+            },
+            {
+                "position": 4,
+                "label": "order mesh",
+                "switch": "",
+                "direction": "right"
+            },
+            {
+                "position": 2,
+                "label": "I need more help",
+                "switch": "Help",
+                "direction": "right"
+            }
+        ]
+      }
+    ]
   }
 }
