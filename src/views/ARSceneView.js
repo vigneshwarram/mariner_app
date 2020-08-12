@@ -36,6 +36,8 @@ import { EventRegister } from 'react-native-event-listeners';
 // Get the AR Scene for the navigator
 let InitialScene = require('./AR/Scene');
 
+let PlacementScene = require('./AR/PlacementScene');
+
 // AR Child Component Views
 import TopMenuComponent from './AR/TopMenu';
 import BottomMenuComponent from './AR/BottomMenu';
@@ -132,8 +134,8 @@ export default class ARSceneView extends React.Component {
         router: false,
 
         // Pin type selection
-        pinTypeSelected: []
-
+        pinTypeSelected: [],
+        placementItems: null
 
 
     };
@@ -522,7 +524,7 @@ export default class ARSceneView extends React.Component {
             new Message().sendAlert(global.t.get$("HEADER.MAXIMUM_PINS_HEADER"), global.t.get$('STATUS.MAXIMUM_PINS_TEXT'), 'OK');
             return
         } 
-        global.state.arPinDropButtonDisable=true;
+        global.tracking.ButtonDisable=true;
         global.TouchEvents.emit({name:global.const.AR_TOUCH});
         if (global.state.ARMode === this.CONST.flowMode) {
             if (global.state.flowId === "ar-flow-page-2") {
@@ -547,7 +549,7 @@ export default class ARSceneView extends React.Component {
                 this.forceUpdate();
             }
         }
-        global.state.arPinDropButtonDisable=false;
+        global.tracking.ButtonDisable=false;
     }
 
     /**

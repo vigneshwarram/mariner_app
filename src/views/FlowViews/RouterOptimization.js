@@ -21,6 +21,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import Style from '../../styles/base/index';
 // Import the main parts of each view
 import AnimatedStackView from '../../styles/components/stack_view';
+import UploadResults from "../../app_code/workorders/upload_results";
 import Device from '../../app_code/diagnostics/deviceinfo';
 import Global_State from '../../constants/global';
 import Header from '../../styles/components/view_header';
@@ -41,7 +42,14 @@ export default class RouterOptimization extends React.Component {
     // Constructor
     constructor(props) {
         super(props);
-        
+
+        if(this.props.info.getOptimization) {
+            this.getRecommendations(this.props.info.optimizationType);
+        }
+
+        if(this.props.info.turnOffPlacementMode) {
+            //turn it off, navigate back to initial scene
+        }
     }     
     // View mounted and ready
     componentDidMount(){
@@ -55,6 +63,7 @@ export default class RouterOptimization extends React.Component {
     // View has been updated
     componentDidUpdate(){
     }
+
     GetLocationPoints(){
         let optimizeUrl = global.configuration.get('wsbOptimizeUrl');
            console.log('optimizeUrl',optimizeUrl)       
@@ -64,13 +73,36 @@ export default class RouterOptimization extends React.Component {
                 
                 }
                 else{
-                  //  global.state.exitFlows();
-                    this.props.navigation.dispatch('IndoorSceneView');
-  
-                
+                    alert('Network request failed');
                 }
             })
     }
+
+    /*
+     * Get recommendations from optimize service
+     */
+    getRecommendations(algorithmType) {
+        new UploadResults().getRecommendation(algorithmType, this.recommendationReturned);
+    }
+
+    recommendationReturned(result) {
+        /*Alert.alert(
+            "Recommendation came back in optimize view",
+            JSON.stringify(result),
+            [
+                {text: 'ok', onPress: () => {}},
+            ]
+        );*/
+        global.AREvents.emit({name: global.const.AR_START_PLACEMENT_MODE, data: result});
+        /*Alert.alert(
+            "Tried to fire the event...",
+            "it should have fired",
+            [
+                {text: 'ok', onPress: () => {}},
+            ]
+        );*/
+    }
+
     // Render view components
 
     render() {
@@ -89,9 +121,7 @@ export default class RouterOptimization extends React.Component {
                     <View style={{flexDirection: "row", flex:0, alignItems:'center', justifyItems: 'start', marginTop: 10}}>
                         <Label style={[styles.h6, {flex: 8, paddingLeft: 15, paddingRight: 15, width:'100%', textAlign:'left', alignItems:'center'}]}>{this.props.info.description}</Label>
                     </View>
-                    <CustomButtons navigation={this.props.navigation} parent={this.props.controller} create={this.props.info.actionButtons}
-                    inject={[
-                        {position: 6, label: global.t.get$("ACTION.VIEW_ROUTER_LOCAION"),  route: () => (this.GetLocationPoints())}]}/>
+                    <CustomButtons navigation={this.props.navigation} parent={this.props.controller} create={this.props.info.actionButtons}/>
                 </View>
             </AnimatedStackView>
         );

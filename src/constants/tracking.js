@@ -355,7 +355,7 @@ export default class Tracking {
     get loaded() {
         return this._loaded;
     }
- 
+
     /**
      * Set loaded
      * @param value
@@ -648,8 +648,7 @@ export default class Tracking {
     set mapItems(value) {
         this._mapItems = value;
     }
-   
-  
+
     /**
      * Get the nodes with signal and other information (for site uploads)
      * @returns {Array}
