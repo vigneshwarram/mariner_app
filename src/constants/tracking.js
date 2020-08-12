@@ -81,7 +81,6 @@ export default class Tracking {
         this._previousRotation = null;
         this._loaded = true;
         this._mapItems = [];
-       
         this._allNodeData = [];
         this._geoLocation = null;
         this._path = [];
@@ -649,7 +648,8 @@ export default class Tracking {
     set mapItems(value) {
         this._mapItems = value;
     }
-
+   
+  
     /**
      * Get the nodes with signal and other information (for site uploads)
      * @returns {Array}

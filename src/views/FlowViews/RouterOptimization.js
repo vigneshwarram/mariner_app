@@ -64,7 +64,10 @@ export default class RouterOptimization extends React.Component {
                 
                 }
                 else{
-                    alert('Network request failed');
+                  //  global.state.exitFlows();
+                    this.props.navigation.dispatch('IndoorSceneView');
+  
+                
                 }
             })
     }

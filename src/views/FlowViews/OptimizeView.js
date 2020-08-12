@@ -62,7 +62,7 @@ export default class WifiRouterView extends React.Component {
     }
     // Render view components
     GetLocationPoints(){
-
+        this.props.navigation.navigate('IndoorSceneView')
     }
     render() {
         console.disableYellowBox = true;
