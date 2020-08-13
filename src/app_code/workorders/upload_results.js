@@ -53,7 +53,7 @@ export default class UploadResults {
      * @param algorithmInputDataJSON
      * @param callback
      */
-    getRecommendation(algorithmType, callback) {
+    getRecommendation(algorithmType, callback,errorback) {
         let optimizeUrl = global.configuration.get("wsbOptimizeUrl");
         let username = global.configuration.get("wsbUsername");
         let password = global.configuration.get("wsbPassword");
@@ -68,26 +68,30 @@ export default class UploadResults {
                 'Content-Type': 'application/json'
             };
 
-            /*Alert.alert(
-                "BUILT REQUEST",
-                "about to post",
+            Alert.alert(
+                JSON.stringify(algorithmPayload),
+                JSON.stringify(optimizeUrl),
                 [
                     {text: 'ok', onPress: () => {}},
                 ]
-            );*/
-
+            );
+             try{
             new HttpService().post(optimizeUrl, headers, algorithmPayload, (response) => {
                 response.json().then(responseJson => {
-                    /*Alert.alert(
+                    Alert.alert(
                         "RECEIVED RESPONSE",
                         "about to callback",
                         [
                             {text: 'ok', onPress: () => {}},
                         ]
-                    );*/
+                    );
                     callback(responseJson);
                 });
             });
+        }
+        catch(error){
+            errorback(error);
+        }
         }
         else {
             callback(null);
