@@ -50,7 +50,6 @@ class Scene extends React.Component {
     wifi = new AR();
     scanningID;
     coolingID;
-
     ssUpdateID = null;
     ssUpdated = false;
     scanned = false;
@@ -102,8 +101,7 @@ class Scene extends React.Component {
         nodeItems:[],
         wifiList: [],
         icons: [],
-placementItemsNode:[],
-IsplacementScene:false,
+
         freq: 0,
         lastSignal: "0",
         linkSpeed: "0",
@@ -196,81 +194,8 @@ IsplacementScene:false,
             ]
         });
     }
-     /**
-     * for placement js merge
-     */
-        getPalcementBasedonNavigate(){
 
-        }
     /**
-     * for getAllPlacements
-     */
-        getAllPlacements() {
-            let placements = global.state.get("placementList");
-            let formattedPlacementItems = [];
-            try {
-                let actualPlacements = placements.recommendations[0].placements;
-                Alert.alert(
-                    "Actual Placements?",
-                    JSON.stringify(placements),
-                    [
-                        {text: 'ok', onPress: () => {}},
-                    ]
-                )
-                for(i=0;i<actualPlacements.length;i++) {
-                    formattedPlacementItems.push(this.getPlacementIcon(actualPlacements[i].type, actualPlacements[i].position));
-                }
-    
-                EventRegister.emit(global.const.AR_UPDATE_HEAT_MAP_ITEMS);
-            } catch (e) {
-                Alert.alert(
-                    "ERROR",
-                    e.message,
-                    [
-                        {text: 'ok', onPress: () => {}},
-                    ]
-                );
-            }
-            return formattedPlacementItems;
-        }
-            /**
-    * Get placement marking object
-    * @param placement type
-    * @returns {*}
-    */
-    getPlacementIcon(pinType, position) {
-        let iconImage = require("../../assets/pins/mesh_point.png");
-        let ringsPosition = [position[0]+4, position[1]-0.5, position[2]];
-        switch(pinType) {
-            case "router": {
-                iconImage =  require("../../assets/pins/router_point.png");
-            }
-        }
-        return (
-            <ViroFlexView
-                style={{flexDirection: "column", alignItems: 'center', justifyContent: 'center'}}
-                >
- 
-                <ViroImage
-                    height={0.5}
-                    width={0.5}
-                    source={iconImage}
-                    position={position}
-                    transformBehaviors={"billboardY"}
-                />
-                <ViroImage
-                    height={0.5}
-                    width={1.5}
-                    source={require("../../assets/images/all-rings.png")}
-                    position={position}
-                    transformBehaviors={"billboardY"}
-                />
-            </ViroFlexView>
-        )
-     }
- 
-    /**
-     * 
      * Create all the needed event listeners
      */
     createEventListeners() {
@@ -284,16 +209,9 @@ IsplacementScene:false,
 
             {id:this, name: global.const.AR_START_PLACEMENT_MODE, callback:(placements) => {
                 //this.startPlacementMode(placements);
-                Alert.alert('func;')
                 global.state.set("placementList", placements);
                 try {
-                   // this.props.sceneNavigator.replace({scene: PlacementScene});
-                   this.setState({
-                    placementItemsNode:this.getAllPlacements()
-                }, () => {
-                 
-                });  
-                this.setState({IsplacementScene:true})            
+                    this.props.sceneNavigator.replace({scene: PlacementScene});
                 } catch (e) {
                     Alert.alert(
                         "ERROR",
@@ -1257,13 +1175,6 @@ IsplacementScene:false,
      * @returns {*}
      */
     render() {
-        if(this.state.IsplacementScene){
-            return (
-                <ViroARScene ref="PLACEMENT_AR_SCENE" onClick={this.onScreenSelected} onTrackingUpdated={this.onInitialized} onCameraTransformUpdate={this.onTransformed}>
-                    {this.state.placementItemsNode}
-                </ViroARScene>
-            );
-        }
         return (
             <ViroARScene ref="AR_SCENE" onClick={this.onScreenSelected} onTrackingUpdated={this.onInitialized} onCameraTransformUpdate={this.onTransformed}>
                 {this.state.nodeItems.map((wifiNode) => {

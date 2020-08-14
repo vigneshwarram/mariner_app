@@ -82,16 +82,7 @@ export default class RouterOptimization extends React.Component {
      * Get recommendations from optimize service
      */
     getRecommendations(algorithmType) {
-        new UploadResults().getRecommendation(algorithmType, this.recommendationReturned,this.errorback);
-    }
-    errorback(error){
-           Alert.alert(
-            "Recommendation came back in optimize view",
-            JSON.stringify(error),
-            [
-                {text: 'ok', onPress: () => {}},
-            ]
-        );
+        new UploadResults().getRecommendation(algorithmType, this.recommendationReturned);
     }
 
     recommendationReturned(result) {

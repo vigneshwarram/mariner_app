@@ -15,7 +15,7 @@ import DeviceInformation from '../app_code/diagnostics/deviceinfo';
 
 // Default style sheet
 import Style from '../styles/base/index'
-import WorkOrderBuilder from '../app_code/workorders/workorder_builder';
+
 // Import the main parts of each view
 import Splash from "../styles/components/splash";
 import AnimatedStackView from "../styles/components/stack_view";
@@ -54,62 +54,11 @@ export default class SplashScreen extends React.Component {
     constructor(props) {
         super(props);
     }
- /**
-     * Requests an optimization of the current data in the app
-     * @param algorithmInputDataJSON
-     * @param callback
-     */
-    getRecommendation(algorithmType, callback,errorback) {
-        let optimizeUrl = global.configuration.get("wsbOptimizeUrl");
-        let username = global.configuration.get("wsbUsername");
-        let password = global.configuration.get("wsbPassword");
 
-        if(optimizeUrl != null) {
-
-            let algorithmPayload = new WorkorderBuilder().buildRecommendationPayload(algorithmType);
-            let headers = username && password ? {
-                'Authorization': 'Basic ' + base64.encode(username + ":" + password),
-                'Content-Type': 'application/json'
-            } : {
-                'Content-Type': 'application/json'
-            };
-
-            Alert.alert(
-                JSON.stringify(algorithmPayload),
-                JSON.stringify(optimizeUrl),
-                [
-                    {text: 'ok', onPress: () => {}},
-                ]
-            );
-             try{
-            new HttpService().post(optimizeUrl, headers, algorithmPayload, (response) => {
-                response.json().then(responseJson => {
-                    Alert.alert(
-                        "RECEIVED RESPONSE",
-                        "about to callback",
-                        [
-                            {text: 'ok', onPress: () => {}},
-                        ]
-                    );
-                    callback(responseJson);
-                });
-            });
-        }
-        catch(error){
-            errorback(error);
-        }
-        }
-        else {
-            callback(null);
-        }
-    }
-    getResult(result){
-        console.log(result)
-    }
     // View mounted and ready
     componentDidMount(){
         styles = new Style().get("SPLASH");
-        this.getRecommendation('getRecommendation',this.getResult);
+
         //load language immediately
         global.storage.getData(global.const.STORAGE_KEY_LANGUAGE, (language_id) => {
             let languageUrl = global.configuration.get("wsbLanguageUrl");
