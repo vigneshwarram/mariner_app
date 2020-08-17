@@ -3,7 +3,7 @@
 import Thresholds from '../certifications/thresholds';
 import Device from '../diagnostics/deviceinfo';
 import WifiDetails from '../wifi/wifidetails';
-import Location from '../certifications/location';
+
 export default class WorkorderBuilder {
     Device = new Device();
     Thresholds = new Thresholds();
@@ -40,7 +40,6 @@ export default class WorkorderBuilder {
             pointWifiDetails.setBand(points[i].data.freq === "5 GHz" ? "5GHz" : "2.4GHz");
             pointWifiDetails.setSignal(points[i].level);
             woDetails.currentCertification.currentLocation.wifiDetails = pointWifiDetails;
-            //this is bad...
             let x = points[i].transform._x - points[0].transform._x;
             let y = points[i].transform._y - points[0].transform._y;
             let z = points[i].transform._z - points[0].transform._z;
@@ -52,38 +51,5 @@ export default class WorkorderBuilder {
         woDetails.currentCertification.setVirtualTechResults();
 
         return woDetails;
-    }
-
-    buildRecommendationPayload(algorithmType) {
-        let recommendationPayload = {};
-        recommendationPayload["options"] = [
-            {
-                name: "algorithm",
-                value: algorithmType
-            }
-        ];
-
-        //let locations = wo.currentCertification.locationTests;
-        let points = global.tracking.allNodeData;
-        let uploadLocations = [];
-        for(i=0;i<points.length;i++) {
-            //let location = new Location(null, null, null, );
-            //location.signal = points[i].level;
-            uploadLocations[i] = {
-                type: points[i].data.pointType,
-                position: [
-                    points[i].transform._x,
-                    points[i].transform._y,
-                    points[i].transform._z,
-                ],
-                coverage: true
-            }
-        }
-        let uploadObservations = {};
-        uploadObservations["description"] = "test from mobile app";
-        uploadObservations["locations"] = uploadLocations;
-
-        recommendationPayload["observations"] = uploadObservations;
-        return recommendationPayload;
     }
 }

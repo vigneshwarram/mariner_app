@@ -40,10 +40,8 @@ import Certification from '../../app_code/certifications/certification';
 import Device from '../../app_code/diagnostics/deviceinfo';
 import WifiDetails from '../../app_code/wifi/wifidetails';
 import Thresholds from '../../app_code/certifications/thresholds';
-import Triggers from "../../app_code/flows/triggers";
 
 import WorkOrderBuilder from '../../app_code/workorders/workorder_builder';
-import UploadResults from '../../app_code/workorders/upload_results';
 
 
 export default class SummaryView extends React.Component {
@@ -146,6 +144,7 @@ export default class SummaryView extends React.Component {
         this.setState({excellent: this.excellent, good: this.good, fair: this.fair, poor: this.poor, coverage: this.coverage, uploaded: this.uploaded});
     }
 
+
     // View about to unmount
     componentWillUnmount() {
     }
@@ -154,74 +153,7 @@ export default class SummaryView extends React.Component {
     componentDidUpdate(){
     }
 
-    /**
-     * Site visit upload results
-     * @param result
-     */
-    uploadSiteVisitComplete(result) {
-        if (result === "success") {
-            this.setState({uploaded: true});
-
-            //set modified to false until we drop more points
-            let allNodeData = global.tracking.allNodeData;
-            global.upload_tracker.lastUploaded = allNodeData;
-            global.upload_tracker.referenceData = {excellent: this.excellent, good: this.good, fair: this.fair, poor: this.poor, coverage: this.coverage, ref: this.wo.id};
-            this.woid = this.wo.id;
-            Alert.alert(
-                global.t.get$("TEXT.SUCCESSFUL_UPLOAD"),
-                '' + global.t.get$("TEXT.HERE_IS_CODE") + this.wo.id.toUpperCase(),
-                [
-                    {text: 'ok', onPress: () => {}},
-                ],
-            );
-            global.state.work_orders.remove(this.wo.id);
-        }
-        else {
-            Alert.alert(
-                global.t.get$("TEXT.FAILED_UPLOAD"),
-                global.t.get$("TEXT.ERROR_UPLOADING"),
-                [
-                    {text: 'ok', onPress: () => {}},
-                ],
-            );
-        }
-    }
-
-    recommendationReturned(result) {
-        Alert.alert(
-            "Recommendation",
-            JSON.stringify(result),
-            [
-                {text: 'ok', onPress: () => {}},
-            ]
-        );
-    }
-
-    /**
-     * Upload a site visit
-     */
-    uploadSiteVisit() {
-        new UploadResults().upload(this.wo, this.uploadSiteVisitComplete);
-    }
-
-    /*
-     * Get recommendations from optimize service
-     */
-    getRecommendations(algorithmType) {
-        new UploadResults().getRecommendation(algorithmType, this.recommendationReturned);
-    }
-
-    showRefCode() {
-        Alert.alert(
-            global.t.get$("HEADER.REFERENCE_CODE"),
-            '' + global.t.get$("TEXT.ALREADY_UPLOADED") + this.woid.toUpperCase(),
-            [
-                {text: 'ok', onPress: () => {}},
-            ],
-        );
-    }
-
-
+  
     // Render view components
     render() {
         console.disableYellowBox = true;
@@ -288,7 +220,7 @@ export default class SummaryView extends React.Component {
                             <Label style={[{flex: 8, paddingLeft: 10, paddingRight: 10, width:'100%', textAlign:'left', alignItems:'center'}]}>{global.t.get$(this.props.info.description_fail)}</Label>
                         </ScrollView>
                     }
-                    <CustomButtons navigation={this.props.navigation} trigger={new Triggers(this)} parent={this.props.controller} create={this.props.info.actionButtons} inject={[
+                    <CustomButtons navigation={this.props.navigation} parent={this.props.controller} create={this.props.info.actionButtons} inject={[
                         {position: 2, label: global.t.get$("ACTION.NEED_MORE_HELP"),switch:"Help",direction:"right", type: "Help",}, {position: 6, label: global.t.get$("ACTION.OPTIMIZE_WIFI"),switch:"WifiOptimize",direction:"right", type: "Help",}
                     ]} />
                 </View>

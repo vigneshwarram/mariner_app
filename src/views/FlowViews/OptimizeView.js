@@ -32,9 +32,6 @@ import Triggers from "../../app_code/flows/triggers";
 import WorkOrderBuilder from '../../app_code/workorders/workorder_builder';
 import HttpService from "../../app_code/http/service";
 import Thresholds from '../../app_code/certifications/thresholds';
-import { EventRegister } from 'react-native-event-listeners';
-
-
 export default class WifiRouterView extends React.Component {
     static navigationOptions = ({ navigation }) => Global_State.getInstance().viewStyleOptions(navigation);
     isiOS13 = global.state.iOS13_available();
@@ -54,15 +51,6 @@ export default class WifiRouterView extends React.Component {
     // View mounted and ready
     componentDidMount(){
         styles = new Style().get("FLOWS");
-
-        if(this.props.info.getOptimization) {
-            this.getRecommendations(this.props.info.optimizationType);
-        }
-
-        if(this.props.info.turnOffPlacementMode) {
-            //turn it off, navigate back to initial scene
-
-        }
     }
 
     // View about to unmount
@@ -74,34 +62,8 @@ export default class WifiRouterView extends React.Component {
     }
     // Render view components
     GetLocationPoints(){
-
+        this.props.navigation.navigate('IndoorSceneView')
     }
-
-    /*
-     * Get recommendations from optimize service
-     */
-    getRecommendations(algorithmType) {
-        new UploadResults().getRecommendation(algorithmType, this.recommendationReturned);
-    }
-
-    recommendationReturned(result) {
-        /*Alert.alert(
-            "Recommendation came back in optimize view",
-            JSON.stringify(result),
-            [
-                {text: 'ok', onPress: () => {}},
-            ]
-        );*/
-        global.AREvents.emit({name: global.const.AR_START_PLACEMENT_MODE, data: result});
-        /*Alert.alert(
-            "Tried to fire the event...",
-            "it should have fired",
-            [
-                {text: 'ok', onPress: () => {}},
-            ]
-        );*/
-    }
-
     render() {
         console.disableYellowBox = true;
 

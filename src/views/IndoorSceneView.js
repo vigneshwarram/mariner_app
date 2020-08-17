@@ -28,14 +28,11 @@ import Global_State from '../constants/global';
 import AppPermissions from '../boot/permissions';
 import OverlayView from '../styles/components/flow_header';
 import AnimatedStackView from '../styles/components/stack_view';
-import TrackingView from './AR/Tracking';
-import TrackingViewDirection from './AR/IndoorTrack'
+import TrackingView from './AR/IndoorTrack';
+
 // Event Listener
 import { EventRegister } from 'react-native-event-listeners';
 
-// Get the AR Scene for the navigator
-let InitialScene = require('./AR/Scene');
-import InitialSceneArrow from "../views/IndoorGuideScene";
 // AR Child Component Views
 import TopMenuComponent from './AR/TopMenu';
 import BottomMenuComponent from './AR/BottomMenu';
@@ -52,7 +49,7 @@ import Device from "../app_code/diagnostics/deviceinfo";
 import Thresholds from "../app_code/certifications/thresholds";
 import WorkOrderBuilder from '../app_code/workorders/workorder_builder';
 import SelectorComponent from "../components/other/SelectorComponent";
-let TrackingViewArow = require('./IndoorGuideScene');
+import InitialScene from "../views/IndoorGuideScene";
 const min_map = {
     top: 50,
     right: 0,
@@ -72,7 +69,7 @@ const simple_map = {
     width: 200
 };
 
-export default class ARSceneView extends React.Component {
+export default class IndoorSceneView extends React.Component {
     static navigationOptions = ({ navigation }) => Global_State.getInstance().viewStyleOptions(navigation);
     isiOS13 = global.state.iOS13_available();
 
@@ -102,7 +99,6 @@ export default class ARSceneView extends React.Component {
     // Local state
     state = {
         loadComplete: false,
-        IsArrowScene:false,
         ARAppProps: {},
         tracking: 'NONE',
         menuOptionsVisible: true,
@@ -227,8 +223,8 @@ export default class ARSceneView extends React.Component {
         global.Events.subscribe([
             // Camera permission
             {id:this, name: global.const.CAMERA_PERMISSION_GRANTED, callback:() => {
-                    this.setState({loadComplete: true,IsArrowScene:false});}},
-                    
+                    this.setState({loadComplete: true});}},
+
             // Updates
             {id:this, name: global.const.PEFORM_UPDATE, callback:() => {
                     this.setState({heatmap: global.state.ARMode === this.CONST.flowMode ?
@@ -236,7 +232,6 @@ export default class ARSceneView extends React.Component {
                             {width: 150, height: 150, style: min_map}});
                     this.forceUpdate();}}
         ]);
-   // Set up Arrow sceme events
 
         // AR Events
         global.AREvents.subscribe([
@@ -245,12 +240,7 @@ export default class ARSceneView extends React.Component {
             {id:this, name: global.const.AR_MENU_TOGGLE, callback:() => {
                     this.setState({expandedMode: !this.state.expandedMode});
                     global.tracking.loaded = !this.state.menuOptionsVisible;}},
-                    {id:this, name: global.const.ARROW_SCENE, callback:() => {
-                        //alert('its triggering',data);
-                      //  this.props.sceneNavigator.replace({scene:TrackingViewArow});
-                       // this.props.sceneNavigator.push({scene:TrackingViewArow});
-                        this.setState({loadComplete: false,IsArrowScene:true});
-                    }},
+
             // Tracking
             {id:this, name: global.const.AR_TRACKING, callback:(trackingState) => {
                     this.setState({tracking: trackingState});}},
@@ -324,27 +314,24 @@ export default class ARSceneView extends React.Component {
 
     // View mounted and ready
     componentDidMount(){
-        this.focusListener = this.props.navigation.addListener('didFocus', () => {
-            styles = new Style().get("AR");
+        styles = new Style().get("AR");
 
-            // Set the AR Mode
-            if (global.state.ARMode == null || global.state.ARMode === this.CONST.flowMode) {
-               this.setupSimpleMode();
-            }
-    
-            // Set up live/manual modes
-            this.setState({liveMode: this.configuration.liveMode});
-            EventRegister.emit(this.CONST.toggleLiveMode, this.configuration.liveMode);
-          })
-      
+        // Set the AR Mode
+        if (global.state.ARMode == null || global.state.ARMode === this.CONST.flowMode) {
+           this.setupSimpleMode();
+        }
+
+        // Set up live/manual modes
+        this.setState({liveMode: this.configuration.liveMode});
+        EventRegister.emit(this.CONST.toggleLiveMode, this.configuration.liveMode);
     }
 
     // View about to unmount
     componentWillUnmount() {
 
         // Unload the AR view
-        this.setState({loadComplete: false,IsArrowScene:false});
-        this.focusListener.remove()
+        this.setState({loadComplete: false});
+
         // Remove listeners
         global.Events.remove(this);
         global.AREvents.remove(this);
@@ -664,96 +651,32 @@ export default class ARSceneView extends React.Component {
 
         const mapPinch = React.createRef();
         const mapRotation = React.createRef();
-
-
-        //const {navigate} = this.props.navigation;
-        if (this.state.loadComplete) {
-            return (
-                <AnimatedStackView>
-                    <StatusBar hidden={this.isiOS13}/>
-                    <ViroARSceneNavigator
-                        style={styles.arView}
-                        apiKey={global.const.API_KEY}
-                        initialScene={{scene: InitialScene}}
-                        ref={this.setARNavigatorRef}
-                        viroAppProps={this.state.ARAppProps}/>
-
-                    {this.state.tracking === 'NONE'  && global.tracking.location == null &&
-                        <TrackingView style={{
-                            position: 'absolute',
-                            top: 150,
-                            left: 0,
-                            right: 0,
-                            width: '100%',
-                            height: 140,
-                            flexDirection: 'column',
-                            justifyContent: 'space-between',
-                            alignItems: 'center'
-                        }}/>
-                    }
-
-                    {global.state.ARMode === this.CONST.flowMode && <BumperLeft bumpers={global.state.bumpers} link {...this.props}/>}
-                    {global.state.ARMode === this.CONST.flowMode && this.state.router && <BumperRight bumpers={global.state.bumpers} link {...this.props}/>}
-
-                    <TopMenuComponent controller={this} link {...this.props}/>
-                    {global.state.ARMode === this.CONST.flowMode && <BottomSimpleMenuComponent controller={this} link {...this.props}/>}
-                    {global.state.flow == null && global.state.ARMode !== this.CONST.flowMode && <BottomMenuComponent controller={this} link {...this.props}/>}
-
-                    <TouchableWithoutFeedback onPress={() => {
-                        this.toggleMapZoom();
-                    }}>
-                        <View style={[this.state.heatmap.style, {
-                            position: 'absolute',
-                            opacity: this.state.expandedMode ? 1 : 0
-                        }]}>
-                        <HeatMap controller={this} link {...this.props}/>
-                        </View>
-                    </TouchableWithoutFeedback>
-
-                    <OverlayView link {...this.props}/>
-                    <SelectorComponent title={global.t.get$('TITLE.LOCATION_SELECTOR_TITLE')} data={global.configuration.get('locations')}  link {...this.props}/>
-                </AnimatedStackView>
-            );
-        }
-        else if(this.state.IsArrowScene){
-            return(
-                <AnimatedStackView>
-                    <StatusBar hidden={this.isiOS13}/>
+return(
+    <AnimatedStackView>
     <ViroARSceneNavigator
     style={styles.arView}
-    initialScene={{scene: TrackingViewArow}}
-    ref={this.setARNavigatorRef}
-    viroAppProps={this.state.ARAppProps}
     apiKey={global.const.API_KEY}
-   /> 
-                        <TrackingViewDirection style={{
-                            position: 'absolute',
-                            top: 150,
-                            left: 0,
-                            right: 0,
-                            width: '100%',
-                            height: 140,
-                            flexDirection: 'column',
-                            justifyContent: 'space-between',
-                            alignItems: 'center'
-                        }}/>
-                    
+    initialScene={{scene: InitialScene}}
+    ref={this.setARNavigatorRef}
+    viroAppProps={this.state.ARAppProps}/>
+    <TrackingView style={{
+        position: 'absolute',
+        top: 150,
+        left: 0,
+        right: 0,
+        width: '100%',
+        height: 140,
+        flexDirection: 'column',
+        justifyContent: 'space-between',
+        alignItems: 'center'
+    }}/>
     </AnimatedStackView>
-            )
-        }
-        else {
-            return (
-                <AnimatedStackView style={{flex: 1}}>
-                    <AppPermissions/>
-                    <StatusBar hidden={this.isiOS13}/>
-                    <Image source={styles.splashImage}
-                           style={{resizeMode: 'stretch', width: '100%', height: '100%'}} />
-                    <ActivityIndicator style={{marginTop: -300}} size="large" color="white" />
-                </AnimatedStackView>
-            );
-        }
+)
+      
     }
 }
 
 // Load default styles
 let styles = new Style().get("AR");
+
+

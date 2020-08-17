@@ -303,7 +303,7 @@
       "critical": 0,
       "major": 0
     },
-    "maximumPins":19,
+    "maximumPins":15,
     "signalStrengthMethod": "OS",
     "scanDetailsIntervalMs": 2000,
     "welcome-workflow" : {
@@ -547,17 +547,11 @@
           "image": "image6",
           "description_pass": "TEXT.RESULTS_SUMMARY_PASS",
           "description_fail": "TEXT.RESULTS_SUMMARY_FAIL",
-          "triggers": "getRecommendationsGatewayOnly",
           "actionButtons": [
             {
               "position": 1,
               "label": "Back",
               "switch": "ar-flow-page-3"
-            },
-            {
-              "position": 4,
-              "label": "Gateway Only",
-              "switch": "trigger:getRecommendationsGatewayOnly"
             }
           ]
         }
@@ -591,8 +585,6 @@
         "type": "optimize",
         "title": "Optimize my WiFi",
         "image": "imageTemp",
-        "getOptimization": false,
-        "turnOffPlacementMode": true,
         "description": "There are a couple of options to improve \nsignal coverage:\n\n1. Router Optimization\n\nYour router can be optimized where it currently is located but also moved to another location in your home.\n\n2. Adding WiFi mesh\n\nThese devices fill coverage gaps, but often cost money. Most Internet Service Providers sell these for a monthly fee or can be purchased outright.",
         "actionButtons": [
             {
@@ -621,9 +613,6 @@
         "type": "routeroptimize",
         "title": "Router Optimization",
         "image": "imageTemp",
-        "getOptimization": true,
-        "optimizationType": "gatewayOnly",
-        "turnOffPlacementMode": false,
         "description": "There are a couple of options to optimize \nyour router.\n\n1. Improve current router position\n\nThere are a few simple tips you can follow to optimize the router where it’s currently located in your home, however this still may leave you with coverage issues.\n\n2.Moving your router\n\nThis involves physically relocating your router to a new location in your home. I can show you a better location for your router if you’d like to see it, to do so, i’ll need to launch your camera again on the next step. ",
         "actionButtons": [
             {
@@ -643,12 +632,6 @@
                 "label": "I need more help",
                 "switch": "Help",
                 "direction": "right"
-            },
-            {
-              "position": 6,
-              "label": "View Router Location",
-              "switch": "ViewWifimesh",
-              "direction": "right"
             }
         ]
        },
@@ -657,9 +640,6 @@
         "type": "optimize",
         "title": "Adding Wifi Mesh",
         "image": "imageTemp",
-        "getOptimization": true,
-        "optimizationType": "addPodsOnly",
-        "turnOffPlacementMode": false,
         "description": "In a nut shell, WiFi mesh is a system of “mini” WiFi routers that are placed around your home to extend the WiFi signal and fill dead-zones.\n\n\n\nI can show the the number of mesh devices you need and where they should go in your home, to do so,i need to access your camera for the next step.",
         "actionButtons": [
             {
@@ -671,7 +651,7 @@
             {
                 "position": 6,
                 "label": "View mesh location",
-                "switch": "ViewWifimesh",
+                "switch": "",
                 "direction": "right"
             },
             {
@@ -686,41 +666,8 @@
                 "switch": "Help",
                 "direction": "right"
             }
-          ]
-        },
-        {
-          "id": "ViewWifimesh",
-          "type": "ar",
-          "title": "show mesh",
-          "image": "imageTemp",
-          "description": "click the button below to see your wifi optimization",
-          "bumpers": {"previous": {"label": "Previous Step", "switch": "ViewWifiMesh", "enabled": true}},
-          "actionButtons": [
-            {
-              "position": 1,
-              "label": "back",
-              "direction": "left",
-              "switch": "addingWifimesh"
-            },
-            {
-              "position": 2,
-              "label": "show",
-              "direction": "right",
-              "switch": [
-                {
-                  "type": "callout",
-                  "text": "You should now be able to see the locations we recommend you place devices, walk around to view them",
-                  "position": {"right": 15, "bottom": 140},
-                  "size": {"width": 240, "height": "100%"},
-                  "backgroundColor": "#4dbdea",
-                  "textColor": "white",
-                  "point": {"bottom": "right"},
-                  "switch": "close"
-                }
-              ]
-            }
-          ]
-        }
+        ]
+      }
     ]
   }
 }

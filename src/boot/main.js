@@ -17,6 +17,7 @@ import DiagnosticView from '../views/DiagnosticView';
 import WorkOrderView from '../views/WorkOrders';
 import SummaryView from '../views/SummaryView';
 import ARSceneView from '../views/ARSceneView';
+import IndoorSceneView from '../views/IndoorSceneView'
 import AboutView from '../views/AboutView';
 import GatewaySetupView from '../views/GatewaySetup';
 import AlternateSpeedtestView from '../views/AlternateSpeedtestView';
@@ -48,6 +49,7 @@ const SlideNavigator = createDrawerNavigator({
             Register: {screen: RegisterView},
             GuidedView: {screen: GuidedView},
             Home: {screen: HomeView},
+            
             NetworkSetup: {screen: NetworkSetupView},
             Certification: {screen: CertificationView},
             LocationTest: {screen: LocationTestView},
@@ -56,10 +58,12 @@ const SlideNavigator = createDrawerNavigator({
             BarcodeScan: {screen: BarcodeScanner},
             Diagnostics: {screen: DiagnosticView},
             WorkOrders: {screen: WorkOrderView},
+            
             CertificationSummary: {screen: SummaryView},
             GatewaySetup: {screen: GatewaySetupView},
             About: {screen: AboutView},
             AR: {screen: ARSceneView},
+         
             AlternateSpeedtest: {screen: AlternateSpeedtestView},
             History: {screen: HistoryView}
         })

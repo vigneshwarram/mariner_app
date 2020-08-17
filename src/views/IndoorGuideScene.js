@@ -6,6 +6,7 @@ import {
   ViroARScene,
   ViroText,
   ViroImage,
+  ViroFlexView,
   ViroConstants,
   ViroMaterials,
   ViroBox
@@ -68,8 +69,20 @@ export default class IndoorGuideScene extends Component{
     return (
       <ViroARScene  onCameraTransformUpdate={this.onTransformed}>
           {allNodes.map((item,index)=>{
-                        return(                
-  <ViroImage position={[item.x,item.y,item.z]}  scale={[.15, .15, .15]} source={ require('../assets/splash-portrait-xhdpi.png')} />
+                        return(  
+                         
+           
+                         
+                          <ViroImage
+                              height={0.5}
+                              width={1}
+                              source={require("../assets/images/all-rings.png")}
+                              position={[item.x,item.y,item.z]} 
+                              transformBehaviors={"billboardY"}
+                          />
+                  
+                         
+
               
                         )
                     })}
