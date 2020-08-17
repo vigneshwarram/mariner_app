@@ -21,7 +21,7 @@ import {
 
 // AR style sheet
 import Style from '../../styles/base/index';
-
+let TrackingViewArow = require('../IndoorGuideScene');
 // Event Listener
 import { EventRegister } from 'react-native-event-listeners';
 
@@ -199,10 +199,15 @@ class Scene extends React.Component {
      * Create all the needed event listeners
      */
     createEventListeners() {
-
+   
         // Set up AR events
         global.AREvents.subscribe([
-
+            {id:this, name: global.const.ARROW_SCENE, callback:() => {
+                //alert('its triggering',data);
+               this.props.sceneNavigator.replace({scene:TrackingViewArow});
+               // this.props.sceneNavigator.push({scene:TrackingViewArow});
+               
+            }},
             // Scene updates
             {id:this, name: global.const.AR_SCENE_STATE_UPDATE, callback:(state) => {
                     this.setState(state); global.NodeEvents.emit({name:global.const.AR_NODE_UPDATE});}},

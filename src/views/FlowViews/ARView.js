@@ -96,7 +96,7 @@ export default class ARView extends React.Component {
                         <Label style={[styles.h2, {flex: 8, marginLeft: -50, width:'90%', textAlign:'center', alignItems:'center'}]}>{this.props.info.title}</Label>
                     </View>
                     <View style={{flexDirection: "row", flex:0, alignItems:'center', justifyItems: 'start', marginTop: 10}}>
-                        <Label style={[styles.h6, {flex: 8, paddingLeft: 10, paddingRight: 10, width:'100%', textAlign:'left', alignItems:'center'}]}>{this.props.info.description}</Label>
+                        {/* <Label style={[styles.h6, {flex: 8, paddingLeft: 10, paddingRight: 10, width:'100%', textAlign:'left', alignItems:'center'}]}>{this.props.info.description}</Label> */}
                     </View>
                     <CustomButtons navigation={this.props.navigation} trigger={new Triggers(this)} parent={this.props.controller} create={this.props.info.actionButtons}/>
                 </View>

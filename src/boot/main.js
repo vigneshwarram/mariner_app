@@ -42,7 +42,8 @@ const theme = {
 const SlideNavigator = createDrawerNavigator({
     Item1: {
         screen:
-            createStackNavigator({
+            createStackNavigator({  
+                
             SplashScreen: {screen: SplashScreen, navigationOptions: {header: null}},
             Register: {screen: RegisterView},
             GuidedView: {screen: GuidedView},

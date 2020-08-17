@@ -13,7 +13,7 @@ import {
 import {
     Label
 } from "native-base";
-
+import {EventRegister} from "react-native-event-listeners";
 // Font Awesome 5
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 
@@ -65,17 +65,23 @@ export default class RouterOptimization extends React.Component {
     }
 
     GetLocationPoints(){
-        let optimizeUrl = global.configuration.get('wsbOptimizeUrl');
-           console.log('optimizeUrl',optimizeUrl)       
-            this.Http.get(optimizeUrl, (response) => {
-                console.log('response',response)
-                if (response != null && response.responseCode === 200) {
+        // let optimizeUrl = global.configuration.get('wsbOptimizeUrl');
+        //    console.log('optimizeUrl',optimizeUrl)       
+        //     this.Http.get(optimizeUrl, (response) => {
+        //         console.log('response',response)
+        //         if (response != null && response.responseCode === 200) {
                 
-                }
-                else{
-                    alert('Network request failed');
-                }
-            })
+        //         }
+        //         else{
+        //           //  global.state.exitFlows();
+        //             this.props.navigation.dispatch('IndoorSceneView');
+  
+                
+        //         }
+        //     })
+       // global.Flow(null);
+        global.AREvents.emit({name: global.const.ARROW_SCENE, data: 'result'});
+
     }
 
     /*
