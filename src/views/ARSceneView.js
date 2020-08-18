@@ -251,6 +251,10 @@ export default class ARSceneView extends React.Component {
                         this.Slide();
                         this.setState({loadComplete: false,IsArrowScene:true});
                     }},
+                    {id:this, name: global.const.ARROW_POP, callback:() => {
+                        this.Slide();
+                        this.setState({loadComplete: true,IsArrowScene:false});
+                    }},
             // Tracking
             {id:this, name: global.const.AR_TRACKING, callback:(trackingState) => {
                     this.setState({tracking: trackingState});}},
@@ -744,7 +748,7 @@ export default class ARSceneView extends React.Component {
                             justifyContent: 'space-between',
                             alignItems: 'center'
                         }}/>
-                        <TouchableWithoutFeedback>
+                        <TouchableWithoutFeedback onPress={()=>{global.AREvents.emit({name: global.const.ARROW_POP});}}>
                         <Animated.View style={{borderRadius: 10, opacity: 0.9, position:'absolute', top: (Math.round(Dimensions.get('window').height)/2)-125, left:0, height: 200, width: 30, backgroundColor:'white', transform: [{translateX: this.animatedMargin}]}}>
                         <FontAwesomeIcon active size={16} color={stylesBumper.bumper.color} icon={faChevronLeft} style={{position: 'absolute', top: 7, right: 7}}/>
                         <Text style={[stylesBumper.bumper, {position: 'absolute', bottom: 100, left: -60, paddingRight: 25, textAlign: 'center', width: 150, transform: [{ rotate: "-90deg" }]}]}>{'Previous'}</Text>

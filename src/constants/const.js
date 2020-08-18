@@ -20,6 +20,7 @@ export const PEFORM_UPDATE= "_perform_update";
 export const CAMERA_PERMISSION_GRANTED= "_ar_camera_permissions_granted";
 export const SELECTOR="_selector_component_view";
 export const ARROW_SCENE="_arrow_scene";
+export const ARROW_POP="_arrow_pop";
 // AR Events
 export const AR_SCENE_STATE_UPDATE = "ar_scene_state_update";
 export const AR_TRACKING_TYPE_NONE = "NONE";

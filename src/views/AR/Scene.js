@@ -196,7 +196,13 @@ class Scene extends React.Component {
         global.AREvents.subscribe([
             {id:this, name: global.const.ARROW_SCENE, callback:() => {
                 //alert('its triggering',data);
-               this.props.sceneNavigator.replace({scene:TrackingViewArow});
+               this.props.sceneNavigator.push({scene:TrackingViewArow});
+               // this.props.sceneNavigator.push({scene:TrackingViewArow});
+               
+            }},
+            {id:this, name: global.const.ARROW_POP, callback:() => {
+                //alert('its triggering',data);
+               this.props.sceneNavigator.pop();
                // this.props.sceneNavigator.push({scene:TrackingViewArow});
                
             }},
