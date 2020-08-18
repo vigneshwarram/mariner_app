@@ -8,11 +8,13 @@ import {
     StatusBar,
     Alert,
     ActivityIndicator,
+    Animated,
     Image, View, TouchableWithoutFeedback, Text, Dimensions
 } from 'react-native';
 
 import {Button} from 'native-base';
-
+import {FontAwesomeIcon} from "@fortawesome/react-native-fontawesome";
+import {faChevronLeft} from '@fortawesome/pro-light-svg-icons';
 // Import AR
 import {
     ViroARSceneNavigator
@@ -142,7 +144,7 @@ export default class ARSceneView extends React.Component {
     // Constructor
     constructor(props) {
         super(props);
-
+        this.animatedMargin = new Animated.Value(-200);
         // Load all the images required for AR
         global.ARimageResources.load([
             {name:"wifi-poor", image:require('../assets/images/wifi/poor.png')},
@@ -246,9 +248,7 @@ export default class ARSceneView extends React.Component {
                     this.setState({expandedMode: !this.state.expandedMode});
                     global.tracking.loaded = !this.state.menuOptionsVisible;}},
                     {id:this, name: global.const.ARROW_SCENE, callback:() => {
-                        //alert('its triggering',data);
-                      //  this.props.sceneNavigator.replace({scene:TrackingViewArow});
-                       // this.props.sceneNavigator.push({scene:TrackingViewArow});
+                        this.Slide();
                         this.setState({loadComplete: false,IsArrowScene:true});
                     }},
             // Tracking
@@ -353,7 +353,14 @@ export default class ARSceneView extends React.Component {
 
         EventRegister.removeEventListener(this.uploadARDataListener);
     }
-
+     Slide(){
+        this.animatedMargin = new Animated.Value(-200);
+        Animated.timing(this.animatedMargin, {
+            toValue: 0,
+            duration: 1000
+        }).start();
+    }
+     
     // View has been updated
     componentDidUpdate(){
         styles = new Style().get("AR");
@@ -737,7 +744,12 @@ export default class ARSceneView extends React.Component {
                             justifyContent: 'space-between',
                             alignItems: 'center'
                         }}/>
-                    
+                        <TouchableWithoutFeedback>
+                        <Animated.View style={{borderRadius: 10, opacity: 0.9, position:'absolute', top: (Math.round(Dimensions.get('window').height)/2)-125, left:0, height: 200, width: 30, backgroundColor:'white', transform: [{translateX: this.animatedMargin}]}}>
+                        <FontAwesomeIcon active size={16} color={stylesBumper.bumper.color} icon={faChevronLeft} style={{position: 'absolute', top: 7, right: 7}}/>
+                        <Text style={[stylesBumper.bumper, {position: 'absolute', bottom: 100, left: -60, paddingRight: 25, textAlign: 'center', width: 150, transform: [{ rotate: "-90deg" }]}]}>{'Previous'}</Text>
+                    </Animated.View>
+                </TouchableWithoutFeedback>
     </AnimatedStackView>
             )
         }
@@ -757,3 +769,4 @@ export default class ARSceneView extends React.Component {
 
 // Load default styles
 let styles = new Style().get("AR");
+let stylesBumper = new Style().get("BUMPERS");
