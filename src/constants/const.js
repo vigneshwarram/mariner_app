@@ -46,9 +46,9 @@ export const AR_RESET_STATES= "_ar_reset_states";
 export const AR_TOUCH= "_ar_touch";
 export const AR_START_PLACEMENT_MODE = "ar_start_placement_mode";
 export const AR_STOP_PLACEMENT_MODE = "ar_stop_placement_mode";
-
+export const AR_PLACEMENT_TRACK="AR_PLACEMENT_TRACK";
 export const AR_WORKFLOW_MODE = "ar_workflow";
-
+export const HIDE_ARROW="HIDE_ARROW";
 // Storage Keys
 export const STORAGE_KEY_FLOW=  "flow_configuration";
 export const STORAGE_KEY_CONFIG =  "configuration";

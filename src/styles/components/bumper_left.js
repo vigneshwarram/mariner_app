@@ -1,5 +1,5 @@
 import React from "react";
-import {Animated, Dimensions, Text, TouchableWithoutFeedback, View} from "react-native";
+import {Animated, Dimensions, Text, TouchableWithoutFeedback, Alert} from "react-native";
 import {EventRegister} from "react-native-event-listeners";
 import {FontAwesomeIcon} from "@fortawesome/react-native-fontawesome";
 import {faChevronLeft} from '@fortawesome/pro-light-svg-icons';
@@ -18,7 +18,9 @@ export default class BumperLeft extends React.Component {
 
         // Slide animation
         this.bumpSlideListener = EventRegister.addEventListener('APPLICATION_INTERNAL_BUMP_LEFT', (data) => {
+            
             if (data === "in" && global.state.bumpers != null && global.state.bumpers.previous && global.state.bumpers.previous.enabled) {
+              
                 this.animatedMargin = new Animated.Value(-200);
                 Animated.timing(this.animatedMargin, {
                     toValue: 0,
@@ -41,6 +43,7 @@ export default class BumperLeft extends React.Component {
         if (global.state.bumpers != null && global.state.bumpers.previous && global.state.bumpers.previous.enabled) {
             return (
                 <TouchableWithoutFeedback onPress={() => {
+                
                     EventRegister.emit("APPLICATION_INTERNAL_FLOW_BUMP", "previous");
                 }}>
                     <Animated.View style={{borderRadius: 10, opacity: 0.9, position:'absolute', top: (Math.round(Dimensions.get('window').height)/2)-125, left:0, height: 200, width: 30, backgroundColor:'white', transform: [{translateX: this.animatedMargin}]}}>

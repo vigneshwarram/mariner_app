@@ -206,12 +206,15 @@ class Scene extends React.Component {
             // Scene updates
             {id:this, name: global.const.AR_SCENE_STATE_UPDATE, callback:(state) => {
                     this.setState(state); global.NodeEvents.emit({name:global.const.AR_NODE_UPDATE});}},
-
-            {id:this, name: global.const.AR_START_PLACEMENT_MODE, callback:(placements) => {
-                //this.startPlacementMode(placements);
+   // Scene updates
+      {id:this, name: global.const.AR_START_PLACEMENT_MODE, callback:(placements) => {
+              
                 global.state.set("placementList", placements);
                 try {
+                    global.AREvents.emit({name:global.const.AR_PLACEMENT_TRACK});
+                    
                     this.props.sceneNavigator.replace({scene: PlacementScene});
+                    EventRegister.emit("APPLICATION_INTERNAL_BUMP_LEFT", "in");
                 } catch (e) {
                     Alert.alert(
                         "ERROR",
@@ -1075,40 +1078,7 @@ class Scene extends React.Component {
         )
      }
 
-     /**
-      * Sets the placement nodes and starts placement mode in the AR scene
-      * @param the array of placement location objects
-      */
-     startPlacementMode(placements) {
-        let formattedPlacementItems = [];
-        try {
-            let actualPlacements = placements.recommendations[0].placements;
-            Alert.alert(
-                "Actual Placements?",
-                JSON.stringify(actualPlacements),
-                [
-                    {text: 'ok', onPress: () => {}},
-                ]
-            )
-            for(i=0;i<actualPlacements.length;i++) {
-                formattedPlacementItems.push(this.getPlacementIcon(actualPlacements[i].type, actualPlacements[i].position));
-            }
-            this.setState({
-                placementMode: true,
-                placementItems: [this.getPlacementIcon("mesh", [5,0,5])]
-            });
 
-            EventRegister.emit(global.const.AR_UPDATE_HEAT_MAP_ITEMS);
-        } catch (e) {
-            Alert.alert(
-                "ERROR",
-                e.message,
-                [
-                    {text: 'ok', onPress: () => {}},
-                ]
-            );
-        }
-     }
 
     /**
      * Create the icon needed for node Wifi icon

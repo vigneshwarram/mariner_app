@@ -694,7 +694,7 @@
           "title": "show mesh",
           "image": "imageTemp",
           "description": "click the button below to see your wifi optimization",
-          "bumpers": {"previous": {"label": "Previous Step", "switch": "ViewWifiMesh", "enabled": true}},
+          "bumpers": {"previous": {"label": "Previous Step", "switch": "hideArrow", "enabled": true}},
           "actionButtons": [
             {
               "position": 1,

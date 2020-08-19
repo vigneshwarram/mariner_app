@@ -29,6 +29,7 @@ import AppPermissions from '../boot/permissions';
 import OverlayView from '../styles/components/flow_header';
 import AnimatedStackView from '../styles/components/stack_view';
 import TrackingView from './AR/Tracking';
+import IndoorTrackingView from './AR/IndoorTrack';
 
 // Event Listener
 import { EventRegister } from 'react-native-event-listeners';
@@ -117,7 +118,7 @@ export default class ARSceneView extends React.Component {
         liveModeState: false,
         locationPinNaming: false,
         liveModePaused: false,
-
+        ArVisible:true,
         nodeOptions: {
             wifi: true,
             speed: false,
@@ -253,7 +254,12 @@ export default class ARSceneView extends React.Component {
             // Settings toggle
             {id:this, name: global.const.AR_SETTINGS_TOGGLE, callback:() => {
                     this.setState({settingsVisible: !this.state.settingsVisible});}},
-
+ //
+ {id:this, name: global.const.AR_PLACEMENT_TRACK, callback:() => {
+    this.setState({ArVisible: false})}},
+    
+    {id:this, name: global.const.HIDE_ARROW, callback:() => {
+        this.setState({ArVisible: true})}},
             // Resets
             {id:this, name: global.const.AR_RESET_STATES, callback:() => {
                     this.setState({router: null});
@@ -659,7 +665,7 @@ export default class ARSceneView extends React.Component {
 
 
         //const {navigate} = this.props.navigation;
-        if (this.state.loadComplete) {
+        if (this.state.loadComplete ) {
             return (
                 <AnimatedStackView>
                     <StatusBar hidden={this.isiOS13}/>
@@ -669,8 +675,8 @@ export default class ARSceneView extends React.Component {
                         initialScene={{scene: InitialScene}}
                         ref={this.setARNavigatorRef}
                         viroAppProps={this.state.ARAppProps}/>
-
-                    {this.state.tracking === 'NONE'  && global.tracking.location == null &&
+                     
+                    {this.state.tracking === 'NONE'  && global.tracking.location == null && this.state.ArVisible &&
                         <TrackingView style={{
                             position: 'absolute',
                             top: 150,
@@ -683,13 +689,26 @@ export default class ARSceneView extends React.Component {
                             alignItems: 'center'
                         }}/>
                     }
+                    {!this.state.ArVisible &&
+                     <IndoorTrackingView style={{
+                        position: 'absolute',
+                        top: 150,
+                        left: 0,
+                        right: 0,
+                        width: '100%',
+                        height: 140,
+                        flexDirection: 'column',
+                        justifyContent: 'space-between',
+                        alignItems: 'center'
+                    }}/>
+                    }
 
                     {global.state.ARMode === this.CONST.flowMode && <BumperLeft bumpers={global.state.bumpers} link {...this.props}/>}
                     {global.state.ARMode === this.CONST.flowMode && this.state.router && <BumperRight bumpers={global.state.bumpers} link {...this.props}/>}
 
-                    <TopMenuComponent controller={this} link {...this.props}/>
-                    {global.state.ARMode === this.CONST.flowMode && <BottomSimpleMenuComponent controller={this} link {...this.props}/>}
-                    {global.state.flow == null && global.state.ARMode !== this.CONST.flowMode && <BottomMenuComponent controller={this} link {...this.props}/>}
+                    {this.state.ArVisible && <TopMenuComponent controller={this} link {...this.props}/>}
+                    {global.state.ARMode === this.CONST.flowMode && this.state.ArVisible && <BottomSimpleMenuComponent controller={this} link {...this.props}/>}
+                    {global.state.flow == null && global.state.ARMode !== this.CONST.flowMode && this.state.ArVisible && <BottomMenuComponent controller={this} link {...this.props}/>}
 
                     <TouchableWithoutFeedback onPress={() => {
                         this.toggleMapZoom();
@@ -702,7 +721,7 @@ export default class ARSceneView extends React.Component {
                         </View>
                     </TouchableWithoutFeedback>
 
-                    <OverlayView link {...this.props}/>
+                    {this.state.ArVisible && <OverlayView link {...this.props}/>}
                     <SelectorComponent title={global.t.get$('TITLE.LOCATION_SELECTOR_TITLE')} data={global.configuration.get('locations')}  link {...this.props}/>
                 </AnimatedStackView>
             );

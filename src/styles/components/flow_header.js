@@ -2,7 +2,7 @@
  * Flow header needs to be added to Views that support overlays
  */
 import React from "react";
-import {View, Animated, Dimensions, TouchableWithoutFeedback, Text} from "react-native";
+import {View, Animated, Dimensions, TouchableWithoutFeedback, Text,Alert} from "react-native";
 
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { faTimes, faQuestionCircle } from '@fortawesome/pro-light-svg-icons';
@@ -113,6 +113,10 @@ export default class OverlayView extends React.Component {
             }
             else if (global.state.bumpers) {
                 if (bump === "previous" && global.state.bumpers.previous) {
+                    if(global.state.bumpers.previous==='hideArrow'){
+                        Alert.alert('pumber back');
+                        return;
+                    }
                     this.jumpIntoFlow(global.state.bumpers.previous.switch);
                     global.state.setBumperNext(false);
                 }
@@ -268,6 +272,7 @@ export default class OverlayView extends React.Component {
             this.setState({bubble:null});
             this.slideBubbleButton();
         }
+    
         else {
             this.setState({bubble: null});
             global.Flow(global.state.flow, {switch:id});
