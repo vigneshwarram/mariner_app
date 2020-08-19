@@ -49,6 +49,7 @@ export const AR_STOP_PLACEMENT_MODE = "ar_stop_placement_mode";
 export const AR_PLACEMENT_TRACK="AR_PLACEMENT_TRACK";
 export const AR_WORKFLOW_MODE = "ar_workflow";
 export const HIDE_ARROW="HIDE_ARROW";
+export const AR_DISTACE_UPDATING="AR_DISTACE_UPDATING";
 // Storage Keys
 export const STORAGE_KEY_FLOW=  "flow_configuration";
 export const STORAGE_KEY_CONFIG =  "configuration";

@@ -11,20 +11,27 @@ import {View,Image, Text} from "react-native";
 
 export default class IndoorTrack extends React.Component {
 
-    // Local state
-    state = {
-    };
+  
 
     constructor() {
         super();
-
+this.state={pointsDistance:[],direction:[]}
+this.createEventListerner()
         //this.setAnimation = this.setAnimation.bind(this);
     }
 
     componentDidMount(){
         //Animated.spring(this.state.slide_x, { toValue: 0 }).start();
     }
+    createEventListerner(){
+        global.AREvents.subscribe([
 
+            // Menu toggle
+            {id:this, name: global.const.AR_DISTACE_UPDATING, callback:(data) => {
+                    this.setState({pointsDistance: data.distance,direction:data.rotations});
+                    }},
+        ])
+    }
     /**
      * Set the tracking animation
      * @param animation
@@ -57,8 +64,8 @@ export default class IndoorTrack extends React.Component {
                 backgroundColor: 'transparent'
             }}>
              
-                    {global.state.pointsDistance.map((item,index)=>{
-                        let degree=global.state.direction[index].split("deg")[0]
+                    {this.state.pointsDistance.map((item,index)=>{
+                        let degree=this.state.direction[index].split("deg")[0]
                      
                         return(
                            <View>

@@ -38,7 +38,7 @@ import SimpleNode from './guided/SimpleNode';
 //Placement Scene to be jumped to when required
 let PlacementScene = require('./PlacementScene');
 
-class Scene extends React.Component {
+export default class Scene extends React.Component {
   
     // Signal Thresholds
     signalThresholds = new SignalThresholds();

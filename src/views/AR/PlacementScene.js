@@ -43,7 +43,7 @@ class PlacementScene extends React.Component {
     constructor(props) {
         super(props);
         this.onTransformed = this.onTransformed.bind(this);
-      
+      //this.createEventListeners();
     }
    /**
      * Create all the needed event listeners
@@ -190,8 +190,8 @@ onTransformed(transform){
    
      global.state.direction=[...rotations]
      global.state.pointsDistance=[...distance];
- 
-     global.AREvents.emit({name:global.const.AR_TRACKING, data: global.const.AR_TRACKING_TYPE_NORMAL});
+     global.AREvents.emit({name:global.const.AR_DISTACE_UPDATING, data: {distance:distance,rotations:rotations}});
+   //  global.AREvents.emit({name:global.const.AR_TRACKING, data: global.const.AR_TRACKING_TYPE_NORMAL});
     
 }
 calcAngleDegrees(p1) {
@@ -199,7 +199,7 @@ calcAngleDegrees(p1) {
     let placements = global.state.get("placementList");
     let actualPlacements = placements.recommendations[0].placements;
     actualPlacements.map((item,index)=>{
-     var angleDeg = Math.atan2(item.position[1] - p1.y, item.position[0] - p1.x) * 180 / Math.PI;
+     var angleDeg = Math.atan2(p1.y-item.position[1] ,   p1.x-item.position[0]) * 180 / Math.PI;
       let total= angleDeg+'deg'
      rotationArray.push(total)
    })
@@ -247,7 +247,7 @@ calcAngleDegrees(p1) {
             });
 
             // AR is not tracking
-            global.AREvents.emit({name:global.const.AR_TRACKING, data: global.const.AR_TRACKING_TYPE_NONE});
+           
         }
         else if (state === ViroConstants.TRACKING_LIMITED) {
             this.setState({
@@ -261,7 +261,7 @@ calcAngleDegrees(p1) {
         //const {navigate} = this.props.navigation;
 
         return (
-            <ViroARScene ref="PLACEMENT_AR_SCENE"    onCameraTransformUpdate={this.onTransformed}>
+            <ViroARScene ref="PLACEMENT_AR_SCENE" onTrackingUpdated={(state)=>this.onInitialized(state)}   onCameraTransformUpdate={this.onTransformed}>
                               {this.state.placementItems}
 
             </ViroARScene>

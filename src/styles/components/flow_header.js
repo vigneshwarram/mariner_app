@@ -113,8 +113,9 @@ export default class OverlayView extends React.Component {
             }
             else if (global.state.bumpers) {
                 if (bump === "previous" && global.state.bumpers.previous) {
-                    if(global.state.bumpers.previous==='hideArrow'){
-                        Alert.alert('pumber back');
+                    if(global.state.bumpers.previous.switch==="hideArrow"){
+                        global.AREvents.emit({name:global.const.HIDE_ARROW});
+                        //Alert.alert('pumber back');
                         return;
                     }
                     this.jumpIntoFlow(global.state.bumpers.previous.switch);
