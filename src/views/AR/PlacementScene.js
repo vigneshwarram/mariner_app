@@ -4,11 +4,12 @@
  */
 
 import React from "react";
-import {Alert} from "react-native";
+import {Alert,StyleSheet} from "react-native";
 import {
     ViroARScene,
     ViroConstants,
     ViroMaterials,
+    ViroText,
     ViroAnimatedImage,
     ViroImage,
     ViroAnimations,
@@ -21,6 +22,7 @@ import {
 
 // AR style sheet
 import Style from '../../styles/base/index';
+import geolocation from '@react-native-community/geolocation';
 let Initialscene = require('./Scene');
 // Event Listener
 import { EventRegister } from 'react-native-event-listeners';
@@ -48,6 +50,7 @@ class PlacementScene extends React.Component {
    /**
      * Create all the needed event listeners
      */
+  
     createEventListeners() {
 
         // Set up AR events
@@ -66,6 +69,27 @@ class PlacementScene extends React.Component {
         global.AREvents.remove(this);
        
     }
+    _latLongToMerc(lat_deg, lon_deg) {
+        var lon_rad = (lon_deg / 180.0 * Math.PI)
+        var lat_rad = (lat_deg / 180.0 * Math.PI)
+        var sm_a = 6378137.0
+        var xmeters  = sm_a * lon_rad
+        var ymeters = sm_a * Math.log((Math.sin(lat_rad) + 1) / Math.cos(lat_rad))
+        return ({x:xmeters, y:ymeters});
+     }
+     
+     _transformPointToAR() {
+     //  var objPoint = {x:}
+  let obj=   geolocation.getCurrentPosition((position) => {
+
+        // Track the last known location to the global tracking class
+       let latitude= position.coords.latitude;
+       let longitude= position.coords.longitude;
+       var devicePoint=  this._latLongToMerc(latitude, longitude);
+       return ({x:devicePoint.x, y:devicePoint.y});
+    })
+       return obj;
+     }
     // View mounted and ready
     componentDidMount(){
        
@@ -154,19 +178,22 @@ class PlacementScene extends React.Component {
            <ViroFlexView
                style={{flexDirection: "column", alignItems: 'center', justifyContent: 'center'}}
                >
-
-               <ViroImage
-                   height={0.5}
-                   width={0.5}
-                   source={iconImage}
-                   position={position}
-                   transformBehaviors={"billboardY"}
-               />
+     {/* <ViroFlexView  transformBehaviors={"billboardY"}  height={0.2}  style={{flexDirection: "column", alignItems: 'center', justifyContent: 'center',borderRadius:20,borderColor:'#fff'}}
+                   width={0.3} backgroundColor={stylesPop.callout.backgroundColor}  position={ringsPosition} >
+         <ViroFlexView  style={{flex:0.8,flexDirection: 'row'}} >
+        		<ViroText
+              style={{color: '#ffffff', flex:1}}
+            
+        			text={'1 of x mesh devices should be placed as close to this area as possible for optimal WiFi coverage'}
+        			fontSize={12} />
+        	</ViroFlexView>
+            </ViroFlexView> */}
+               
                <ViroImage
                    height={0.5}
                    width={1.5}
                    source={require("../../assets/images/all-rings.png")}
-                   position={position}
+                   position={ringsPosition}
                    transformBehaviors={"billboardY"}
                />
            </ViroFlexView>
@@ -175,11 +202,12 @@ class PlacementScene extends React.Component {
 
 onTransformed(transform){
     const {position}=transform;
- 
+    const {rotation}=transform
+   // let obj=this._transformPointToAR();
     let p1={
-      x:position[0],
-      y:position[1],
-      z:position[2],
+      x:rotation[0],
+      y:rotation[1],
+      z:rotation[2],  
     }
      // let objectPosition=[0,-0.5,-1]
      let rotations= this.calcAngleDegrees(p1)
@@ -187,9 +215,7 @@ onTransformed(transform){
 //    let assendingDistance=  distance.sort(function(a, b){
 //        return a - b;
 //    });
-   
-     global.state.direction=[...rotations]
-     global.state.pointsDistance=[...distance];
+
      global.AREvents.emit({name:global.const.AR_DISTACE_UPDATING, data: {distance:distance,rotations:rotations}});
    //  global.AREvents.emit({name:global.const.AR_TRACKING, data: global.const.AR_TRACKING_TYPE_NORMAL});
     
@@ -199,7 +225,7 @@ calcAngleDegrees(p1) {
     let placements = global.state.get("placementList");
     let actualPlacements = placements.recommendations[0].placements;
     actualPlacements.map((item,index)=>{
-     var angleDeg = Math.atan2(p1.y-item.position[1] ,   p1.x-item.position[0]) * 180 / Math.PI;
+     var angleDeg = Math.atan2(p1.y-item.position[2] ,   p1.x-item.position[0]+4) * 360 / Math.PI;
       let total= angleDeg+'deg'
      rotationArray.push(total)
    })
@@ -218,7 +244,7 @@ calcAngleDegrees(p1) {
         let actualPlacements = placements.recommendations[0].placements;
         actualPlacements.map((item,index)=>{
           try {
-            distanceaRRAY.push(distance(currentPosition, [item.position[0],item.position[1],item.position[2]]));
+            distanceaRRAY.push(distance(currentPosition, [item.position[0]+4,item.position[1]-0.5,item.position[2]]));
         }
         catch(err) {
             return -1;
@@ -268,8 +294,29 @@ calcAngleDegrees(p1) {
         );
     }
 }
+          
+var styless = StyleSheet.create({
+    boldFont: {
+         color: '#FFFFFF',
+         flex: 1,
+         textAlignVertical: 'center',
+         textAlign: 'center',
+         fontWeight: 'bold',
+    },
+});
 
+ViroMaterials.createMaterials({
+    frontMaterial: {
+      diffuseColor: '#FFFFFF',
+    },
+    backMaterial: {
+      diffuseColor: '#FF0000',
+    },
+    sideMaterial: {
+      diffuseColor: '#0000FF',
+    },
+});
 // Load default styles
 const styles = new Style().get();
-
+let stylesPop = new Style().get("FLOW_HEADER");
 module.exports = PlacementScene;

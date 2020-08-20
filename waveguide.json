@@ -709,12 +709,12 @@
               "switch": [
                 {
                   "type": "callout",
-                  "text": "You should now be able to see the locations we recommend you place devices, walk around to view them",
-                  "position": {"right": 15, "bottom": 140},
+                  "text": "follow the arrows to see where the best spots are for Wifi mesh",
+                  "position": {"left": 40, "bottom": 80},
                   "size": {"width": 240, "height": "100%"},
                   "backgroundColor": "#4dbdea",
                   "textColor": "white",
-                  "point": {"bottom": "right"},
+                  "point": {"bottom": "center"},
                   "switch": "close"
                 }
               ]

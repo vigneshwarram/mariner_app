@@ -319,20 +319,20 @@ export default class OverlayView extends React.Component {
                 <TouchableWithoutFeedback onPress={() => this.jumpIntoFlow(this.state.bubble.callout.switch ? this.state.bubble.callout.switch : null)}>
                     <Animated.View style={[{position: 'absolute', zIndex: 2000, transform: [{scale: this.springValue}]}, this.state.bubble.callout.position]}>
                         <Badge style={[{opacity: 1, borderColor: 'white', borderWidth: 1, borderStyle: 'solid', backgroundColor: styles.callout.backgroundColor, paddingHorizontal: 5}, this.state.bubble.callout.size]}>
-                            <Button rounded style={[styles.circle_icon, {position: 'absolute', bottom: -7, left: -7}]}>
+                           {this.props.Arvisible &&<Button rounded style={[styles.circle_icon, {position: 'absolute', bottom: -7, left: -7}]}>
                                 <FontAwesomeIcon active size={20} color={'white'} icon={faQuestionCircle}/>
-                            </Button>
+                            </Button>} 
                             <Text style={[{alignSelf: 'center', fontSize: 16, marginTop: 10, marginRight: 15, marginLeft: 5, color: styles.callout.color}]}>{this.state.bubble.callout.text + '\n'}</Text>
                             <Button onPress={() => this.jumpIntoFlow(this.state.bubble.callout.switch ? this.state.bubble.callout.switch : null)} rounded style={[styles.circle_icon, {position: 'absolute', top: 3, right: 3}]}>
                                 <FontAwesomeIcon active size={20} color={'white'} icon={faTimes}/>
                             </Button>
                         </Badge>
-                        {this.state.bubble.style &&<View style={[this.state.bubble.style.direction, this.state.bubble.style.location, {opacity: 1}]}/>}
+                        {this.props.Arvisible && this.state.bubble.style &&<View style={[this.state.bubble.style.direction, this.state.bubble.style.location, {opacity: 1}]}/>}
                     </Animated.View>
                 </TouchableWithoutFeedback>
             )
         }
-        else if (this.state.bubbles && this.state.bubbles.length > 0) {
+        else if (this.props.Arvisible && this.state.bubbles && this.state.bubbles.length > 0) {
             return (
                 <TouchableWithoutFeedback onPress={() => this.jumpIntoFlow("continue")}>
                     <Animated.View style={{position: 'absolute', bottom: 70, zIndex: 2000, transform: [{translateX: this.animatedMargin}]}}>

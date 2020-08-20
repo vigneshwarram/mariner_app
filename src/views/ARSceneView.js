@@ -721,7 +721,7 @@ export default class ARSceneView extends React.Component {
                         </View>
                     </TouchableWithoutFeedback>
 
-                    <OverlayView link {...this.props}/>
+                    <OverlayView Arvisible={this.state.ArVisible} link {...this.props}/>
                     <SelectorComponent title={global.t.get$('TITLE.LOCATION_SELECTOR_TITLE')} data={global.configuration.get('locations')}  link {...this.props}/>
                 </AnimatedStackView>
             );
