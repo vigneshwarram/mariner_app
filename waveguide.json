@@ -710,7 +710,7 @@
                 {
                   "type": "callout",
                   "text": "follow the arrows to see where the best spots are for Wifi mesh",
-                  "position": {"left": 40, "bottom": 80},
+                  "position": {"left": 40 , "bottom": 80},
                   "size": {"width": 240, "height": "100%"},
                   "backgroundColor": "#4dbdea",
                   "textColor": "white",

@@ -178,8 +178,8 @@ class PlacementScene extends React.Component {
            <ViroFlexView
                style={{flexDirection: "column", alignItems: 'center', justifyContent: 'center'}}
                >
-     {/* <ViroFlexView  transformBehaviors={"billboardY"}  height={0.2}  style={{flexDirection: "column", alignItems: 'center', justifyContent: 'center',borderRadius:20,borderColor:'#fff'}}
-                   width={0.3} backgroundColor={stylesPop.callout.backgroundColor}  position={ringsPosition} >
+     <ViroFlexView  transformBehaviors={"billboardY"}  height={0.2}  style={{flexDirection: "column", alignItems: 'center', justifyContent: 'center',borderRadius:20,borderColor:'#fff'}}
+                   width={0.3} backgroundColor={stylesPop.callout.backgroundColor}  position={position} >
          <ViroFlexView  style={{flex:0.8,flexDirection: 'row'}} >
         		<ViroText
               style={{color: '#ffffff', flex:1}}
@@ -187,13 +187,13 @@ class PlacementScene extends React.Component {
         			text={'1 of x mesh devices should be placed as close to this area as possible for optimal WiFi coverage'}
         			fontSize={12} />
         	</ViroFlexView>
-            </ViroFlexView> */}
+            </ViroFlexView>
                
-               <ViroImage
+               <ViroImage 
                    height={0.5}
                    width={1.5}
                    source={require("../../assets/images/all-rings.png")}
-                   position={ringsPosition}
+                   position={position}
                    transformBehaviors={"billboardY"}
                />
            </ViroFlexView>
@@ -225,7 +225,7 @@ calcAngleDegrees(p1) {
     let placements = global.state.get("placementList");
     let actualPlacements = placements.recommendations[0].placements;
     actualPlacements.map((item,index)=>{
-     var angleDeg = Math.atan2(p1.y-item.position[2] ,   p1.x-item.position[0]+4) * 360 / Math.PI;
+     var angleDeg = Math.atan2(p1.y-item.position[2] ,   p1.x-item.position[0]) * 360 / Math.PI;
       let total= angleDeg+'deg'
      rotationArray.push(total)
    })
@@ -244,7 +244,7 @@ calcAngleDegrees(p1) {
         let actualPlacements = placements.recommendations[0].placements;
         actualPlacements.map((item,index)=>{
           try {
-            distanceaRRAY.push(distance(currentPosition, [item.position[0]+4,item.position[1]-0.5,item.position[2]]));
+            distanceaRRAY.push(distance(currentPosition, [item.position[0],item.position[1],item.position[2]]));
         }
         catch(err) {
             return -1;

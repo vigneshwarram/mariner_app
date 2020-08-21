@@ -241,7 +241,6 @@ export default class ARSceneView extends React.Component {
 
         // AR Events
         global.AREvents.subscribe([
-
             // Menu toggle
             {id:this, name: global.const.AR_MENU_TOGGLE, callback:() => {
                     this.setState({expandedMode: !this.state.expandedMode});

@@ -49,18 +49,18 @@ this.createEventListerner()
      * Tracking renderer
      * @returns {*}
      */
-    // calcAngleDegrees(p1) {
-    //     let rotationArray=[]
-    //     let placements = global.state.get("placementList");
-    //     let actualPlacements = placements.recommendations[0].placements;
-    //     actualPlacements.map((item,index)=>{
-    //      var angleDeg = Math.atan2(p1.y-item.position[1] ,   p1.x-item.position[0]) * 180 / Math.PI;
-    //       let total= angleDeg+'deg'
-    //      rotationArray.push(total)
-    //    })
+    calcAngleDegrees() {
+        let rotationArray=[]
+        let placements = global.state.get("placementList");
+        let actualPlacements = placements.recommendations[0].placements;
+        actualPlacements.map((item,index)=>{
+         var angleDeg = Math.atan2(0-item.position[1] ,   -1-item.position[0]) * 180 / Math.PI;
+          let total= angleDeg+'deg'
+         rotationArray.push(total)
+       })
       
-    //    return rotationArray;
-    //  }
+       return rotationArray;
+     }
     render() {
         return (
             <View style={{
@@ -77,7 +77,9 @@ this.createEventListerner()
             }}>
              
                     {this.state.pointsDistance.map((item,index)=>{
-                        let degree=this.state.direction[index].split("deg")[0]
+                        let degrees=this.state.direction[index].split("deg")[0]
+                       
+                       let degree= Math.round(-degrees)
                        // let rotations= this.calcAngleDegrees(p1)
                         return(
                            <View>
@@ -91,9 +93,9 @@ this.createEventListerner()
                    <Text style={{color:'#fff',fontSize:70,fontWeight:'bold',marginLeft:-20}} >{Math.round(item) +"m"}</Text>
                    </View>      */}
                    {degree >= -290 && degree <= 290?       
-                   <View style={{alignItems:degree>0?'flex-start':'flex-end',marginRight:degree>0?0:10,flexDirection:degree>0?'row':'row-reverse',marginBottom:20,marginTop:10}}>
+                   <View style={{alignItems:degree>0?'flex-end':'flex-start',marginRight:degree>0?0:10,flexDirection:degree>0?'row':'row-reverse',marginBottom:20,marginTop:10}}>
                          
-                         <Image source={require('../../assets/triangular.png')} style={{width:20,height:20,resizeMode:'contain',tintColor:'#fff', marginRight:20,transform: [{ rotate: degree+'deg' }]}}></Image> 
+                         <Image source={require('../../assets/triangular.png')} style={{width:20,height:20,resizeMode:'contain',tintColor:'#fff', marginRight:20,transform: [{ rotate:degree>0? -90+'deg':90+'deg' }]}}></Image> 
                          <Text style={{color:'#fff',fontSize:14,fontWeight:'bold'}} >{Math.round(item) +"m"}</Text>
                          
                          </View>
