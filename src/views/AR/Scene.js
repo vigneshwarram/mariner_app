@@ -4,7 +4,7 @@
  */
 
 import React from "react";
-import {Alert} from "react-native";
+import {Alert, Platform} from 'react-native';
 import {
     ViroARScene,
     ViroConstants,
@@ -14,9 +14,7 @@ import {
     ViroAnimations,
     ViroQuad,
     ViroARPlane,
-    ViroAmbientLight,
-    ViroParticleEmitter,
-    ViroFlexView
+    ViroAmbientLight
 } from 'react-viro';
 
 // AR style sheet
@@ -35,11 +33,8 @@ import Transforms from '../../app_code/ar/classes/transforms';
 import Node from './Node';
 import SimpleNode from './guided/SimpleNode';
 
-//Placement Scene to be jumped to when required
-let PlacementScene = require('./PlacementScene');
+class Scene extends React.Component {
 
-export default class Scene extends React.Component {
-  
     // Signal Thresholds
     signalThresholds = new SignalThresholds();
 
@@ -117,10 +112,7 @@ export default class Scene extends React.Component {
             wifi: true,
             speed: false,
             interference: false
-        },
-        placementMode: false,
-        //placementItems: []
-        placementItems:[this.getPlacementIcon("mesh", [-5,0,-5])]
+        }
     };
 
     // Animated icon needed for the nodes
@@ -205,26 +197,7 @@ export default class Scene extends React.Component {
 
             // Scene updates
             {id:this, name: global.const.AR_SCENE_STATE_UPDATE, callback:(state) => {
-                    this.setState(state); global.NodeEvents.emit({name:global.const.AR_NODE_UPDATE});}},
-   // Scene updates
-      {id:this, name: global.const.AR_START_PLACEMENT_MODE, callback:(placements) => {
-              
-                global.state.set("placementList", placements);
-                try {
-                    global.AREvents.emit({name:global.const.AR_PLACEMENT_TRACK});
-                    
-                    this.props.sceneNavigator.replace({scene: PlacementScene});
-                    EventRegister.emit("APPLICATION_INTERNAL_BUMP_LEFT", "in");
-                } catch (e) {
-                    Alert.alert(
-                        "ERROR",
-                        e.message,
-                        [
-                            {text: "ok", onPress: () => {}}
-                        ]
-                    );
-                }
-            }}
+                    this.setState(state); global.NodeEvents.emit({name:global.const.AR_NODE_UPDATE});}}
         ]);
 
         // Set up button events
@@ -483,10 +456,10 @@ export default class Scene extends React.Component {
      * @param transform
      * @private
      */
-    onTransformed=(transform)=> {
-
+    onTransformed(transform) {
         global.tracking.moving = (distance(transform, this.lastTransform) > 0) ? 1 : 0
         //if (this.wifi_animated_icon == null) return;
+
         // Check the rendering order and
         // update the latest transform
         this.checkLatestTransform(transform);
@@ -759,26 +732,20 @@ export default class Scene extends React.Component {
                 transformInformation.heatmapCoords = iParams.mapCoords  && iParams.mapCoords.length >= 1 ? iParams.mapCoords : global.tracking.heatmapNode;
                 transformInformation.style = nodeInformation.color;
                 transformInformation.pathStyle = nodeInformation.pathColor;
-                let maximumPins=global.configuration.get("maximumPins");
-                if(this.pointsCollected.length<maximumPins){
-                    this.pointsCollected.push(transformInformation);
-                    let allNodes = global.tracking.allNodeData;
-                    allNodes.push({time: global.functions.getCurrentTimeStamp(), data: nodeInformation, transform: transformInformation});
-                    global.tracking.allNodeData = allNodes;
-                 
-                }
+                this.pointsCollected.push(transformInformation);
+
                 // Send the point information to the tracking global class to be accessed later when upload the work order
-               
+                let allNodes = global.tracking.allNodeData;
+                allNodes.push({time: global.functions.getCurrentTimeStamp(), data: nodeInformation, transform: transformInformation});
+                global.tracking.allNodeData = allNodes;
             }
 
             // Put the latest map tracking items into the global tracking class
             global.tracking.mapItems = this.pointsCollected.slice(0);
-           
             EventRegister.emit(global.const.AR_UPDATE_HEAT_MAP_ITEMS);
 
             // Cool down the manager
             this.coolDownTimeout();
-            
         }
         catch(error) {this.coolDownTimeout();}
     }
@@ -1043,44 +1010,6 @@ export default class Scene extends React.Component {
     }
 
     /**
-     * Get placement marking object
-     * @param placement type
-     * @returns {*}
-     */
-     getPlacementIcon(pinType, position) {
-        let iconImage = require("../../assets/pins/mesh_point.png");
-        let ringsPosition = [position[0]+4, position[1]-0.5, position[2]];
-        switch(pinType) {
-            case "router": {
-                iconImage =  require("../../assets/pins/router_point.png");
-            }
-        }
-        return (
-            <ViroFlexView
-                style={{flexDirection: "column", alignItems: 'center', justifyContent: 'center'}}
-                >
-
-                <ViroImage
-                    height={0.5}
-                    width={0.5}
-                    source={iconImage}
-                    position={position}
-                    transformBehaviors={"billboardY"}
-                />
-                <ViroImage
-                    height={0.5}
-                    width={1.5}
-                    source={require("../../assets/images/all-rings.png")}
-                    position={position}
-                    transformBehaviors={"billboardY"}
-                />
-            </ViroFlexView>
-        )
-     }
-
-
-
-    /**
      * Create the icon needed for node Wifi icon
      * @returns {*}
      */
@@ -1159,146 +1088,3 @@ export default class Scene extends React.Component {
 const styles = new Style().get("ARSCENE");
 
 module.exports = Scene;
-
-/*
-                {this.state.placementItems.map((placementNode) => {
-                    return(placementNode)
-                })}
-
-                {this.getPlacementIcon("mesh", [0.0,-2.0,-8.0])}
-               */
-
-
-/*
-latest with the two rings for ripple effect
-
-                <ViroParticleEmitter
-                  position={[0, -2, -4]}
-                  duration={1}
-                  visible={true}
-                  delay={2000}
-                  run={true}
-                  loop={true}
-                  fixedToEmitter={true}
-
-                  image={ {
-                    source:require("../../assets/images/green_glow.png"),
-                    height:0.1,
-                    width:0.1,
-                    bloomThreshold:0.0
-                  }}
-
-                  spawnBehavior={ {
-                    particleLifetime:[1900,1900],
-                    emissionRatePerSecond:[15000, 15000],
-                    spawnVolume:{
-                      shape:"sphere",
-                      params:[0.5, 0.0, 0.5],
-                      spawnOnSurface:true
-                    },
-                    maxParticles:6000
-                  }}
-
-                  particleAppearance={ {
-                    opacity:{
-                      initialRange:[0.3, 0.3],
-                      factor:"time",
-                      interpolation:[
-                        {endValue:0.3, interval:[0,1900]}
-                      ]
-                    },
-
-                    rotation:{
-                      initialRange:[0, 0],
-                      factor:"time",
-                      interpolation:[
-                        {endValue:1080, interval:[0,0]},
-                      ]
-                    },
-
-                    scale:{
-                      initialRange:[[1,1,1], [1,1,1]],
-                      factor:"time",
-                      interpolation:[
-                        {endValue:[1,1,1], interval:[0,1900]}
-                      ]
-                    },
-                  }}
-
-                  particlePhysics={{
-
-                    explosiveImpulse: {
-                        impulse: 0.1,
-                        position: [0,0,0],
-                        decelerationPeriod: 500
-                    }
-                  }}
-
-                  rotation={[0,360,0]}
-                />
-                <ViroParticleEmitter
-                  position={[0, -2, -4]}
-                  duration={1}
-                  visible={true}
-                  delay={2000}
-                  run={true}
-                  loop={true}
-                  fixedToEmitter={true}
-
-                  image={ {
-                    source:require("../../assets/images/green_glow.png"),
-                    height:0.1,
-                    width:0.1,
-                    bloomThreshold:0.0
-                  }}
-
-                  spawnBehavior={ {
-                    particleLifetime:[1900,1900],
-                    emissionRatePerSecond:[15000, 15000],
-                    spawnVolume:{
-                      shape:"sphere",
-                      params:[0.5, 0.0, 0.5],
-                      spawnOnSurface:true
-                    },
-                    maxParticles:6000
-                  }}
-
-                  particleAppearance={ {
-                    opacity:{
-                      initialRange:[0.3, 0.3],
-                      factor:"time",
-                      interpolation:[
-                        {endValue:0.3, interval:[0,1900]}
-                      ]
-                    },
-
-                    rotation:{
-                      initialRange:[0, 0],
-                      factor:"time",
-                      interpolation:[
-                        {endValue:1080, interval:[0,0]},
-                      ]
-                    },
-
-                    scale:{
-                      initialRange:[[1,1,1], [1,1,1]],
-                      factor:"time",
-                      interpolation:[
-                        {endValue:[1,1,1], interval:[0,1900]}
-                      ]
-                    },
-                  }}
-
-                  particlePhysics={{
-
-                    explosiveImpulse: {
-                        impulse: 0.4,
-                        position: [0,0,0],
-                        decelerationPeriod: 500
-                    }
-                  }}
-
-                  rotation={[0,360,0]}
-                />
-
-*/

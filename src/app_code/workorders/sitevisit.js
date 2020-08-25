@@ -138,7 +138,7 @@ export default class SiteVisit {
                             testResults: {
                                 kpis: kpis,
                                 networkType: certificationDetails.type,
-                                locationType: test.pointType,
+                                locationType: certificationDetails.pointType,
                                 serialNumber: certificationDetails.gateway,
                                 speedTestResults: [{
                                     score: null,

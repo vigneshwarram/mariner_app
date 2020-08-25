@@ -16,6 +16,7 @@ import {faCog, faToggleOn, faToggleOff} from '@fortawesome/pro-light-svg-icons';
 
 // Event Listener
 import { EventRegister } from 'react-native-event-listeners';
+
 // Style sheet
 import Style from '../../styles/base/index';
 
@@ -27,7 +28,7 @@ import StackedButtonTouchableIconComponent from '../../components/buttons/Stacke
 
 export default class BottomMenuComponent extends React.Component {
 
-    // Event listeners   
+    // Event listeners
     toggleLiveListener;
     pauseLiveListener;
 
@@ -581,10 +582,10 @@ export default class BottomMenuComponent extends React.Component {
     /**
      * Add point to the AR scene
      */
-    onAddPoint() {      
-            global.state.processing = true;
-            global.TouchEvents.emit({name:global.const.AR_TOUCH});
-            this.props.controller.addPoint();
+    onAddPoint() {
+        global.state.processing = true;
+        global.TouchEvents.emit({name:global.const.AR_TOUCH});
+        this.props.controller.addPoint();
     }
 
     /**

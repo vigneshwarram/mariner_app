@@ -48,8 +48,7 @@ let _flow = null;
 let _overlayActive = false;
 let _bumpers = null;
 let _AR_MODE = null;
-let _pointsDistance=[];
-this. _direction=['0deg','0deg','0deg'];
+
 // Application processing events
 let _processing = false;
 
@@ -298,28 +297,7 @@ export default class Global_State extends React.Component {
     get currentNavigationView() {
         return this._viewTracker.length > 0 ? this._viewTracker[0] : null;
     }
-    get pointsDistance() {
-        return _pointsDistance;
-    }
 
-  /**
-     * Set the AR Node Items (for mapping)
-     * @param value
-     */
-    set pointsDistance(value) {
-        _pointsDistance = value;
-    }
-    get direction() {
-        return _direction;
-    }
-
-    /**
-     * Set the AR Node Items (for mapping)
-     * @param value
-     */
-    set direction(value) {
-        _direction = value;
-    }
     /**
      * Common view style for the view stack
      * @param navigation

@@ -12,13 +12,12 @@ import {EventRegister} from "react-native-event-listeners";
 
 // Default style sheet
 import Style from '../../styles/base/index';
-let staticView={}
+
 export default class FlowView extends React.Component {
 
     // Get the overlays
     OverlayViews = new OverlayViews();
-    //new features static data
-    
+
     // Total views that support pagination
     totalViews = 0;
 
@@ -42,7 +41,7 @@ export default class FlowView extends React.Component {
     constructor(props) {
         super(props);
         this.springValue = new Animated.Value(1.1);
-        staticView=global.configuration.get("wifi-optimize");
+
         this.onSwipeLeft.bind(this);
         this.onSwipeRight.bind(this);
 
@@ -77,10 +76,8 @@ export default class FlowView extends React.Component {
      * @param flows
      */
     constructViews(flows) {
-      
         if (flows && flows.views) {
-            let totalArray=[...flows.views,...staticView]
-            totalArray.forEach((view, idx) => {
+            flows.views.forEach((view, idx) => {
                 if (view.pagination) this.totalViews++;
                 let view_layout = this.OverlayViews.get(view.type, {
                     key: idx,
@@ -106,10 +103,6 @@ export default class FlowView extends React.Component {
                 this.state.viewStack.push({index: idx, id: view.id, enabled: false, bumpers: view.bumpers, details: view, layout: view_layout});
             });
         }
-        else{
-            
-        }
-   
     }
 
     /**
@@ -122,7 +115,6 @@ export default class FlowView extends React.Component {
                 this.setState({view: [view]});
                 this.props._parent.setState({index: view.index});
             }
-           
         });
     }
 
@@ -148,8 +140,7 @@ export default class FlowView extends React.Component {
             }
         }
         else {
-           
-            this.state.viewStack.forEach((view) => {   
+            this.state.viewStack.forEach((view) => {
                 if (view.id === id) {
                     global.state.flowId = id;
                     this.setState({view: [view]});

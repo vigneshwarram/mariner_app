@@ -66,10 +66,7 @@
         "SKIP_TEST": "Sauter",
         "TEST_CONNECTION": "Test",
         "SHARE_RESULTS": "Partagez mes résultats",
-        "NEED_MORE_HELP": "I need more Help",
-        "SHOW_REF_CODE": "Code de Référence",
-        "VIEW_ROUTER_LOCAION":"View new router location",
-        "OPTIMIZE_WIFI":"Optimize My WiFi "
+        "SHOW_REF_CODE": "Code de Référence"
     },
     "AUTHENTICATION": {
         "AZURE": "Ce fournisseur de service requiert une authentification du système Microsoft Azure.",
@@ -115,8 +112,7 @@
         "HERE_IS_CODE": "Veuillez noter ou prendre une capture d'écran de ce code de référence, vous pouvez donner ce code de référence à votre fournisseur de services afin qu'il puisse voir vos résultats et vous aider à approfondir vos problèmes.",
         "ERROR_UPLOADING": "Impossible de télécharger les données pour le moment, veuillez réessayer plus tard",
         "ALREADY_UPLOADED": "Vous avez déjà téléchargé vos résultats, votre code de référence est: ",
-        "MIN_AMOUNT_POINTS": "Not enough dropped pins, a minimum amount of {0} pins must be dropped before uploading.",
-        "HELP_SUMMARY_DESC":"To better assist you,  your signal coverage test results and recomendations can be shared with your service provider so they so they can be viewed when you contact them. This will speed up the time to resolve your issue. Don’t worry, only the wifi signal data will be sent, no video or pictures of your home or any of your private information."
+        "MIN_AMOUNT_POINTS": "Not enough dropped pins, a minimum amount of {0} pins must be dropped before uploading."
     },
     "CLOSE_OUT_REASON": {
       "NO_REASON_SELECTED": "Pas de sélection",
@@ -143,7 +139,6 @@
         "BEST_CHOICE": "Meilleur choix",
         "BEST_LOCATION": "Meilleur endroit",
         "CHANGE_SERVICE_PROVIDER": "Changer de Fournisseur de Services",
-        "MAXIMUM_PINS_HEADER":"Maximum Pins Dropped",
         "CONFIG_VERSION": "Version de Configuration",
         "DEVICE_INFO": "Détails de l'Appareil",
         "TEST_TYPE": "Type de réseau",
@@ -382,12 +377,8 @@
         "RETRYCONNECTION": "Non connecté à: SSID {{ssid}} .. Essais restants {{retries}}",
         "CONNECTION_TIMEOUT_ERROR": "Connexion impossible sur {{ssid}}, impossible de se connecter au réseau",
         "VT_REGISTRATION_COMMUNICATION_ERROR": "Virtual Tech n'est pas disponible pour ce fournisseur de services Internet pour le moment, veuillez réessayer plus tard",
-        "VT_REGISTRATION_ERROR": "Virtual Tech n'est pas disponible pour ce fournisseur de services Internet pour le moment, veuillez réessayer plus tard",
-        "MAXIMUM_PINS_TEXT": "you have reached the maxmimum number of pins you can drop"
+        "VT_REGISTRATION_ERROR": "Virtual Tech n'est pas disponible pour ce fournisseur de services Internet pour le moment, veuillez réessayer plus tard"
     },
-    "MAXIMUMPINS":{
-        "MAXIMUM_PINS":19
-        },
     "TITLE": {
         "LOCATION_SELECTOR_TITLE": "Name Location Pin",
         "AR_TOOLBOX": "Augmented Reality Toolbox",

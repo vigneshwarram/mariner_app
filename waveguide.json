@@ -94,6 +94,7 @@
     "wsbRegistrationUrl": "https://waveguide.mpicorp.ca/wifiservicebroker-1.0/webresources/waveguide/registration",
     "ooklaSpeedTestUrl": "http://waveguide.mpicorp.ca/mpicorp/",
     "wsbOptimizeUrl":"https://waveguide-qa.mpicorp.ca:18443/waveguideservicebroker/webresources/optimize",
+    "wsbretriveUrl":"https://waveguide.mpicorp.ca/vt/virtualtechcache/params",
     "postTimeout": 30000,
     "isOoklaReachableTimeout": 10000,
     "scanInProgressTimeout": 20000,

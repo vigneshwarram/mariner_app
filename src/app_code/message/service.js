@@ -46,6 +46,20 @@ export default class Message {
         );
     }
 
+
+    sendAlertWithOptionForDeepLink(title, message, buttonText, buttonCallback, cancelButtonText, buttonCancelCallback) {
+        console.log(global.functions.replace("{0} : {1}", [title, message]));
+        Alert.alert(
+            title,
+            message,
+            [
+                {text: cancelButtonText, style: 'cancel', onPress: () => buttonCancelCallback()},
+                {text: buttonText, onPress: () => buttonCallback()},
+            ],
+            {cancelable: false},
+        );
+    }
+
     /**
      * Show a toast message
      * @param message

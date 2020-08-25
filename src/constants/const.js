@@ -44,12 +44,9 @@ export const AR_SETTINGS_TOGGLE= "_ar_toggle_settings_mode";
 export const AR_UPLOAD_DATA= "_ar_upload_visit_data";
 export const AR_RESET_STATES= "_ar_reset_states";
 export const AR_TOUCH= "_ar_touch";
-export const AR_START_PLACEMENT_MODE = "ar_start_placement_mode";
-export const AR_STOP_PLACEMENT_MODE = "ar_stop_placement_mode";
-export const AR_PLACEMENT_TRACK="AR_PLACEMENT_TRACK";
+
 export const AR_WORKFLOW_MODE = "ar_workflow";
-export const HIDE_ARROW="HIDE_ARROW";
-export const AR_DISTACE_UPDATING="AR_DISTACE_UPDATING";
+
 // Storage Keys
 export const STORAGE_KEY_FLOW=  "flow_configuration";
 export const STORAGE_KEY_CONFIG =  "configuration";
@@ -58,6 +55,8 @@ export const STORAGE_KEY_TECHID = "technician_id";
 export const STORAGE_KEY_LANGUAGE = "language";
 export const STORAGE_KEY_APP_VERSION = "app_version";
 export const STORAGE_KEY_BUILD_NUMBER = "build_number";
+export const STORAGE_KEY_W = "w_values";
+export const STORAGE_KEY_C = "c_values";
 
 // exclude kpi keys
 export const CO_CHANNEL = "coInterference";

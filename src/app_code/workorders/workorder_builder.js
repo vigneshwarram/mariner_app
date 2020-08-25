@@ -3,19 +3,33 @@
 import Thresholds from '../certifications/thresholds';
 import Device from '../diagnostics/deviceinfo';
 import WifiDetails from '../wifi/wifidetails';
-import Location from '../certifications/location';
+let workId = '';
+let customer_Id = '';
 export default class WorkorderBuilder {
     Device = new Device();
     Thresholds = new Thresholds();
     WifiDetails = new WifiDetails();
 
     constructor() {
+        global.storage.getData(global.const.STORAGE_KEY_W, (res) => {
+            workId = res.toString()
+        })
 
+        global.storage.getData(global.const.STORAGE_KEY_C, (res) => {
+            customer_Id = res.toString()
+        })
     }
 
+
     build() {
-        let woid = Math.random().toString(36).substr(2,6);
-        global.state.work_orders.new(woid, 3, this.Device.uuid);
+        let woid = workId;
+        if (woid === '' || woid === null) {
+            woid = Math.random().toString(36).substr(2, 6);
+        }
+        let customerId = customer_Id != null || customer_Id != '' ? customer_Id : this.Device.uuid
+        global.state.work_orders.new(woid, 3, customerId);
+
+        //global.state.work_orders.new(woid, 3, this.Device.uuid);
         let woDetails = global.state.work_orders.get(woid);
         woDetails.displayWhenActive = false;
         //let work_order_id = this.work_order.id;
@@ -24,10 +38,10 @@ export default class WorkorderBuilder {
         woDetails.addCertification("GATEWAY");
         woDetails.currentCertification.testType = "heatMap";
         woDetails.currentCertification.installedLocation = "Point1";
-        for(let i = 0; i<=points.length-1;i++){
-            let point_location = points[i].transform.location != null && points[i].transform.location.length > 0 ? (points[i].transform.location[0].label === "Other" ? points[i].transform.location[0].text  : points[i].transform.location[0].label) : ("Point" + (i + 1).toString());
+        for (let i = 0; i <= points.length - 1; i++) {
+            let point_location = points[i].transform.location != null && points[i].transform.location.length > 0 ? (points[i].transform.location[0].label === "Other" ? points[i].transform.location[0].text : points[i].transform.location[0].label) : ("Point" + (i + 1).toString());
             woDetails.currentCertification.addLocationTest(point_location, {
-               signalThresholds: this.Thresholds.get('signalThresholds', '')
+                signalThresholds: this.Thresholds.get('signalThresholds', '')
             }, null, null);
             woDetails.currentCertification.currentLocation.updateTimeStamps(points[i].transform.timestamp);
             woDetails.currentCertification.currentLocation.signal = points[i].data.level;
@@ -40,50 +54,16 @@ export default class WorkorderBuilder {
             pointWifiDetails.setBand(points[i].data.freq === "5 GHz" ? "5GHz" : "2.4GHz");
             pointWifiDetails.setSignal(points[i].level);
             woDetails.currentCertification.currentLocation.wifiDetails = pointWifiDetails;
-            //this is bad...
             let x = points[i].transform._x - points[0].transform._x;
             let y = points[i].transform._y - points[0].transform._y;
             let z = points[i].transform._z - points[0].transform._z;
-            woDetails.currentCertification.currentLocation.setCoordinates(x , y, z);
-            woDetails.currentCertification.currentLocation.interferingNetworks = {value: points[i].data.interference.value, type: points[i].data.interference.type};
+            woDetails.currentCertification.currentLocation.setCoordinates(x, y, z);
+            woDetails.currentCertification.currentLocation.interferingNetworks = { value: points[i].data.interference.value, type: points[i].data.interference.type };
             woDetails.currentCertification.currentLocation.linkSpeed = points[i].data.linkspeed;
         }
 
         woDetails.currentCertification.setVirtualTechResults();
 
         return woDetails;
-    }
-
-    buildRecommendationPayload(algorithmType) {
-        let recommendationPayload = {};
-        recommendationPayload["options"] = [
-            {
-                name: "algorithm",
-                value: algorithmType
-            }
-        ];
-
-        //let locations = wo.currentCertification.locationTests;
-        let points = global.tracking.allNodeData;
-        let uploadLocations = [];
-        for(i=0;i<points.length;i++) {
-            //let location = new Location(null, null, null, );
-            //location.signal = points[i].level;
-            uploadLocations[i] = {
-                type: points[i].data.pointType,
-                position: [
-                    points[i].transform._x,
-                    points[i].transform._y,
-                    points[i].transform._z,
-                ],
-                coverage: true
-            }
-        }
-        let uploadObservations = {};
-        uploadObservations["description"] = "test from mobile app";
-        uploadObservations["locations"] = uploadLocations;
-
-        recommendationPayload["observations"] = uploadObservations;
-        return recommendationPayload;
     }
 }

@@ -4,27 +4,21 @@
  */
 
 import React from "react";
-import {View,Alert, Text} from "react-native";
-import { EventRegister } from 'react-native-event-listeners';
+import {View, Text} from "react-native";
+
 // Animations
 //import Animation from 'lottie-react-native';
 
 export default class TrackingView extends React.Component {
 
     // Local state
-   
+    state = {
+    };
 
     constructor() {
         super();
-        this. state = {
-            Arflow:true
-        };
-     
-     
+
         //this.setAnimation = this.setAnimation.bind(this);
-    }
-    componentWillUnmount() {
-       // EventRegister.removeEventListener(this.heatMapListener);
     }
 
     componentDidMount(){
@@ -49,7 +43,6 @@ export default class TrackingView extends React.Component {
      * @returns {*}
      */
     render() {
-        if(this.state.Arflow){
         return (
             <View style={{
                 position: 'absolute',
@@ -69,8 +62,6 @@ export default class TrackingView extends React.Component {
                 </View>
             </View>
         )
-        }
-
     }
 }
 TrackingView.defaultProps = {

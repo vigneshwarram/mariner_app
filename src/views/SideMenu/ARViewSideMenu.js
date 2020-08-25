@@ -10,7 +10,7 @@ import { faHeadVr } from '@fortawesome/pro-regular-svg-icons';
 
 import Style from '../../styles/base/index';
 import {EventRegister} from "react-native-event-listeners";
-
+var Tool_box=''
 export default class ARViewSideMenuComponent extends React.Component {
 
     // Check to see if option is enabled
@@ -31,7 +31,9 @@ export default class ARViewSideMenuComponent extends React.Component {
             global.ButtonEvents.emit({name:global.const.AR_DELETE_ALL_POINTS});
         });
     }
-
+   componentDidMount(){
+       Tool_box=global.t.get$("TITLE.AR_TOOLBOX");
+   }
     // Theme system updates
     componentDidUpdate(prevProps, prevState, snapshot) {
         styles = new Style().get();
@@ -50,7 +52,7 @@ export default class ARViewSideMenuComponent extends React.Component {
                             />
                             <Label style={[styles.side_label, {flex: 0, marginTop: 10}]}
                                    onPress={() => this.navigateToMenu()}
-                            >{global.t.get$("TITLE.AR_TOOLBOX")}</Label>
+                            >{Tool_box}</Label>
                         </View>
                     </View>
                 </TouchableOpacity>
