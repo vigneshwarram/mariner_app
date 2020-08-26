@@ -57,6 +57,23 @@ export default class HttpService {
             )
         ]);
     }
+/**
+     * Get request
+     * @param url
+     * @param callback
+     */
+    getQuery(url, callback) {
+        fetch(url,{
+            method: 'GET'
+        }).then((response) => response.text())
+        .then((responseJson) => {
+            console.log(responseJson);
+            callback(responseJson);
+        }).catch(error => {
+            console.log('Http Error:', error);
+            callback(null);
+        });
+    }
 
     /**
      * Post with headers request
