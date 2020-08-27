@@ -23,6 +23,7 @@ public class MainActivity extends ReactActivity {
     protected ReactRootView createRootView() {
         return new RNGestureHandlerEnabledRootView(MainActivity.this);
         }
+        
     };
   }
 }

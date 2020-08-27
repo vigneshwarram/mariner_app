@@ -11,6 +11,7 @@ import {
     Linking,
     Alert,
     AsyncStorage,
+    AppState,
     Platform
 } from 'react-native';
 
@@ -65,9 +66,105 @@ export default class SplashScreen extends React.Component {
     constructor(props) {
         super(props);
     }
+    state = {
+        appState: AppState.currentState
+      }
+       // View about to unmount
+       componentWillUnmount() {
+        //   AppState.removeEventListener('change', this._handleAppStateChange);
+        //  Linking.removeEventListener('url', this.handleUrl);
+    }
+
+    // View has been updated
+    componentDidUpdate() {
+    }
+    BasicFlow(){
+     // Check the local storage
+     global.storage.getData(global.const.STORAGE_KEY_CONFIG, value => {
+        if (this.Configuration.isValidConfig(value)) {
+            global.storage.getData(global.const.STORAGE_KEY_APP_VERSION, (build_version) => {
+                if (this.DeviceInfo.buildVersion === build_version) {
+                    global.storage.getData(global.const.STORAGE_KEY_REG_CODE, (reg_code) => {
+                        this.Http.getWithTimeout(this.Register.generate(reg_code), 5000).then((initialResponse) => initialResponse.json()).then((response) => {
+                            if (response != null && response.responseCode === 200 && response.configuration != null) {
+                                if (this.Register.isLicensed(response.configuration)) {
+                                    this.Configuration.merge(response.configuration);
+                                    this.Workflows.update();
+                                    global.storage.storeData(global.const.STORAGE_KEY_CONFIG, JSON.stringify(response.configuration));
+                                    this.props.navigation.dispatch(this.Global.resetNavigation("GuidedView"));
+                                }
+                                else {
+                                    this.Message.sendAlert('Registration', global.t.get$('STATUS.REGISTRATION_ERROR'), 'OK');
+                                    this.props.navigation.dispatch(this.Global.resetNavigation('Register'));
+                                }
+                            } else {
+                                this.failedRegistration(value);
+                            }
+                        }).catch((e) => {
+                            this.failedRegistration(value);
+                        });
+
+                        global.storage.getData(global.const.STORAGE_KEY_TECHID, (id) => {
+                            this.Global.set("tech_id", id);
+                        });
+                        global.storage.getData(global.const.STORAGE_KEY_REG_CODE, (code) => {
+                            this.Global.set("registration_code", code);
+                        });
+                        global.storage.getData(global.const.STORAGE_KEY_LANGUAGE, (lang) => {
+                            this.Global.set("language", lang);
+                            let languageUrl = global.configuration.get("wsbLanguageUrl");
+                            if (languageUrl) {
+                                global.t.$load(global.functions.replace("{0}{1}.json", [languageUrl, lang]))
+                            }
+                        });
+                    });
+                } else {
+                    this.props.navigation.dispatch(this.Global.resetNavigation('Register'));
+                }
+            });
+        }
+        else {
+            this.props.navigation.dispatch(this.Global.resetNavigation('Register'));
+        }
+    });
+
+    }
+    _handleAppStateChange = (nextAppState) => {
+        if (nextAppState === 'active') {
+            //this.props.navigation.dispatch(this.Global.resetNavigation('Register'));
+            Linking.getInitialURL().then(url => {
+                if(url!=null){
+                    console.log('nextAppState',url)
+                    // Clear the global options
+                    global.state.clearWorkOrders();
+                    global.configuration.reset();
+                    global.storage.multiClear([
+                        global.const.STORAGE_KEY_CONFIG,
+                        global.const.STORAGE_KEY_REG_CODE,
+                        global.const.STORAGE_KEY_TECHID,
+                        global.const.STORAGE_KEY_LANGUAGE,
+                        global.const.STORAGE_KEY_APP_VERSION,
+                        global.const.STORAGE_KEY_BUILD_NUMBER
+                    ]);
+                   this.navigate(url)
+                }        
+            })
+          
+      }
+    }
     getRetriveData =()=>{
         this.Http.getQuery(global.configuration.get("wsbretriveUrl"),(data)=>{
             if(data!='' && data!=undefined && data!=null){
+                global.state.clearWorkOrders();
+                global.configuration.reset();
+                global.storage.multiClear([
+                    global.const.STORAGE_KEY_CONFIG,
+                    global.const.STORAGE_KEY_REG_CODE,
+                    global.const.STORAGE_KEY_TECHID,
+                    global.const.STORAGE_KEY_LANGUAGE,
+                    global.const.STORAGE_KEY_APP_VERSION,
+                    global.const.STORAGE_KEY_BUILD_NUMBER
+                ]); 
                 let createarray=data.split('&')   
                 let modifiedArray=[];
                 let modifiedObject={}
@@ -79,6 +176,18 @@ export default class SplashScreen extends React.Component {
                 AsyncStorage.setItem('registerFirstTime', JSON.stringify(getLinkValue));
                 this.url(getLinkValue)
                 console.log('data',getLinkValue)
+            }
+            else{
+                Linking.getInitialURL().then(url => {
+                    if (url !== null) {
+                        this.navigate(url);
+                    } else {
+                        // Check the local storage
+                       this.BasicFlow();
+                    }
+        
+                });
+        
             }
             })
      
@@ -321,78 +430,29 @@ export default class SplashScreen extends React.Component {
     }
     // View mounted and ready
   async  componentDidMount() {
+    AppState.addEventListener('change', this._handleAppStateChange);
+    Linking.addEventListener('url', event => {
+        console.log('URL', event.url)
+        this.navigate(event.url)
+    })
+   // Linking.addEventListener('url', this.handleUrl);
         service_value=global.t.get$("HEADER.CHANGE_SERVICE_PROVIDER")
         service_message=global.t.get$("STATUS.CHANGE_INTERNET_SERVICE_PROVIDER");
       let alreadyLaunchedPage=await AsyncStorage.getItem('registerFirstTime');
       console.log('alreadyLaunchedPage',alreadyLaunchedPage)
         if(alreadyLaunchedPage===null || alreadyLaunchedPage==='' || alreadyLaunchedPage==='null' || alreadyLaunchedPage===undefined){
-            global.state.clearWorkOrders();
-            global.configuration.reset();
-            global.storage.multiClear([
-                global.const.STORAGE_KEY_CONFIG,
-                global.const.STORAGE_KEY_REG_CODE,
-                global.const.STORAGE_KEY_TECHID,
-                global.const.STORAGE_KEY_LANGUAGE,
-                global.const.STORAGE_KEY_APP_VERSION,
-                global.const.STORAGE_KEY_BUILD_NUMBER
-            ]);          
+             
             this.getRetriveData();
           
         }
         else{
-            Linking.addEventListener('url', this.handleUrl);
+          
             Linking.getInitialURL().then(url => {
                 if (url !== null) {
                     this.navigate(url);
                 } else {
                     // Check the local storage
-                    global.storage.getData(global.const.STORAGE_KEY_CONFIG, value => {
-                        if (this.Configuration.isValidConfig(value)) {
-                            global.storage.getData(global.const.STORAGE_KEY_APP_VERSION, (build_version) => {
-                                if (this.DeviceInfo.buildVersion === build_version) {
-                                    global.storage.getData(global.const.STORAGE_KEY_REG_CODE, (reg_code) => {
-                                        this.Http.getWithTimeout(this.Register.generate(reg_code), 5000).then((initialResponse) => initialResponse.json()).then((response) => {
-                                            if (response != null && response.responseCode === 200 && response.configuration != null) {
-                                                if (this.Register.isLicensed(response.configuration)) {
-                                                    this.Configuration.merge(response.configuration);
-                                                    this.Workflows.update();
-                                                    global.storage.storeData(global.const.STORAGE_KEY_CONFIG, JSON.stringify(response.configuration));
-                                                    this.props.navigation.dispatch(this.Global.resetNavigation("GuidedView"));
-                                                }
-                                                else {
-                                                    this.Message.sendAlert('Registration', global.t.get$('STATUS.REGISTRATION_ERROR'), 'OK');
-                                                    this.props.navigation.dispatch(this.Global.resetNavigation('Register'));
-                                                }
-                                            } else {
-                                                this.failedRegistration(value);
-                                            }
-                                        }).catch((e) => {
-                                            this.failedRegistration(value);
-                                        });
-    
-                                        global.storage.getData(global.const.STORAGE_KEY_TECHID, (id) => {
-                                            this.Global.set("tech_id", id);
-                                        });
-                                        global.storage.getData(global.const.STORAGE_KEY_REG_CODE, (code) => {
-                                            this.Global.set("registration_code", code);
-                                        });
-                                        global.storage.getData(global.const.STORAGE_KEY_LANGUAGE, (lang) => {
-                                            this.Global.set("language", lang);
-                                            let languageUrl = global.configuration.get("wsbLanguageUrl");
-                                            if (languageUrl) {
-                                                global.t.$load(global.functions.replace("{0}{1}.json", [languageUrl, lang]))
-                                            }
-                                        });
-                                    });
-                                } else {
-                                    this.props.navigation.dispatch(this.Global.resetNavigation('Register'));
-                                }
-                            });
-                        }
-                        else {
-                            this.props.navigation.dispatch(this.Global.resetNavigation('Register'));
-                        }
-                    });
+                   this.BasicFlow();
                 }
     
             });
@@ -407,9 +467,7 @@ export default class SplashScreen extends React.Component {
 
     }
 
-    handleUrl({ url }) {
-        //alert(url)
-    }
+   
     navigate = (url) => {
         console.log('url---',url)
         const { navigate } = this.props.navigation;
@@ -879,14 +937,7 @@ export default class SplashScreen extends React.Component {
         });
     }
 
-    // View about to unmount
-    componentWillUnmount() {
-        //Linking.removeEventListener('url', this.handleOpenURL);
-    }
-
-    // View has been updated
-    componentDidUpdate() {
-    }
+ 
 
     failedRegistration(value) {
         this.Message.showToastMessage(global.t.get$('STATUS.REGISTRATION_COMMUNICATION_ERROR'), 'danger');
