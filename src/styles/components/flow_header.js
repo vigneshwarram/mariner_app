@@ -55,7 +55,16 @@ export default class OverlayView extends React.Component {
                     global.overlayActive = data != null;
                     this.setState({pop: data});}}
         ]);
+   // AR Events
+   global.AREvents.subscribe([
 
+    // close toggle
+    {id:this, name:'Close_popup', callback:() => {
+        clearTimeout(this.bubbleTimer);
+        this.setState({bubble:null});
+        this.slideBubbleButton();
+    }}
+]);
         // Flow listener
         this.flowListener = EventRegister.addEventListener('APPLICATION_INTERNAL_FLOW', (data) => {
             if (this.state.pop !== null) return;

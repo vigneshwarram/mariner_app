@@ -77,7 +77,11 @@ export default class FlowView extends React.Component {
      */
     constructViews(flows) {
         if (flows && flows.views) {
-            flows.views.forEach((view, idx) => {
+            //remove the merged array once,wave guide json ported to API,
+                let arViews=global.configuration.get("newStatic_ar_flow");
+                let ViewsofAr=arViews.views
+                let mergedArray=[...flows.views,...ViewsofAr]
+                mergedArray.forEach((view, idx) => {
                 if (view.pagination) this.totalViews++;
                 let view_layout = this.OverlayViews.get(view.type, {
                     key: idx,

@@ -244,6 +244,21 @@ export default class ARSceneView extends React.Component {
                     this.setState({expandedMode: !this.state.expandedMode});
                     global.tracking.loaded = !this.state.menuOptionsVisible;}},
 
+                    {id:this, name: 'Internal_track', callback:(data) => {
+                        EventRegister.emit("APPLICATION_INTERNAL_BUBBLE", [
+                            {
+                              "type": "callout",
+                              "text": data.value,
+                              "position": {"left": 40 , "bottom": 80},
+                              "size": {"width": 240, "height": "100%"},
+                              "backgroundColor": "#4dbdea",
+                              "textColor": "white",
+                              "point": {"bottom": "center"},
+                              "switch": "close",
+                              "hideStatus":data.status
+                            }
+                          ] );
+                        }},
             // Tracking
             {id:this, name: global.const.AR_TRACKING, callback:(trackingState) => {
                     this.setState({tracking: trackingState});}},
@@ -655,6 +670,7 @@ export default class ARSceneView extends React.Component {
                     <StatusBar hidden={this.isiOS13}/>
                     <ViroARSceneNavigator
                         style={styles.arView}
+                        debug={true} 
                         apiKey={global.const.API_KEY}
                         initialScene={{scene: InitialScene}}
                         ref={this.setARNavigatorRef}

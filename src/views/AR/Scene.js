@@ -425,13 +425,13 @@ class Scene extends React.Component {
      * @param state
      * @private
      */
-    onInitialized(state) {
+    onInitialized(state,reason) {
         if (state === ViroConstants.TRACKING_NORMAL) {
             this.tracking = true;
             this.setState({
                 tracking: global.const.AR_TRACKING_TYPE_NORMAL, needsRender:true
             });
-
+            global.AREvents.emit({name:'Close_popup', data:''});
             // AR is tracking
             global.AREvents.emit({name:global.const.AR_TRACKING, data: global.const.AR_TRACKING_TYPE_NORMAL});
         }
@@ -439,14 +439,25 @@ class Scene extends React.Component {
             this.setState({
                 tracking: global.const.AR_TRACKING_TYPE_NONE
             });
-
+              if(reason===4){
+                global.AREvents.emit({name:'Internal_track', data: {value:' Too dark to scan. Try turning on the lights or moving to a well-lit area.',status:false}});
+              }
+              else if(reason===2){
+                global.AREvents.emit({name:'Internal_track', data: {value:'Device moving too fast. Try moving more slowly.',status:false}});
+              }
+              else if(reason===3) {
+                global.AREvents.emit({name:'Internal_track', data: {value:' Looks like the sensor is blocked. Try moving your finger or adjusting the device’s position..',status:false}});
+              }
             // AR is not tracking
-            global.AREvents.emit({name:global.const.AR_TRACKING, data: global.const.AR_TRACKING_TYPE_NONE});
+          
+           // global.AREvents.emit({name:global.const.AR_TRACKING, data: global.const.AR_TRACKING_TYPE_NONE});
         }
         else if (state === ViroConstants.TRACKING_LIMITED) {
+            global.AREvents.emit({name:'Internal_track', data: {value:'',status:true}});
             this.setState({
                 tracking: global.const.AR_TRACKING_TYPE_NONE
             });
+            
         }
     }
 
@@ -457,6 +468,7 @@ class Scene extends React.Component {
      * @private
      */
     onTransformed(transform) {
+   
         global.tracking.moving = (distance(transform, this.lastTransform) > 0) ? 1 : 0
         //if (this.wifi_animated_icon == null) return;
 

@@ -43,8 +43,10 @@ const SlideNavigator = createDrawerNavigator({
     Item1: {
         screen:
             createStackNavigator({
+              
             SplashScreen: {screen: SplashScreen, navigationOptions: {header: null}},
             Register: {screen: RegisterView},
+            AR: {screen: ARSceneView},
             GuidedView: {screen: GuidedView},
             Home: {screen: HomeView},
             NetworkSetup: {screen: NetworkSetupView},
@@ -58,7 +60,7 @@ const SlideNavigator = createDrawerNavigator({
             CertificationSummary: {screen: SummaryView},
             GatewaySetup: {screen: GatewaySetupView},
             About: {screen: AboutView},
-            AR: {screen: ARSceneView},
+           
             AlternateSpeedtest: {screen: AlternateSpeedtestView},
             History: {screen: HistoryView}
         })
