@@ -930,9 +930,9 @@
           "type": "ar",
           "note": "DO NOT CHANGE THIS ID",
           "id": "ar-flow-page-skip_instructions",
-          "image": "intro.png",
+          "image": "intro",
           "title": "Just  a few more things",
-          "bumpers": {"previous": {"label": "Previous Step", "switch": "ar-flow-page-3", "enabled": true}, "next": {"label": "Results", "switch": "5", "enabled": false}},
+          "bumpers": {"previous": {"label": "Previous Step", "switch": "ar-flow-page-skip_instructions", "enabled": true}, "next": {"label": "Results", "switch": "5", "enabled": false}},
           "description": "On the next step, we will be using augmented.reality technology, This technology use your camera to show your Wi-dead-spotsin your home.there are few importants tips to know your ahead of time before we jump in.",
           "actionButtons": [
             {
@@ -945,7 +945,7 @@
               "position": 1,
               "label": "Previous Step",
               "direction": "left",
-              "switch": "ar-flow-page-skip_instructions"
+              "switch": "ar-flow-page-2"
             },
             {
               "position": 2,
@@ -1062,7 +1062,7 @@
             {
               "position": 1,
               "label": "Back",
-              "switch": "ar-flow-page-1",
+              "switch": "ar-flow-page-skip_instructions",
               "direction": "left"
             },
             {
@@ -1099,7 +1099,7 @@
           "id": "ar-flow-page-seeTips3",
           "title": "Keep Distance",
           "image": "sensor_tips",
-          "bumpers": {"previous": {"label": "Previous Step", "switch": "ar-flow-page-3", "enabled": true}, "next": {"label": "Results", "switch": "5", "enabled": false}},
+          "bumpers": {"previous": {"label": "Previous Step", "switch": "ar-flow-page-skip_instructions", "enabled": true}, "next": {"label": "Results", "switch": "5", "enabled": false}},
           "description": "      Keep the phone couple of feet away from.\nall objects.Try not to cover the camera lens  with a finger or set it down during  the process",
           "actionButtons": [
             {

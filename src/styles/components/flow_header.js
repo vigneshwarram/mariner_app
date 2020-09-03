@@ -106,7 +106,10 @@ export default class OverlayView extends React.Component {
                         if (i === 0) {
                             this.setState({bubble: {idx: i, callout: data[i], timer: data[i].timerMS, location: bubble_location, style: point_location}});
                         }
-                        bubbles.push({idx: i, callout: data[i], timer: data[i].timerMS, location: bubble_location, style: point_location});
+                        if(!data[i].hideStatus){
+                            bubbles.push({idx: i, callout: data[i], timer: data[i].timerMS, location: bubble_location, style: point_location});
+                        }
+                       
                     }
                     this.setState({bubbles: bubbles});
                 }
@@ -322,15 +325,16 @@ export default class OverlayView extends React.Component {
                 <TouchableWithoutFeedback onPress={() => this.jumpIntoFlow(this.state.bubble.callout.switch ? this.state.bubble.callout.switch : null)}>
                     <Animated.View style={[{position: 'absolute', zIndex: 2000, transform: [{scale: this.springValue}]}, this.state.bubble.callout.position]}>
                         <Badge style={[{opacity: 1, borderColor: 'white', borderWidth: 1, borderStyle: 'solid', backgroundColor: styles.callout.backgroundColor, paddingHorizontal: 5}, this.state.bubble.callout.size]}>
-                            <Button rounded style={[styles.circle_icon, {position: 'absolute', bottom: -7, left: -7}]}>
+                           {this.state.bubble.callout.hideStatus?null:<Button rounded style={[styles.circle_icon, {position: 'absolute', bottom: -7, left: -7}]}>
                                 <FontAwesomeIcon active size={20} color={'white'} icon={faQuestionCircle}/>
-                            </Button>
+                            </Button>} 
                             <Text style={[{alignSelf: 'center', fontSize: 16, marginTop: 10, marginRight: 15, marginLeft: 5, color: styles.callout.color}]}>{this.state.bubble.callout.text + '\n'}</Text>
-                            <Button onPress={() => this.jumpIntoFlow(this.state.bubble.callout.switch ? this.state.bubble.callout.switch : null)} rounded style={[styles.circle_icon, {position: 'absolute', top: 3, right: 3}]}>
+                            {this.state.bubble.callout.hideStatus && this.state.bubble.callout.text===global.t.$.AR.CALIBRATING?null: <Button onPress={() => this.jumpIntoFlow(this.state.bubble.callout.switch ? this.state.bubble.callout.switch : null)} rounded style={[styles.circle_icon, {position: 'absolute', top: 3, right: 3}]}>
                                 <FontAwesomeIcon active size={20} color={'white'} icon={faTimes}/>
-                            </Button>
+                            </Button>}
                         </Badge>
-                        {this.state.bubble.style &&<View style={[this.state.bubble.style.direction, this.state.bubble.style.location, {opacity: 1}]}/>}
+                        {this.state.bubble.callout.hideStatus?null:this.state.bubble.style &&<View style={[this.state.bubble.style.direction, this.state.bubble.style.location, {opacity: 1}]}/>
+        }
                     </Animated.View>
                 </TouchableWithoutFeedback>
             )

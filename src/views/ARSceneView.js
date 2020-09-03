@@ -10,7 +10,8 @@ import {
     ActivityIndicator,
     Image, View, TouchableWithoutFeedback, Text, Dimensions
 } from 'react-native';
-
+const height=Dimensions.get('window').height
+const width=Dimensions.get('window').width
 import {Button} from 'native-base';
 
 // Import AR
@@ -245,11 +246,12 @@ export default class ARSceneView extends React.Component {
                     global.tracking.loaded = !this.state.menuOptionsVisible;}},
 
                     {id:this, name: 'Internal_track', callback:(data) => {
+                       
                         EventRegister.emit("APPLICATION_INTERNAL_BUBBLE", [
                             {
                               "type": "callout",
                               "text": data.value,
-                              "position": {"left": 40 , "bottom": 80},
+                              "position": {"left": 90, "top":"40%" ,},
                               "size": {"width": 240, "height": "100%"},
                               "backgroundColor": "#4dbdea",
                               "textColor": "white",
@@ -676,7 +678,7 @@ export default class ARSceneView extends React.Component {
                         ref={this.setARNavigatorRef}
                         viroAppProps={this.state.ARAppProps}/>
 
-                    {this.state.tracking === 'NONE'  && global.tracking.location == null &&
+                    {/* {this.state.tracking === 'NONE'  && global.tracking.location == null &&
                         <TrackingView style={{
                             position: 'absolute',
                             top: 150,
@@ -688,7 +690,7 @@ export default class ARSceneView extends React.Component {
                             justifyContent: 'space-between',
                             alignItems: 'center'
                         }}/>
-                    }
+                    } */}
 
                     {global.state.ARMode === this.CONST.flowMode && <BumperLeft bumpers={global.state.bumpers} link {...this.props}/>}
                     {global.state.ARMode === this.CONST.flowMode && this.state.router && <BumperRight bumpers={global.state.bumpers} link {...this.props}/>}

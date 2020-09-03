@@ -440,20 +440,23 @@ class Scene extends React.Component {
                 tracking: global.const.AR_TRACKING_TYPE_NONE
             });
               if(reason===4){
-                global.AREvents.emit({name:'Internal_track', data: {value:' Too dark to scan. Try turning on the lights or moving to a well-lit area.',status:false}});
+                global.AREvents.emit({name:'Internal_track', data: {value:' Too dark to scan. Try turning on the lights or moving to a well-lit area.',status:true}});
               }
               else if(reason===2){
-                global.AREvents.emit({name:'Internal_track', data: {value:'Device moving too fast. Try moving more slowly.',status:false}});
+                global.AREvents.emit({name:'Internal_track', data: {value:'Device moving too fast. Try moving more slowly.',status:true}});
               }
               else if(reason===3) {
-                global.AREvents.emit({name:'Internal_track', data: {value:' Looks like the sensor is blocked. Try moving your finger or adjusting the device’s position..',status:false}});
+                global.AREvents.emit({name:'Internal_track', data: {value:' Looks like the sensor is blocked. Try moving your finger or adjusting the device’s position..',status:true}});
+              }
+              else{
+                global.AREvents.emit({name:'Internal_track', data: {value:global.t.$.AR.CALIBRATING,status:true}});
               }
             // AR is not tracking
           
            // global.AREvents.emit({name:global.const.AR_TRACKING, data: global.const.AR_TRACKING_TYPE_NONE});
         }
         else if (state === ViroConstants.TRACKING_LIMITED) {
-            global.AREvents.emit({name:'Internal_track', data: {value:'',status:true}});
+            global.AREvents.emit({name:'Internal_track', data: {value:global.t.$.AR.CALIBRATING,status:true}});
             this.setState({
                 tracking: global.const.AR_TRACKING_TYPE_NONE
             });

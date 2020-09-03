@@ -17,12 +17,13 @@ export default class TrackingView extends React.Component {
 
     constructor() {
         super();
-
+       
         //this.setAnimation = this.setAnimation.bind(this);
     }
 
     componentDidMount(){
         //Animated.spring(this.state.slide_x, { toValue: 0 }).start();
+        
     }
 
     /**
