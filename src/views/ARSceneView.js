@@ -42,7 +42,7 @@ import TopMenuComponent from './AR/TopMenu';
 import BottomMenuComponent from './AR/BottomMenu';
 import BottomSimpleMenuComponent from './AR/guided/BottomSimpleMenu';
 import HeatMap from "./AR/HeatMap";
-
+import KeepAwake from 'react-native-keep-awake';
 import BumperLeft from '../styles/components/bumper_left';
 import BumperRight from '../styles/components/bumper_right';
 import SiteVisit from "../app_code/workorders/sitevisit";
@@ -335,7 +335,7 @@ export default class ARSceneView extends React.Component {
     // View mounted and ready
     componentDidMount(){
         styles = new Style().get("AR");
-
+        
         // Set the AR Mode
         if (global.state.ARMode == null || global.state.ARMode === this.CONST.flowMode) {
            this.setupSimpleMode();
@@ -351,7 +351,7 @@ export default class ARSceneView extends React.Component {
 
         // Unload the AR view
         this.setState({loadComplete: false});
-
+        KeepAwake.deactivate();
         // Remove listeners
         global.Events.remove(this);
         global.AREvents.remove(this);

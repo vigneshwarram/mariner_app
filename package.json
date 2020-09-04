@@ -47,6 +47,7 @@
     "react-native-device-info": "^5.5.3",
     "react-native-event-listeners": "^1.0.3",
     "react-native-gesture-handler": "^1.6.1",
+    "react-native-keep-awake": "^4.0.0",
     "react-native-network-info": "^4.0.1",
     "react-native-screens": "^2.7.0",
     "react-native-sensors": "^5.4.1",

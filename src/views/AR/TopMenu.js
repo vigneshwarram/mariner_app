@@ -39,8 +39,9 @@ export default class TopMenuComponent extends React.Component {
         wifiDetails: {
             signal: 0,
             color: {
-                style: null
+              style:null
             },
+            textColor:'#0093f6',
             signal_label: '',
             signal_type: 0,
             name: '',
@@ -306,14 +307,19 @@ export default class TopMenuComponent extends React.Component {
         switch(this.state.interference.type) {
 
             // Red
-            case 2: {
+            case 3: {
                 iconImage = global.ARimageResources.get('speed-poor');
                 break;
             }
 
             // Yellow
-            case 1: {
+            case 2: {
                 iconImage = global.ARimageResources.get('speed-good');
+                break;
+            }
+             // Yellow
+             case 1: {
+                iconImage = global.ARimageResources.get('speed-excellent');
                 break;
             }
         }
@@ -341,14 +347,19 @@ export default class TopMenuComponent extends React.Component {
         switch(this.state.wifiDetails.signal_type) {
 
             // Red
-            case 2: {
+            case 3: {
                 iconImage = global.ARimageResources.get('interference-poor');
                 break;
             }
 
             // Yellow
-            case 1: {
+            case 2: {
                 iconImage = global.ARimageResources.get('interference-good');
+                break;
+            }
+              // green
+              case 1: {
+                iconImage = global.ARimageResources.get('interference-excellent');
                 break;
             }
         }
