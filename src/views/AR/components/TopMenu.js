@@ -623,7 +623,7 @@ export default class TopMenuSubComponent extends React.Component {
                                                         {this.props.parent.state.nodeOptions.speed &&
                                                         <View style={{
                                                             flexDirection: 'column',
-                                                            flex: 0.6,
+                                                            flex: 1,
                                                             marginLeft: 20,
                                                             marginTop: 0
                                                         }}>

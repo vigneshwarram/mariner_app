@@ -159,14 +159,14 @@ export default class CustomButtons extends React.Component {
                                     onPress={() => this.state.button5.route !== undefined ?
                                         this.changeNavigationStack(this.state.button5.route) :
                                         this.changeViewById(this.state.button5.switch, this.state.button5.direction)}>
-                                <Text style={styles.button_text}>{this.state.button5 ? global.t.get$(this.state.button5.label) : ''}</Text>
+                                <Text numberOfLines={2} style={styles.button_text}>{this.state.button5 ? global.t.get$(this.state.button5.label) : ''}</Text>
                             </Button>
                             <Button bordered disabled={!this.state.button6}
                                     style={[styles.button, {width: this.state.button6 ? this.state.button6.width : 150, marginLeft: 5, opacity: this.state.button6 ? 1 : 0}]}
                                     onPress={() => this.state.button6.route !== undefined ?
                                         this.changeNavigationStack(this.state.button6.route) :
                                         this.changeViewById(this.state.button6.switch, this.state.button6.direction)}>
-                                <Text style={styles.button_text}>{this.state.button6 ? global.t.get$(this.state.button6.label) : ''}</Text>
+                                <Text numberOfLines={2} style={styles.button_text}>{this.state.button6 ? global.t.get$(this.state.button6.label) : ''}</Text>
                             </Button>
                         </View>
                     </View>
@@ -177,14 +177,14 @@ export default class CustomButtons extends React.Component {
                                     onPress={() => this.state.button3.route !== undefined ?
                                         this.changeNavigationStack(this.state.button3.route) :
                                         this.changeViewById(this.state.button3.switch, this.state.button3.direction)}>
-                                <Text style={styles.button_text}>{this.state.button3 ? global.t.get$(this.state.button3.label) : ''}</Text>
+                                <Text numberOfLines={2} style={styles.button_text}>{this.state.button3 ? global.t.get$(this.state.button3.label) : ''}</Text>
                             </Button>
                             <Button bordered disabled={!this.state.button4}
                                     style={[styles.button, {width: this.state.button4 ? this.state.button4.width : 150, marginTop: 60, marginLeft: 5, opacity: this.state.button4 ? 1 : 0}]}
                                     onPress={() => this.state.button4.route !== undefined ?
                                         this.changeNavigationStack(this.state.button4.route) :
                                         this.changeViewById(this.state.button4.switch, this.state.button4.direction)}>
-                                <Text style={styles.button_text}>{this.state.button4 ? global.t.get$(this.state.button4.label) : ''}</Text>
+                                <Text numberOfLines={2} style={styles.button_text}>{this.state.button4 ? global.t.get$(this.state.button4.label) : ''}</Text>
                             </Button>
                         </View>
                     </View>
@@ -202,7 +202,7 @@ export default class CustomButtons extends React.Component {
                                     onPress={() => this.state.button2.route !== undefined ?
                                         this.changeNavigationStack(this.state.button2.route) :
                                         this.changeViewById(this.state.button2.switch, this.state.button2.direction)}>
-                                <Text style={styles.button_text}>{this.state.button2 ? global.t.get$(this.state.button2.label) : ''}</Text>
+                                <Text numberOfLines={2} style={styles.button_text}>{this.state.button2 ? global.t.get$(this.state.button2.label) : ''}</Text>
                             </Button>
                         </View>
                     </View>
