@@ -14,9 +14,10 @@ import {
     AppState,
     Platform
 } from 'react-native';
-
 // Get the device information
 import DeviceInformation from '../app_code/diagnostics/deviceinfo';
+
+import wifi from 'react-native-android-wifi';
 import Translate from "../../src/constants/translate";
 // Default style sheet
 import Style from '../styles/views/default'
@@ -74,7 +75,7 @@ export default class SplashScreen extends React.Component {
         //   AppState.removeEventListener('change', this._handleAppStateChange);
         //  Linking.removeEventListener('url', this.handleUrl);
     }
-
+ 
     // View has been updated
     componentDidUpdate() {
     }
@@ -431,6 +432,8 @@ export default class SplashScreen extends React.Component {
     // View mounted and ready
   async  componentDidMount() {
     AppState.addEventListener('change', this._handleAppStateChange);
+    this.getNetworkBandwidth();
+  
     Linking.addEventListener('url', event => {
         console.log('URL', event.url)
         this.navigate(event.url)

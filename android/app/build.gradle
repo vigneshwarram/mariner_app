@@ -196,6 +196,7 @@ android {
 apply from: '../../node_modules/react-native-unimodules/gradle.groovy'
 
 dependencies {
+    implementation project(':rn-fetch-blob')
     implementation project(':react-native-keep-awake')
     implementation project(':react-native-device-info')
     implementation project(':react-native-gesture-handler')

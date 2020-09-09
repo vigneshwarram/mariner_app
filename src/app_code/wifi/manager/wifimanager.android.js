@@ -3,7 +3,7 @@ import {PermissionsAndroid} from 'react-native';
 import wifi from 'react-native-android-wifi';
 import WifiDetails from "../wifidetails";
 import NetInfo from './wifimanager.ios';
-
+import { measureConnectionSpeed } from 'react-native-network-bandwith-speed';
 
 export default class WifiManage extends React.Component{
     constructor(props) {
@@ -100,11 +100,10 @@ export default class WifiManage extends React.Component{
             result(band);
         });
     }
-
-    getLinkSpeed(result) {
-        wifi.getLinkSpeed((linkspeed) => {
-            result(linkspeed);
-        });
+    getLinkSpeed=async(result): Promise<void>=> {
+        const networkSpeed: NetworkBandwidthTestResults = await measureConnectionSpeed();  
+        let wifispeed= networkSpeed.speed
+            result(wifispeed.toFixed(2));
     }
 
     loadWifiList(result) {
