@@ -264,19 +264,16 @@ export default class TopMenuComponent extends React.Component {
     renderSignalStrengthIcon(resize=false, min=false) {
         let iconImage = global.ARimageResources.get('wifi-excellent');
         switch(this.state.wifiDetails.signal_type) {
-
             // Red
             case 3: {
                 iconImage = global.ARimageResources.get('wifi-poor');
                 break;
             }
-
             // Yellow
             case 2: {
                 iconImage = global.ARimageResources.get('wifi-good');
                 break;
             }
-
             // Green
             case 1: {
                 iconImage = global.ARimageResources.get('wifi-ok');
@@ -345,13 +342,11 @@ export default class TopMenuComponent extends React.Component {
 
         let iconImage = global.ARimageResources.get('interference-excellent');
         switch(this.state.wifiDetails.signal_type) {
-
             // Red
             case 3: {
                 iconImage = global.ARimageResources.get('interference-poor');
                 break;
             }
-
             // Yellow
             case 2: {
                 iconImage = global.ARimageResources.get('interference-good');

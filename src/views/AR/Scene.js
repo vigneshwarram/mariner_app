@@ -15,6 +15,7 @@ import {
     ViroARPlane,
     ViroAmbientLight
 } from 'react-viro';
+//screeen timer awake 
 import KeepAwake from 'react-native-keep-awake';
 // AR style sheet
 import Style from '../../styles/base/index';
@@ -274,6 +275,7 @@ class Scene extends React.Component {
         // Pre-load translations
         this.translation["2.4"] = global.t.get$("TEXT.24");
         this.translation["5.0"] = global.t.get$("TEXT.50");
+        //screen timer wake always
         KeepAwake.activate();
         // Create the icons used by the node renderer
         this.setState({icons: [
