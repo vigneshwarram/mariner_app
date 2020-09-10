@@ -9,16 +9,11 @@ import {
     ActivityIndicator,
     StatusBar,
     Linking,
-    Alert,
     AsyncStorage,
-    AppState,
-    Platform
-} from 'react-native';
+    AppState} from 'react-native';
 // Get the device information
 import DeviceInformation from '../app_code/diagnostics/deviceinfo';
 
-import wifi from 'react-native-android-wifi';
-import Translate from "../../src/constants/translate";
 // Default style sheet
 import Style from '../styles/views/default'
 
@@ -33,7 +28,6 @@ import Message from '../app_code/message/service';
 import AppPermissions from "../boot/permissions";
 
 import _ispList from '../res/ispList';
-import { contains } from "cheerio";
 var service_value=''
 var service_message=''
 export default class SplashScreen extends React.Component {
@@ -101,7 +95,7 @@ export default class SplashScreen extends React.Component {
                             } else {
                                 this.failedRegistration(value);
                             }
-                        }).catch((e) => {
+                        }).catch(() => {
                             this.failedRegistration(value);
                         });
 
@@ -169,7 +163,7 @@ export default class SplashScreen extends React.Component {
                 let createarray=data.split('&')   
                 let modifiedArray=[];
                 let modifiedObject={}
-                createarray.map((item,index)=>{
+                createarray.map((item)=>{
                     modifiedObject[item.split('=')[0]]=item.split('=')[1];
                     modifiedArray.splice(0,createarray.length-1,modifiedObject)
                 })    
@@ -397,7 +391,7 @@ export default class SplashScreen extends React.Component {
                                         } else {
                                             this.failedRegistration(value);
                                         }
-                                    }).catch((e) => {
+                                    }).catch(() => {
                                         this.failedRegistration(value);
                                     });
 
@@ -432,7 +426,6 @@ export default class SplashScreen extends React.Component {
     // View mounted and ready
   async  componentDidMount() {
     AppState.addEventListener('change', this._handleAppStateChange);
-    this.getNetworkBandwidth();
   
     Linking.addEventListener('url', event => {
         console.log('URL', event.url)
@@ -473,7 +466,6 @@ export default class SplashScreen extends React.Component {
    
     navigate = (url) => {
         console.log('url---',url)
-        const { navigate } = this.props.navigation;
         var regex = /[?&]([^=#]+)=([^&#]*)/g,
             params = {},
             match;
@@ -685,7 +677,7 @@ export default class SplashScreen extends React.Component {
                                         } else {
                                             this.failedRegistration(value);
                                         }
-                                    }).catch((e) => {
+                                    }).catch(() => {
                                         this.failedRegistration(value);
                                     });
 
@@ -766,7 +758,7 @@ export default class SplashScreen extends React.Component {
                                 } else {
                                     this.failedRegistration(value);
                                 }
-                            }).catch((e) => {
+                            }).catch(() => {
                                 this.failedRegistration(value);
                             });
 
@@ -911,7 +903,7 @@ export default class SplashScreen extends React.Component {
                                 } else {
                                     this.failedRegistration(value);
                                 }
-                            }).catch((e) => {
+                            }).catch(() => {
                                 this.failedRegistration(value);
                             });
 
@@ -967,4 +959,4 @@ export default class SplashScreen extends React.Component {
     }
 }
 // Load default styles
-const styles = new Style().get();
+

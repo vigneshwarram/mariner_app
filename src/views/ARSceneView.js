@@ -8,11 +8,8 @@ import {
     StatusBar,
     Alert,
     ActivityIndicator,
-    Image, View, TouchableWithoutFeedback, Text, Dimensions
+    Image, View, TouchableWithoutFeedback, Dimensions
 } from 'react-native';
-const height=Dimensions.get('window').height
-const width=Dimensions.get('window').width
-import {Button} from 'native-base';
 
 // Import AR
 import {
@@ -29,7 +26,6 @@ import Global_State from '../constants/global';
 import AppPermissions from '../boot/permissions';
 import OverlayView from '../styles/components/flow_header';
 import AnimatedStackView from '../styles/components/stack_view';
-import TrackingView from './AR/Tracking';
 
 // Event Listener
 import { EventRegister } from 'react-native-event-listeners';
@@ -245,8 +241,7 @@ export default class ARSceneView extends React.Component {
                     this.setState({expandedMode: !this.state.expandedMode});
                     global.tracking.loaded = !this.state.menuOptionsVisible;}},
 
-                    {id:this, name: 'Internal_track', callback:(data) => {
-                       
+                    {id:this, name: global.const.OPTIMIZE_EXECPTION, callback:(data) => {                  
                         EventRegister.emit("APPLICATION_INTERNAL_BUBBLE", [
                             {
                               "type": "callout",
@@ -257,7 +252,7 @@ export default class ARSceneView extends React.Component {
                               "textColor": "white",
                               "point": {"bottom": "center"},
                               "switch": "close",
-                              "hideStatus":data.status
+                              "popupVisibleStatus":data.status
                             }
                           ] );
                         }},
@@ -660,11 +655,7 @@ export default class ARSceneView extends React.Component {
     // Render view components
     render() {
         console.disableYellowBox = true;
-
-        const mapPinch = React.createRef();
-        const mapRotation = React.createRef();
-
-
+        
         //const {navigate} = this.props.navigation;
         if (this.state.loadComplete) {
             return (
@@ -677,28 +668,11 @@ export default class ARSceneView extends React.Component {
                         initialScene={{scene: InitialScene}}
                         ref={this.setARNavigatorRef}
                         viroAppProps={this.state.ARAppProps}/>
-
-                    {/* {this.state.tracking === 'NONE'  && global.tracking.location == null &&
-                        <TrackingView style={{
-                            position: 'absolute',
-                            top: 150,
-                            left: 0,
-                            right: 0,
-                            width: '100%',
-                            height: 140,
-                            flexDirection: 'column',
-                            justifyContent: 'space-between',
-                            alignItems: 'center'
-                        }}/>
-                    } */}
-
                     {global.state.ARMode === this.CONST.flowMode && <BumperLeft bumpers={global.state.bumpers} link {...this.props}/>}
                     {global.state.ARMode === this.CONST.flowMode && this.state.router && <BumperRight bumpers={global.state.bumpers} link {...this.props}/>}
-
                     <TopMenuComponent controller={this} link {...this.props}/>
                     {global.state.ARMode === this.CONST.flowMode && <BottomSimpleMenuComponent controller={this} link {...this.props}/>}
                     {global.state.flow == null && global.state.ARMode !== this.CONST.flowMode && <BottomMenuComponent controller={this} link {...this.props}/>}
-
                     <TouchableWithoutFeedback onPress={() => {
                         this.toggleMapZoom();
                     }}>

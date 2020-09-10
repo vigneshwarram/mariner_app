@@ -67,6 +67,11 @@ export const DOWNLOAD_SPEED = "downloadSpeed";
 export const UPLOAD_SPEED = "uploadSpeed";
 export const SECURITY = "security";
 
+// optimize tips event
+export const OPTIMIZATION_TIPS = "optimization_tips";
+export const OPTIMIZE_EXECPTION = "optimization_exception";
+
+
 // Speedtest event
 export const END_SPEEDTEST = "end_speedtest";
 

@@ -79,8 +79,6 @@ const images  = [
     {name: "good_point", image:require('../res/AR/simple/green_point.png')},
     {name: "fair_point", image:require('../res/AR/simple/yellow_point.png')},
     {name: "critical_point", image:require('../res/AR/simple/red_point.png')},
-
-    //tips images
     {name: "sensor_tips", image:require('../res/workflows/images/sensor_tips.png')},
     {name: "dark", image:require('../res/workflows/images/dark.png')},
     {name: "fss", image:require('../res/workflows/images/fss.png')},

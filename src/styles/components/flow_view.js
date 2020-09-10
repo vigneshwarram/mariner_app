@@ -3,13 +3,10 @@
  */
 import React from "react";
 import {Animated, View, Dimensions} from "react-native";
-import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
-
 // Import the supported views
 import OverlayViews from '../../boot/flows';
 import GestureRecognizer from "react-native-swipe-gestures";
 import {EventRegister} from "react-native-event-listeners";
-
 // Default style sheet
 import Style from '../../styles/base/index';
 

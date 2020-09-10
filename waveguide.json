@@ -70,7 +70,7 @@
         }
       ]
     },
-
+    
     "waveguide_gateway_models": [
       {
         "gateway_name": "XB6",
@@ -1149,7 +1149,13 @@
             }
           ]
         }
-      ]
+      ],
+      "tips_Description":{
+        "dark_exxception":"Too dark to scan. Try turning on the lights or moving to a well-lit area.",
+        "move_exception":"Device moving too fast. Try moving more slowly.",
+        "sensor_block":"Looks like the sensor is blocked. Try moving your finger or adjusting the device’s position.."
+
+      }
     }
   }
 }

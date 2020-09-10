@@ -4,7 +4,6 @@
  */
 
 import React from "react";
-import {Alert, Platform} from 'react-native';
 import {
     ViroARScene,
     ViroConstants,
@@ -431,7 +430,7 @@ class Scene extends React.Component {
             this.setState({
                 tracking: global.const.AR_TRACKING_TYPE_NORMAL, needsRender:true
             });
-            global.AREvents.emit({name:'Close_popup', data:''});
+            global.AREvents.emit({name:global.const.OPTIMIZATION_TIPS, data:''});
             // AR is tracking
             global.AREvents.emit({name:global.const.AR_TRACKING, data: global.const.AR_TRACKING_TYPE_NORMAL});
         }
@@ -440,23 +439,23 @@ class Scene extends React.Component {
                 tracking: global.const.AR_TRACKING_TYPE_NONE
             });
               if(reason===4){
-                global.AREvents.emit({name:'Internal_track', data: {value:' Too dark to scan. Try turning on the lights or moving to a well-lit area.',status:true}});
+                global.AREvents.emit({name:global.const.OPTIMIZE_EXECPTION, data: {value:global.configuration.get("newStatic_ar_flow").tips_Description.dark_exxception,status:true}});
               }
               else if(reason===2){
-                global.AREvents.emit({name:'Internal_track', data: {value:'Device moving too fast. Try moving more slowly.',status:true}});
+                global.AREvents.emit({name:global.const.OPTIMIZE_EXECPTION, data: {value:global.configuration.get("newStatic_ar_flow").tips_Description.move_exception,status:true}});
               }
               else if(reason===3) {
-                global.AREvents.emit({name:'Internal_track', data: {value:' Looks like the sensor is blocked. Try moving your finger or adjusting the device’s position..',status:true}});
+                global.AREvents.emit({name:global.const.OPTIMIZE_EXECPTION, data: {value:global.configuration.get("newStatic_ar_flow").tips_Description.sensor_block,status:true}});
               }
               else{
-                global.AREvents.emit({name:'Internal_track', data: {value:global.t.$.AR.CALIBRATING,status:true}});
+                global.AREvents.emit({name:global.const.OPTIMIZE_EXECPTION, data: {value:global.t.$.AR.CALIBRATING,status:true}});
               }
             // AR is not tracking
           
            // global.AREvents.emit({name:global.const.AR_TRACKING, data: global.const.AR_TRACKING_TYPE_NONE});
         }
         else if (state === ViroConstants.TRACKING_LIMITED) {
-            global.AREvents.emit({name:'Internal_track', data: {value:global.t.$.AR.CALIBRATING,status:true}});
+            global.AREvents.emit({name:global.const.OPTIMIZE_EXECPTION, data: {value:global.t.$.AR.CALIBRATING,status:true}});
             this.setState({
                 tracking: global.const.AR_TRACKING_TYPE_NONE
             });
