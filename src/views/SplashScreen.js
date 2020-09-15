@@ -15,7 +15,6 @@ import {
 import DeviceInformation from '../app_code/diagnostics/deviceinfo';
 
 // Default style sheet
-import Style from '../styles/views/default'
 
 // Import the main parts of each view
 import Splash from "../styles/components/splash";
@@ -64,15 +63,7 @@ export default class SplashScreen extends React.Component {
     state = {
         appState: AppState.currentState
       }
-       // View about to unmount
-       componentWillUnmount() {
-        //   AppState.removeEventListener('change', this._handleAppStateChange);
-        //  Linking.removeEventListener('url', this.handleUrl);
-    }
- 
-    // View has been updated
-    componentDidUpdate() {
-    }
+
     BasicFlow(){
      // Check the local storage
      global.storage.getData(global.const.STORAGE_KEY_CONFIG, value => {
@@ -129,7 +120,6 @@ export default class SplashScreen extends React.Component {
             //this.props.navigation.dispatch(this.Global.resetNavigation('Register'));
             Linking.getInitialURL().then(url => {
                 if(url!=null){
-                    console.log('nextAppState',url)
                     // Clear the global options
                     global.state.clearWorkOrders();
                     global.configuration.reset();
@@ -141,13 +131,14 @@ export default class SplashScreen extends React.Component {
                         global.const.STORAGE_KEY_APP_VERSION,
                         global.const.STORAGE_KEY_BUILD_NUMBER
                     ]);
-                   this.navigate(url)
+                   this.DeepLinikNavigate(url)
                 }        
             })
           
       }
     }
-    getRetriveData =()=>{
+    //launch first time
+    InitialLaunchDeepLink =()=>{
         this.Http.getQuery(global.configuration.get("wsbretriveUrl"),(data)=>{
             if(data!='' && data!=undefined && data!=null){
                 global.state.clearWorkOrders();
@@ -169,13 +160,13 @@ export default class SplashScreen extends React.Component {
                 })    
                 const getLinkValue=modifiedArray[0];
                 AsyncStorage.setItem('registerFirstTime', JSON.stringify(getLinkValue));
-                this.url(getLinkValue)
+                this.urlLaunch(getLinkValue)
                 console.log('data',getLinkValue)
             }
             else{
                 Linking.getInitialURL().then(url => {
                     if (url !== null) {
-                        this.navigate(url);
+                        this.DeepLinikNavigate(url);
                     } else {
                         // Check the local storage
                        this.BasicFlow();
@@ -187,7 +178,7 @@ export default class SplashScreen extends React.Component {
             })
      
     }
-    url(params){
+    urlLaunch(params){
         if(params.w != null && params.w !== ""){
             console.log('params.w',params.w)
             //store the w value for refrenece code
@@ -214,11 +205,7 @@ export default class SplashScreen extends React.Component {
                         global.storage.getData(global.const.STORAGE_KEY_APP_VERSION, (build_version) => {
                             if (this.DeviceInfo.buildVersion === build_version) {
                                 global.storage.getData(global.const.STORAGE_KEY_REG_CODE, (reg_code) => {
-
                                     if (reg_code === params.s) {
-
-                                        //this.callRegCodeIsSame(params)
-
                                         // Clear the global options
                                         global.state.clearWorkOrders();
                                         global.configuration.reset();
@@ -230,20 +217,15 @@ export default class SplashScreen extends React.Component {
                                             global.const.STORAGE_KEY_APP_VERSION,
                                             global.const.STORAGE_KEY_BUILD_NUMBER
                                         ]);
-
-
                                         this.Http.get(this.Register.generate(reg_code), (response) => {
-
                                             if (response != null && response.responseCode === 200 && response.configuration != null) {
                                                 console.log("response.configuration-->", response.configuration)
                                                 if (this.Register.isLicensed(response.configuration)) {
                                                     this.Configuration.merge(response.configuration);
                                                     this.Workflows.update();
-
                                                     this.Global.set("tech_id", this.DeviceInfo.uuid);
                                                     this.Global.set("registration_code", reg_code);
                                                     this.Global.set("language", "en");
-
                                                     // Store information
                                                     global.storage.storeData(global.const.STORAGE_KEY_CONFIG, JSON.stringify(response.configuration));
                                                     global.storage.storeData(global.const.STORAGE_KEY_REG_CODE, reg_code);
@@ -313,8 +295,6 @@ export default class SplashScreen extends React.Component {
                         });
                     }
                     else {
-                        //this.props.navigation.dispatch(this.Global.resetNavigation('Register'));
-
                         this.Http.get(this.Register.generate(params.s), (response) => {
 
                             if (response != null && response.responseCode === 200 && response.configuration != null) {
@@ -371,55 +351,8 @@ export default class SplashScreen extends React.Component {
 
             } else {
                 // Checking is value Not present in ISP network List
-                global.storage.getData(global.const.STORAGE_KEY_CONFIG, value => {
-                    if (this.Configuration.isValidConfig(value)) {
-                        global.storage.getData(global.const.STORAGE_KEY_APP_VERSION, (build_version) => {
-                            if (this.DeviceInfo.buildVersion === build_version) {
-                                global.storage.getData(global.const.STORAGE_KEY_REG_CODE, (reg_code) => {
-                                    this.Http.getWithTimeout(this.Register.generate(reg_code), 5000).then((initialResponse) => initialResponse.json()).then((response) => {
-                                        if (response != null && response.responseCode === 200 && response.configuration != null) {
-                                            if (this.Register.isLicensed(response.configuration)) {
-                                                this.Configuration.merge(response.configuration);
-                                                this.Workflows.update();
-                                                global.storage.storeData(global.const.STORAGE_KEY_CONFIG, JSON.stringify(response.configuration));
-                                                this.props.navigation.dispatch(this.Global.resetNavigation("GuidedView"));
-                                            }
-                                            else {
-                                                this.Message.sendAlert('Registration', global.t.get$('STATUS.REGISTRATION_ERROR'), 'OK');
-                                                this.props.navigation.dispatch(this.Global.resetNavigation('Register'));
-                                            }
-                                        } else {
-                                            this.failedRegistration(value);
-                                        }
-                                    }).catch(() => {
-                                        this.failedRegistration(value);
-                                    });
-
-                                    global.storage.getData(global.const.STORAGE_KEY_TECHID, (id) => {
-                                        this.Global.set("tech_id", id);
-                                    });
-                                    global.storage.getData(global.const.STORAGE_KEY_REG_CODE, (code) => {
-                                        this.Global.set("registration_code", code);
-                                    });
-                                    global.storage.getData(global.const.STORAGE_KEY_LANGUAGE, (lang) => {
-                                        this.Global.set("language", lang);
-                                        let languageUrl = global.configuration.get("wsbLanguageUrl");
-                                        if (languageUrl) {
-                                            global.t.$load(global.functions.replace("{0}{1}.json", [languageUrl, lang]))
-                                        }
-                                    });
-                                });
-                            } else {
-                                this.props.navigation.dispatch(this.Global.resetNavigation('Register'));
-                            }
-                        });
-                    }
-                    else {
-                        this.props.navigation.dispatch(this.Global.resetNavigation('Register'));
-                    }
-                });
+                this.BasicFlow()
             }
-
         }
 
     }
@@ -428,31 +361,27 @@ export default class SplashScreen extends React.Component {
     AppState.addEventListener('change', this._handleAppStateChange);
   
     Linking.addEventListener('url', event => {
-        console.log('URL', event.url)
-        this.navigate(event.url)
+        this.DeepLinikNavigate(event.url)
     })
    // Linking.addEventListener('url', this.handleUrl);
         service_value=global.t.get$("HEADER.CHANGE_SERVICE_PROVIDER")
         service_message=global.t.get$("STATUS.CHANGE_INTERNET_SERVICE_PROVIDER");
       let alreadyLaunchedPage=await AsyncStorage.getItem('registerFirstTime');
       console.log('alreadyLaunchedPage',alreadyLaunchedPage)
-        if(alreadyLaunchedPage===null || alreadyLaunchedPage==='' || alreadyLaunchedPage==='null' || alreadyLaunchedPage===undefined){
-             
-            this.getRetriveData();
-          
+        if(alreadyLaunchedPage===null || alreadyLaunchedPage==='' || alreadyLaunchedPage==='null' || alreadyLaunchedPage===undefined){           
+            this.InitialLaunchDeepLink();        
         }
         else{
           
             Linking.getInitialURL().then(url => {
                 if (url !== null) {
-                    this.navigate(url);
+                    this.DeepLinikNavigate(url);
                 } else {
                     // Check the local storage
                    this.BasicFlow();
                 }
     
             });
-    
     
         }
        
@@ -464,23 +393,21 @@ export default class SplashScreen extends React.Component {
     }
 
    
-    navigate = (url) => {
-        console.log('url---',url)
+    DeepLinikNavigate = (url) => { 
         var regex = /[?&]([^=#]+)=([^&#]*)/g,
             params = {},
             match;
         while (match = regex.exec(url)) {
             params[match[1]] = match[2];
         }
-        console.log(params);
-        console.log("svvalue", params.s)
+       
         if(params.w != null && params.w !== ""){
-            console.log('params.w',params.w)
+           
             //store the w value for refrenece code
             global.storage.storeData(global.const.STORAGE_KEY_W,params.w)
         }
         if(params.c != null && params.c !== ""){
-            console.log('params.w',params.w)
+           
             //store the w value for refrenece code
             global.storage.storeData(global.const.STORAGE_KEY_C,params.c)
         }
@@ -657,60 +584,11 @@ export default class SplashScreen extends React.Component {
 
             } else {
                 // Checking is value Not present in ISP network List
-                global.storage.getData(global.const.STORAGE_KEY_CONFIG, value => {
-                    if (this.Configuration.isValidConfig(value)) {
-                        global.storage.getData(global.const.STORAGE_KEY_APP_VERSION, (build_version) => {
-                            if (this.DeviceInfo.buildVersion === build_version) {
-                                global.storage.getData(global.const.STORAGE_KEY_REG_CODE, (reg_code) => {
-                                    this.Http.getWithTimeout(this.Register.generate(reg_code), 5000).then((initialResponse) => initialResponse.json()).then((response) => {
-                                        if (response != null && response.responseCode === 200 && response.configuration != null) {
-                                            if (this.Register.isLicensed(response.configuration)) {
-                                                this.Configuration.merge(response.configuration);
-                                                this.Workflows.update();
-                                                global.storage.storeData(global.const.STORAGE_KEY_CONFIG, JSON.stringify(response.configuration));
-                                                this.props.navigation.dispatch(this.Global.resetNavigation("GuidedView"));
-                                            }
-                                            else {
-                                                this.Message.sendAlert('Registration', global.t.get$('STATUS.REGISTRATION_ERROR'), 'OK');
-                                                this.props.navigation.dispatch(this.Global.resetNavigation('Register'));
-                                            }
-                                        } else {
-                                            this.failedRegistration(value);
-                                        }
-                                    }).catch(() => {
-                                        this.failedRegistration(value);
-                                    });
-
-                                    global.storage.getData(global.const.STORAGE_KEY_TECHID, (id) => {
-                                        this.Global.set("tech_id", id);
-                                    });
-                                    global.storage.getData(global.const.STORAGE_KEY_REG_CODE, (code) => {
-                                        this.Global.set("registration_code", code);
-                                    });
-                                    global.storage.getData(global.const.STORAGE_KEY_LANGUAGE, (lang) => {
-                                        this.Global.set("language", lang);
-                                        let languageUrl = global.configuration.get("wsbLanguageUrl");
-                                        if (languageUrl) {
-                                            global.t.$load(global.functions.replace("{0}{1}.json", [languageUrl, lang]))
-                                        }
-                                    });
-                                });
-                            } else {
-                                this.props.navigation.dispatch(this.Global.resetNavigation('Register'));
-                            }
-                        });
-                    }
-                    else {
-                        this.props.navigation.dispatch(this.Global.resetNavigation('Register'));
-                    }
-                });
+                this.BasicFlow();
             }
-
         }
 
-
     }
-
 
     //Show if found already registerd any network
     clearAllWorkOrders = (params) => {
@@ -786,9 +664,7 @@ export default class SplashScreen extends React.Component {
             }
         });
 
-
     }
-
     // Load URL s value Network
     loadDeepLinkNetwork = (params) => {
 
@@ -837,7 +713,6 @@ export default class SplashScreen extends React.Component {
 
                     }
 
-
                 }
                 else {
                     this.setState({ form_submitted: false });
@@ -851,18 +726,7 @@ export default class SplashScreen extends React.Component {
         });
     }
 
-    callRegCodeIsSame = (params) => {
-        //  // Clear the global options
-//                                         global.state.clearWorkOrders();
-//                                         global.configuration.reset();
-//                                         global.storage.multiClear([
-//                                             global.const.STORAGE_KEY_CONFIG,
-//                                             global.const.STORAGE_KEY_REG_CODE,
-//                                             global.const.STORAGE_KEY_TECHID,
-//                                             global.const.STORAGE_KEY_LANGUAGE,
-//                                             global.const.STORAGE_KEY_APP_VERSION,
-//                                             global.const.STORAGE_KEY_BUILD_NUMBER
-//                                         ]);
+    callRegCodeIsSame = (params) => { 
         global.storage.getData(global.const.STORAGE_KEY_CONFIG, value => {
             if (this.Configuration.isValidConfig(value)) {
                 global.storage.getData(global.const.STORAGE_KEY_APP_VERSION, (build_version) => {
@@ -874,9 +738,6 @@ export default class SplashScreen extends React.Component {
                                         this.Configuration.merge(response.configuration);
                                         this.Workflows.update();
                                         global.storage.storeData(global.const.STORAGE_KEY_CONFIG, JSON.stringify(response.configuration));
-
-                                        //this.props.navigation.dispatch(this.Global.resetNavigation("GuidedView"));
-
                                         let flowList = response.configuration.flows.map(function (item) {
                                             return item['id'];
                                         });
@@ -931,8 +792,6 @@ export default class SplashScreen extends React.Component {
             }
         });
     }
-
- 
 
     failedRegistration(value) {
         this.Message.showToastMessage(global.t.get$('STATUS.REGISTRATION_COMMUNICATION_ERROR'), 'danger');
