@@ -18,7 +18,10 @@
         "PINS": "PINS",
         "UPLOAD_HEADER": "Télécharger les Données",
         "UPLOAD_TEXT": "Voulez vous télécharger vos données pour les analyser?",
-        "LAST_PIN_REMOVED": "Pin Removed!"
+        "LAST_PIN_REMOVED": "Pin Removed!",
+        "DARK_EXCEPTION":"It’s a bit too dark. Try turning on the lights or opening window coverings.",
+        "MOVE_EXCEPTION" :"Device moving too fast. Try moving more slowly.",
+        "SENSOR_EXCEPTION":"It looks like the camera is blocked. Try moving your fingers out of the way or adjust the devices position in your hand."
     },
     "ACTION": {
         "ASK_LATER": "Ask me later",

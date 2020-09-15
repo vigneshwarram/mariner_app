@@ -441,23 +441,28 @@ class Scene extends React.Component {
                 tracking: global.const.AR_TRACKING_TYPE_NONE
             });
               if(reason===4){
-                global.AREvents.emit({name:global.const.OPTIMIZE_EXECPTION, data: {value:global.const.dark_exxception,status:true}});
+                global.AREvents.emit({name:global.const.OPTIMIZE_EXECPTION, data: {value:global.t.$.AR.DARK_EXCEPTION,status:true}});
               }
               else if(reason===2){
-                global.AREvents.emit({name:global.const.OPTIMIZE_EXECPTION, data: {value:global.const.move_exception,status:true}});
+                global.AREvents.emit({name:global.const.OPTIMIZE_EXECPTION, data: {value:global.t.$.AR.MOVE_EXCEPTION,status:true}});
               }
               else if(reason===3) {
-                global.AREvents.emit({name:global.const.OPTIMIZE_EXECPTION, data: {value:global.const.sensor_block,status:true}});
+                global.AREvents.emit({name:global.const.OPTIMIZE_EXECPTION, data: {value:global.t.$.AR.SENSOR_EXCEPTION,status:true}});
               }
               else{
-                global.AREvents.emit({name:global.const.OPTIMIZE_EXECPTION, data: {value:global.t.$.AR.CALIBRATING,status:true}});
+                  setTimeout(()=>{
+                    global.AREvents.emit({name:global.const.OPTIMIZE_EXECPTION, data: {value:global.t.$.AR.CALIBRATING,status:true}});
+                  },1000)
+               
               }
             // AR is not tracking
           
            // global.AREvents.emit({name:global.const.AR_TRACKING, data: global.const.AR_TRACKING_TYPE_NONE});
         }
         else if (state === ViroConstants.TRACKING_LIMITED) {
-            global.AREvents.emit({name:global.const.OPTIMIZE_EXECPTION, data: {value:global.t.$.AR.CALIBRATING,status:true}});
+            setTimeout(()=>{
+                global.AREvents.emit({name:global.const.OPTIMIZE_EXECPTION, data: {value:global.t.$.AR.CALIBRATING,status:true}});
+              },1000)
             this.setState({
                 tracking: global.const.AR_TRACKING_TYPE_NONE
             });

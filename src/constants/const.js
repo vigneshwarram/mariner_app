@@ -71,10 +71,6 @@ export const SECURITY = "security";
 export const OPTIMIZATION_TIPS = "optimization_tips";
 export const OPTIMIZE_EXECPTION = "optimization_exception";
 
-//tips description
-export const dark_exxception="Too dark to scan. Try turning on the lights or moving to a well-lit area.";
-export const move_exception ="Device moving too fast. Try moving more slowly.";
-export const sensor_block="Looks like the sensor is blocked. Try moving your finger or adjusting the device’s position.";
 // Speedtest event
 export const END_SPEEDTEST = "end_speedtest";
 
