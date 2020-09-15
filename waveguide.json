@@ -440,35 +440,6 @@
         {
           "type": "ar",
           "note": "DO NOT CHANGE THIS ID",
-          "id": "ar-flow-page-2",
-          "image": "https://online.alvernia.edu/wp-content/uploads/2019/02/800x440-201804-EmployeeOnboarding-header-ALV.png",
-          "title": "Find Your WiFi Router",
-          "description": "First, I need you to find your router, so we can mark it's location on the map.\n\n\nWhen you've found it, let me know!",
-          "bumpers": {"previous": {"label": "Previous Step", "switch": "ar-flow-page-2", "enabled": true}, "next": {"label": "I'm Done", "switch": "ar-flow-page-3", "enabled": false}},
-          "actionButtons": [
-            {
-              "position": 4,
-              "label": "What is a router?",
-              "switch": "ar-flow-page-1",
-              "direction": "right"
-            },
-            {
-              "position": 1,
-              "label": "Previous Step",
-              "direction": "left",
-              "switch": "ar-flow-page-instructions"
-            },
-            {
-              "position": 2,
-              "label": "I Found It",
-              "direction": "right",
-              "switch": "ar-flow-page-skip_instructions"
-            }
-          ]
-        },
-        {
-          "type": "ar",
-          "note": "DO NOT CHANGE THIS ID",
           "id": "ar-flow-page-skip_instructions",
           "image": "https://online.alvernia.edu/wp-content/uploads/2019/02/800x440-201804-EmployeeOnboarding-header-ALV.png",
           "title": "Just  a few more things",
@@ -847,56 +818,8 @@
               ]
             }
           ]
-        }
-    ],
-    "newStatic_ar_flow": {
-      "id": "ar-_static_workflow",
-      "views": [
-        {
-          "type": "splash",
-          "id": "ar-flow-page-1",
-          "image": "https://online.alvernia.edu/wp-content/uploads/2019/02/800x440-201804-EmployeeOnboarding-header-ALV.png",
-          "description": "Hi, My name is Vee, I'm your\nVirtual Assistant.\n\nWhat can I help you with today?",
-          "swipe": {
-            "left": "ar-flow-page-instructions"
-          },
-          "actionButtons": [
-            {
-              "position": 4,
-              "label": "Check",
-              "switch": "ar-flow-page-instructions",
-              "width": 305,
-              "direction": "right"
-            },
-            {
-              "position": 2,
-              "label": "I Just want to play",
-              "switch": "exit",
-              "width": 305
-            }
-          ]
         },
-        {
-          "type": "default",
-          "id": "ar-flow-page-instructions",
-          "title": "Here's The Plan",
-          "image": "image6",
-          "description": "\nWe are going to:\n\n- Create a virtual map of your WiFi signal\n\n- Analyse the results\n\n- Help fix your problems",
-          "actionButtons": [
-            {
-              "position": 1,
-              "label": "Previous",
-              "switch": "ar-flow-page-1",
-              "direction": "left"
-            },
-            {
-              "position": 2,
-              "label": "I am ready!",
-              "switch": "ar-flow-page-2",
-              "direction": "right"
-            }
-          ]
-        },
+
         {
           "type": "default",
           "note": "DO NOT CHANGE THIS ID",
@@ -916,7 +839,7 @@
               "position": 1,
               "label": "Previous Step",
               "direction": "left",
-              "switch": "ar-flow-page-instructions"
+              "switch": "ar-flow-page-1"
             },
             {
               "position": 2,
@@ -933,7 +856,7 @@
           "image": "intro",
           "title": "Just  a few more things",
           "bumpers": {"previous": {"label": "Previous Step", "switch": "ar-flow-page-skip_instructions", "enabled": true}, "next": {"label": "Results", "switch": "5", "enabled": false}},
-          "description": "On the next step, we will be using augmented.reality technology, This technology use your camera to show your Wi-dead-spotsin your home.there are few importants tips to know your ahead of time before we jump in.",
+          "description": "On the next step we will be using Augmented Reality technology. This technology uses your camera to show your Wi-Fi dead spots in your home. There are a few important tips to know ahead of time before we jump in.",
           "actionButtons": [
             {
               "position": 4,
@@ -987,71 +910,7 @@
 
             }
           ]
-        },
-        {
-          "type": "ar",
-          "note": "DO NOT CHANGE THIS ID",
-          "id": "ar-flow-page-3",
-          "image": "intro.png",
-          "title": "Test your signal levels",
-          "description": "Let's keep building the map!\n\n\nNow let's see how good your signal is where you use WiFi",
-          "bumpers": {"previous": {"label": "Previous Step", "switch": "ar-flow-page-3", "enabled": true}, "next": {"label": "Results", "switch": "5", "enabled": false}},
-          "actionButtons": [
-            {
-              "position": 1,
-              "label": "Previous Step",
-              "direction": "left",
-              "switch": "ar-flow-page-2"
-            },
-            {
-              "position": 2,
-              "label": "Let's do it",
-              "direction": "right",
-              "switch": [
-                {
-                  "type": "callout",
-                  "text": "Walk to a location that you use WiFi and tap here",
-                  "position": {"right": 15, "bottom": 140},
-                  "size": {"width": 240, "height": "100%"},
-                  "backgroundColor": "#4dbdea",
-                  "textColor": "white",
-                  "point": {"bottom": "right"},
-                  "switch": "close"
-                },
-                {
-                  "type": "callout",
-                  "text": "Great!\nRepeat this in every location where you use WiFi",
-                  "position": {"right": 50, "center": 40},
-                  "size": {"width": 250, "height": "100%"},
-                  "backgroundColor": "#4dbdea",
-                  "textColor": "white",
-                  "switch": "close"
-                }
-              ]
-            }
-          ]
-        },
-        {
-          "type": "summary",
-          "id": "5",
-          "title": "Results",
-          "image": "image6",
-          "description_pass": "TEXT.RESULTS_SUMMARY_PASS",
-          "description_fail": "TEXT.RESULTS_SUMMARY_FAIL",
-          "triggers": "getRecommendationsGatewayOnly",
-          "actionButtons": [
-            {
-              "position": 1,
-              "label": "Back",
-              "switch": "ar-flow-page-3"
-            },
-            {
-              "position": 4,
-              "label": "Gateway Only",
-              "switch": "trigger:getRecommendationsGatewayOnly"
-            }
-          ]
-        },
+        }, 
         {
           "type": "default",
           "id": "ar-flow-page-seeTips1",
@@ -1076,9 +935,9 @@
         {
           "type": "default",
           "id": "ar-flow-page-seeTips2",
-          "title": "Move phone slowly",
+          "title": "Move Phone Slowly",
           "image": "fss",
-          "description": "Try to move the phone slowly,especiall ywhen turning around ",
+          "description": "           Try to move the phone slowly, especially  when turning around.",
           "actionButtons": [
             {
               "position": 1,
@@ -1100,7 +959,7 @@
           "title": "Keep Distance",
           "image": "sensor_tips",
           "bumpers": {"previous": {"label": "Previous Step", "switch": "ar-flow-page-skip_instructions", "enabled": true}, "next": {"label": "Results", "switch": "5", "enabled": false}},
-          "description": "      Keep the phone couple of feet away from.\nall objects.Try not to cover the camera lens  with a finger or set it down during  the process",
+          "description": "         Keep the phone a couple of feet away from all objects. Try not to cover the camera lens with a finger or set it down during the process.",
           "actionButtons": [
             {
               "position": 1,
@@ -1110,7 +969,7 @@
             },
             {
               "position": 2,
-              "label": "Lets begin",
+              "label": "Let's begin",
               "direction": "right",
               "switch": [
                 {
@@ -1149,13 +1008,6 @@
             }
           ]
         }
-      ],
-      "tips_Description":{
-        "dark_exxception":"Too dark to scan. Try turning on the lights or moving to a well-lit area.",
-        "move_exception":"Device moving too fast. Try moving more slowly.",
-        "sensor_block":"Looks like the sensor is blocked. Try moving your finger or adjusting the device’s position.."
-
-      }
-    }
+    ]
   }
 }

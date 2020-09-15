@@ -441,13 +441,13 @@ class Scene extends React.Component {
                 tracking: global.const.AR_TRACKING_TYPE_NONE
             });
               if(reason===4){
-                global.AREvents.emit({name:global.const.OPTIMIZE_EXECPTION, data: {value:global.configuration.get("newStatic_ar_flow").tips_Description.dark_exxception,status:true}});
+                global.AREvents.emit({name:global.const.OPTIMIZE_EXECPTION, data: {value:global.const.dark_exxception,status:true}});
               }
               else if(reason===2){
-                global.AREvents.emit({name:global.const.OPTIMIZE_EXECPTION, data: {value:global.configuration.get("newStatic_ar_flow").tips_Description.move_exception,status:true}});
+                global.AREvents.emit({name:global.const.OPTIMIZE_EXECPTION, data: {value:global.const.move_exception,status:true}});
               }
               else if(reason===3) {
-                global.AREvents.emit({name:global.const.OPTIMIZE_EXECPTION, data: {value:global.configuration.get("newStatic_ar_flow").tips_Description.sensor_block,status:true}});
+                global.AREvents.emit({name:global.const.OPTIMIZE_EXECPTION, data: {value:global.const.sensor_block,status:true}});
               }
               else{
                 global.AREvents.emit({name:global.const.OPTIMIZE_EXECPTION, data: {value:global.t.$.AR.CALIBRATING,status:true}});
