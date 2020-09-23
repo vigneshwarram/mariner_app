@@ -1,6 +1,6 @@
 /**
- * Template for making the overlay views
- * Rename the class
+ * Selector View
+ * Used for naming the location pins
  */
 
 // Import Components
@@ -8,7 +8,7 @@ import React from "react";
 import {
     View,
     Animated,
-    ScrollView
+    ScrollView, ActivityIndicator
 } from 'react-native';
 import {
     Button,
@@ -17,14 +17,13 @@ import {
 
 import { TagSelect } from '../../components/other/Tag';
 
-// Font Awesome 5
-import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
-
 // Default style sheet
 import Style from '../../styles/views/default'
 
 
 export default class SelectorComponent extends React.Component {
+
+    BreakException = {};
 
     eventID = global.Events.generateId();
 
@@ -39,6 +38,8 @@ export default class SelectorComponent extends React.Component {
 
     // Local state
     state = {
+        isLoading: false,
+        isVisible: false,
         allowTags: false,
         selectionMade: false
     };
@@ -61,10 +62,20 @@ export default class SelectorComponent extends React.Component {
             {id:this.eventID, name: global.const.SELECTOR, callback:(state) => {
                 if (state.id) {
                     this.selectedId = state.id;
-                    this.slideIn();
+                    if(this.props.controller.state.liveMode){
+                        this.slideOut();
+                    }
+                    else{
+                        this.slideIn();
+                    }             
                 }
                 else if (state === "show") {
-                    this.slideIn();
+                    if(this.props.controller.state.liveMode){
+                        this.slideOut();
+                    }
+                    else{
+                        this.slideIn();
+                    }
                 }
                 else {
                     this.slideOut();
@@ -103,29 +114,40 @@ export default class SelectorComponent extends React.Component {
      * Slide In
      */
     slideIn() {
-        this.setState({allowTags: true, selectionMade: false});
-        this.textvalue = "";
-        this.selected.clearSelected();
+        this.setState({isLoading: true}, () => {
+            setTimeout(() => {
+            this.setState({allowTags: true, selectionMade: false, isVisible: true}, () => {
+                this.textvalue = "";
+                this.selected.clearSelected();
 
-        if (this.selectedId != null) {
-            let mapItems = global.tracking.mapItems;
-            for (let i=0;i<mapItems.length;i++) {
-                if (mapItems[i].ID === this.selectedId && mapItems[i].location != null && mapItems[i].location.length > 0) {
-                    if (mapItems[i].location[0].id === 1000) {
-                        this.textvalue = mapItems[i].location[0].text;
+                if (this.selectedId != null) {
+                    let mapItems = global.tracking.mapItems.reverse();
+                    try {
+                        mapItems.forEach((item) => {
+                            if (item.ID === this.selectedId && item.location != null && item.location.length > 0) {
+                                if (item.location[0].id === 1000) {
+                                    this.textvalue = item.location[0].text;
+                                }
+                                this.selected.itemsSelected = item.location;
+                                throw this.BreakException;
+                            }
+                        });
+                    } catch (e) {
+                        if (e !== this.BreakException) throw e;
                     }
-                    this.selected.itemsSelected = mapItems[i].location;
                 }
-            }
-        }
 
-        this.forceUpdate();
+                this.setState({isLoading: false});
 
-        this.animatedMargin = new Animated.Value(400);
-        Animated.timing(this.animatedMargin, {
-            toValue: 0,
-            duration: 500
-        }).start();
+                this.animatedMargin = new Animated.Value(400);
+                Animated.timing(this.animatedMargin, {
+                    toValue: 0,
+                    duration: 500,
+                    useNativeDriver: true
+                }).start();
+            });
+            }, 200);
+        });
     }
 
     /**
@@ -147,10 +169,11 @@ export default class SelectorComponent extends React.Component {
     slideOut() {
         Animated.timing(this.animatedMargin, {
             toValue: 400,
-            duration: 500
+            duration: 500,
+            useNativeDriver: true
         }).start(({ finished }) => {
-            this.setState({allowTags: false});
-            this.forceUpdate();
+            this.setState({allowTags: false, isVisible: false});
+            //this.forceUpdate();
         });
 
         // Manually add the text for the location pin
@@ -164,19 +187,19 @@ export default class SelectorComponent extends React.Component {
                 locationMetaData = this.selected.itemsSelected;
             }
             if (this.selectedId != null) {
-                for (let i=0;i<mapItems.length;i++) {
-                    if (mapItems[i].ID === this.selectedId) {
-                        mapItems[i].location = locationMetaData;
+                mapItems.forEach((item) => {
+                    if (item.ID === this.selectedId) {
+                        item.location = locationMetaData;
                     }
-                }
+                });
             }
             else {
                 mapItems[mapItems.length - 1].location = locationMetaData;
             }
             global.tracking.mapItems = mapItems;
         }
+        global.NodeEvents.emit({name: global.const.AR_NODE_UPDATE, data: this.selectedId});
         this.selectedId = null;
-        global.NodeEvents.emit({name: global.const.AR_NODE_UPDATE});
     }
 
     /**
@@ -192,11 +215,20 @@ export default class SelectorComponent extends React.Component {
     render() {
         console.disableYellowBox = true;
 
-        return (
-            <Animated.View style={{backgroundColor: 'white', width: '100%', height: 400, position: 'absolute', bottom: 0, zIndex: 2000, transform: [{translateY: this.animatedMargin}]}}>
-                <Label style={{fontWeight: 'bold', paddingLeft: 20, paddingTop: 10}}>{this.props.title}</Label>
-                <ScrollView style={{marginRight: 20, marginTop: 20, marginLeft: 20, maxHeight: 220}}>
-                    {this.state.allowTags === false &&
+        if (this.state.isVisible) {
+            return (
+                <Animated.View style={{
+                    backgroundColor: 'white',
+                    width: '100%',
+                    height: 400,
+                    position: 'absolute',
+                    bottom: 0,
+                    zIndex: 2000,
+                    transform: [{translateY: this.animatedMargin}]
+                }}>
+                    <Label style={{fontWeight: 'bold', paddingLeft: 20, paddingTop: 10}}>{this.props.title}</Label>
+                    <ScrollView style={{marginRight: 20, marginTop: 20, marginLeft: 20, maxHeight: 220}}>
+                        {this.state.allowTags === false &&
                         <Input ref={c => this.input = c}
                                selectTextOnFocus={true}
                                defaultValue={this.textvalue}
@@ -205,44 +237,80 @@ export default class SelectorComponent extends React.Component {
                                onSubmitEditing={() => this.keyboardDismiss()}
                                onChangeText={(text) => this.addOther(text)}
                         />
-                    }
-                    <TagSelect
-                        data={this.state.allowTags === true ? this.selectorData : []}
-                        max={1}
-                        ref={(selected) => {
-                            this.selected = selected;
-                        }}
-                        onItemPress={(item) => {
-                            this.setState({selectionMade: true});
-                            if (item.label.toLowerCase() === "other") {
-                                this.setState({allowTags: false});
-                                if (this.textvalue === "") this.textvalue = "Point";
-                                setTimeout(() => {
-                                    this.input._root.focus();
-                                }, 100);
-                            }
-                            else {
-                                this.textvalue = "";
-                            }
-                        }}
-                        onMaxError={() => {
-                        }}
-                    />
-                </ScrollView>
-                <View style={{flexDirection: 'column', flex: 1, width: '100%', position: 'absolute', bottom: 20, alignItems: 'center', justifyItems: 'center'}}>
-                    <Button bordered disabled={!this.state.selectionMade}
-                            style={[!this.state.selectionMade ? styles.button_disabled : styles.button, {width: 250, marginBottom: 10}]}
-                            onPress={() => {this.slideOut()}}>
-                        <Text style={[!this.state.selectionMade ? styles.button_disabled_text : styles.button_text]}>{global.t.get$('ACTION.DONE')}</Text>
-                    </Button>
-                    <Button bordered
-                            style={[styles.button, {width: 250}]}
-                            onPress={() => {this.slideOut()}}>
-                        <Text style={styles.button_text}>Skip</Text>
-                    </Button>
+                        }
+                        <TagSelect
+                            data={this.state.allowTags === true ? this.selectorData : []}
+                            max={1}
+                            ref={(selected) => {
+                                this.selected = selected;
+                            }}
+                            onItemPress={(item) => {
+                                this.setState({selectionMade: true});
+                                if (item.label.toLowerCase() === "other") {
+                                    this.setState({allowTags: false});
+                                    if (this.textvalue === "") this.textvalue = "Point";
+                                    setTimeout(() => {
+                                        this.input._root.focus();
+                                    }, 10);
+                                } else {
+                                    this.textvalue = "";
+                                }
+                            }}
+                            onMaxError={() => {
+                            }}
+                        />
+                    </ScrollView>
+                    <View style={{
+                        flexDirection: 'column',
+                        flex: 1,
+                        width: '100%',
+                        position: 'absolute',
+                        bottom: 20,
+                        alignItems: 'center',
+                        justifyItems: 'center'
+                    }}>
+                        <Button bordered disabled={!this.state.selectionMade}
+                                style={[!this.state.selectionMade ? styles.button_disabled : styles.button, {
+                                    width: 250,
+                                    marginBottom: 10
+                                }]}
+                                onPress={() => {
+                                    this.slideOut()
+                                }}>
+                            <Text
+                                style={[!this.state.selectionMade ? styles.button_disabled_text : styles.button_text]}>{global.t.get$('ACTION.DONE')}</Text>
+                        </Button>
+                        <Button bordered
+                                style={[styles.button, {width: 250}]}
+                                onPress={() => {
+                                    this.slideOut()
+                                }}>
+                            <Text style={styles.button_text}>Skip</Text>
+                        </Button>
+                    </View>
+                </Animated.View>
+            );
+        }
+        else if (this.state.isLoading) {
+            return(<View style={{
+                position: 'absolute',
+                top: 300,
+                left: 0,
+                right: 0,
+                bottom: 100,
+                width: '100%',
+                height: '100%',
+                flexDirection: 'column',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                backgroundColor: 'transparent'
+            }}>
+                <View style={{width: 200, height: 200}}>
+                    <ActivityIndicator size="large" color="white" />
                 </View>
-            </Animated.View>
-        );
+            </View>);
+        }
+        return null;
     }
 }
 // Load default styles

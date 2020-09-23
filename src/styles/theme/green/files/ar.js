@@ -40,6 +40,6 @@ export const style = {
         height: 150
     },
     selected: {
-        color: '#4dbdea'
+        color: '#248700'
     }
 };

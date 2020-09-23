@@ -56,6 +56,11 @@ export default class SideMenu extends React.Component {
     }
 
     componentDidMount() {
+        new Style().get(null, (style) => {
+            styles = style;
+            this.forceUpdate();
+        });
+
         console.log('global.t.get$("CHANGE_SERVICE_PROVIDER")',global.t.get$("HEADER.CHANGE_SERVICE_PROVIDER"))
         service_value=global.t.get$("HEADER.CHANGE_SERVICE_PROVIDER")
         service_message=global.t.get$("STATUS.CHANGE_INTERNET_SERVICE_PROVIDER")
@@ -67,7 +72,7 @@ export default class SideMenu extends React.Component {
 
     // Theme system updates
     componentDidUpdate(prevProps, prevState, snapshot) {
-        styles = new Style().get();
+        //styles = new Style().get();
     }
 
     /**

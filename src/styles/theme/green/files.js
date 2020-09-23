@@ -11,3 +11,4 @@ export const FLOW_HEADER = require('./files/flow_header');
 export const CUSTOM_BUTTONS = require('./files/buttons');
 export const NAVIGATION_BUTTONS = require('./files/navigation');
 export const BUMPERS = require('./files/bumpers');
+export const PLACEMENTSCENE = require('./files/placementscene');

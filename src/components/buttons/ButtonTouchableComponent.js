@@ -27,9 +27,10 @@ class ButtonTouchableComponent extends React.Component {
 
     onPress() {
         this.scale();
-        requestAnimationFrame(() => {
-            if (this.props.onPress) this.props.onPress();
-        });
+        this.props.onPress();
+        /*requestAnimationFrame(() => {
+            this.props.onPress();
+        });*/
     }
 
     onLongPress() {
@@ -41,7 +42,7 @@ class ButtonTouchableComponent extends React.Component {
 
     render() {
         return (
-            <TouchableHighlight underlayColor="#00000000" onPress={this.onPress} onLongPress={this.onLongPress} delayLongPress={500}>
+            <TouchableHighlight style={{opacity:this.props.dropPinButtonDisable?0.3:1}} disabled={this.props.dropPinButtonDisable} underlayColor="#00000000" onPress={this.onPress} onLongPress={this.onLongPress} delayLongPress={500}>
                 <View style={{
                     textAlign: 'center',
                     justifyContent: 'center',

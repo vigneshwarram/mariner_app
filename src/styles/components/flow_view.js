@@ -9,11 +9,12 @@ import GestureRecognizer from "react-native-swipe-gestures";
 import {EventRegister} from "react-native-event-listeners";
 // Default style sheet
 import Style from '../../styles/base/index';
-
+let staticView={}
 export default class FlowView extends React.Component {
 
     // Get the overlays
     OverlayViews = new OverlayViews();
+    //new features static data
 
     // Total views that support pagination
     totalViews = 0;
@@ -38,7 +39,7 @@ export default class FlowView extends React.Component {
     constructor(props) {
         super(props);
         this.springValue = new Animated.Value(1.1);
-
+        staticView=global.configuration.get("wifi-optimize");
         this.onSwipeLeft.bind(this);
         this.onSwipeRight.bind(this);
 
@@ -54,13 +55,17 @@ export default class FlowView extends React.Component {
      * On mount construct the views
      */
     componentDidMount() {
-        style = new Style().get("FLOW_HEADER");
+        new Style().get("FLOW_HEADER", (styles) => {
+            style = styles;
+            this.forceUpdate();
+        });
         this.setState({height: Platform.OS === 'ios' ? Math.round(Dimensions.get('window').height)-100 : Math.round(Dimensions.get('window').height)-56});
 
         //this.springValue.setValue(0.6);
         Animated.spring(this.springValue, { toValue: 1, duration: 500 }).start();
 
         if (this.props._flow && this.state.view && this.state.view.length === 0) { this.constructViews(this.props._flow); }
+        if (global.state.flow != null && global.state.flow.id != null) console.log("workflow:" + global.state.flow.id);
     }
 
     // Remove listeners
@@ -146,6 +151,8 @@ export default class FlowView extends React.Component {
                         this.setState({currentView: view.details.pagination - 1});
                     }
                     global.state.bumpers = view.bumpers;
+
+                    console.log("workflow:" + global.state.flow.id + " view:" + view.index);
                 }
             });
         }

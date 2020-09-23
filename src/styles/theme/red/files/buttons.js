@@ -5,6 +5,7 @@ export const style = {
         borderWidth: 1,
         backgroundColor: '#FFFFFF',
         borderColor: '#DA291C',
+        borderRadius: 50,
     },
     button_text: {
         textTransform: 'capitalize',

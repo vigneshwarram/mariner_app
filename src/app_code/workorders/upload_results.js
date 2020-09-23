@@ -4,6 +4,7 @@
 import SiteVisit from "./sitevisit";
 import base64 from "react-native-base64";
 import HttpService from "../http/service";
+import WorkorderBuilder from "./workorder_builder.js";
 
 export default class UploadResults {
 
@@ -43,6 +44,37 @@ export default class UploadResults {
         }
         else {
             callback("failed");
+        }
+    }
+
+    /**
+     * Requests an optimization of the current data in the app
+     * @param algorithmInputDataJSON
+     * @param callback
+     */
+    getRecommendation(algorithmType, callback) {
+        let optimizeUrl = global.configuration.get("wsbOptimizeUrl");
+        let username = global.configuration.get("wsbUsername");
+        let password = global.configuration.get("wsbPassword");
+
+        if(optimizeUrl != null) {
+
+            let algorithmPayload = new WorkorderBuilder().buildRecommendationPayload(algorithmType);
+            let headers = username && password ? {
+                'Authorization': 'Basic ' + base64.encode(username + ":" + password),
+                'Content-Type': 'application/json'
+            } : {
+                'Content-Type': 'application/json'
+            };
+
+            new HttpService().post(optimizeUrl, headers, algorithmPayload, (response) => {
+                response.json().then(responseJson => {
+                    callback(responseJson);
+                });
+            });
+        }
+        else {
+            callback(null);
         }
     }
 }

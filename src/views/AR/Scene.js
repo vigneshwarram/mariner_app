@@ -7,18 +7,13 @@ import React from "react";
 import {
     ViroARScene,
     ViroConstants,
-    ViroMaterials,
-    ViroAnimatedImage,
     ViroImage,
-    ViroAnimations,
-    ViroQuad,
-    ViroARPlane,
-    ViroAmbientLight
+    ViroFlexView
 } from 'react-viro';
 //screeen timer awake 
 import KeepAwake from 'react-native-keep-awake';
 // AR style sheet
-import Style from '../../styles/base/index';
+import Style from '../../styles/views/arscene';
 
 // Event Listener
 import { EventRegister } from 'react-native-event-listeners';
@@ -33,7 +28,7 @@ import Transforms from '../../app_code/ar/classes/transforms';
 import Node from './Node';
 import SimpleNode from './guided/SimpleNode';
 
-class Scene extends React.Component {
+export default class Scene extends React.Component {
 
     // Signal Thresholds
     signalThresholds = new SignalThresholds();
@@ -51,6 +46,9 @@ class Scene extends React.Component {
     cool = false;
     lock = false;
     processing = false;
+    nodes = [];
+
+    needsRendering = true;
 
     // Store node/point/coords information
     pointsCollected = [];
@@ -77,6 +75,9 @@ class Scene extends React.Component {
     //scan interval for signal strength
     scanInterval;
 
+    // Guided flow pin naming
+    guidedPinNaming = false;
+
     // Event listeners
     detailModeListener;
     addPointListener;
@@ -90,7 +91,6 @@ class Scene extends React.Component {
         needsRender: true,
         tracking: 'NONE',
         detailedMode: true,
-        measurement: 'dBm',
         liveMode: false,
         liveModePaused: false,
         nodeItems:[],
@@ -107,8 +107,10 @@ class Scene extends React.Component {
             style: {color: "green"}
         },
 
+        locationPinNaming: false,
         globalNodeUpdate: false,
         nodeOptions: {
+            measurement: 'dBm',
             wifi: true,
             speed: false,
             interference: false
@@ -117,6 +119,14 @@ class Scene extends React.Component {
 
     // Animated icon needed for the nodes
     wifi_animated_icon;
+
+    // Global classes
+    GlobalState = global.state;
+    GlobalClass = global.system;
+    GlobalTracking = global.tracking;
+    GlobalConst = global.const;
+    GlobalConfiguration = global.configuration;
+    maximumPins = global.configuration.get("maximumPins");
 
     /**
      * Constructor
@@ -137,54 +147,15 @@ class Scene extends React.Component {
         this.loadPointConfiguration();
 
         //get signal strength scan interval
-        let interval = global.configuration.get("scanDetailsIntervalMs");
-        this.scanInterval = interval > 2000 ? interval : 2000;
+        let interval = this.GlobalConfiguration.get("scanDetailsIntervalMs");
+        this.scanInterval = interval > 4000 ? interval : 4000;
 
-        // Create the AR Materials needed for the billboard
-        ViroMaterials.createMaterials({
-            bg_excellent: {
-                diffuseTexture: require('../../res/AR/background_excellent.png')
-            },
-            bg_green: {
-                diffuseTexture: require('../../res/AR/background_green.png')
-            },
-            bg_yellow: {
-                diffuseTexture: require('../../res/AR/background_yellow.png')
-            },
-            bg_red: {
-                diffuseTexture: require('../../res/AR/background_red.png')
-            },
-            simple_bg_router: {
-                diffuseTexture: require('../../assets/pins/router_point.png')
-            },
-            simple_bg_mesh: {
-                diffuseTexture: require('../../assets/pins/mesh_point.png')
-            },
-            simple_bg_tv: {
-                diffuseTexture: require('../../assets/pins/tv_point.png')
-            },
-            simple_bg_excellent: {
-                diffuseTexture: require('../../assets/pins/excellent_point.png')
-            },
-            simple_bg_green: {
-                diffuseTexture: require('../../assets/pins/green_point.png')
-            },
-            simple_bg_yellow: {
-                diffuseTexture: require('../../assets/pins/yellow_point.png')
-            },
-            simple_bg_red: {
-                diffuseTexture: require('../../assets/pins/red_point.png')
-            }
-        });
-        ViroAnimations.registerAnimations({
-            jump:{properties:{positionY:"+=2"}, easing:"Bounce", duration: 500},
-            land:{properties:{positionY:"-=2"}, easing:"Bounce", duration:500},
-            shadedYellow:{properties:{color:"#fff33e"}, easing:"Linear", duration:500},
-            shadedRed:{properties:{color:"#ff2a21"}, easing:"Linear", duration:500},
-            jumpAndLand:[
-                ["jump", "land"]
-            ]
-        });
+        // Guided flow pin naming
+        this.guidedPinNaming = global.configuration.get("guidedPinNaming");
+
+        // Set up the AR navigation using the initial scene (weird, but needs to be done)
+        global.state.set("AR_NAVIGATOR", this.props.sceneNavigator);
+
     }
 
     /**
@@ -196,39 +167,51 @@ class Scene extends React.Component {
         global.AREvents.subscribe([
 
             // Scene updates
-            {id:this, name: global.const.AR_SCENE_STATE_UPDATE, callback:(state) => {
-                    this.setState(state); global.NodeEvents.emit({name:global.const.AR_NODE_UPDATE});}}
+            {id:this, name: this.GlobalConst.AR_SCENE_STATE_UPDATE, callback:(state) => {
+                this.setState(state, () => {
+                    global.NodeEvents.emit({name:'AR_UPDATE_NODE_OPTIONS', data: state});
+                });
+            }},
+
+            // Generic options update
+            {id:this, name: "AR_CHANGE_STATE_OPTIONS", callback:(state) => {
+                    this.setState(state);
+            }}
         ]);
 
         // Set up button events
         global.ButtonEvents.subscribe([
 
             // Delete Nodes Event
-            {id:this, name: global.const.AR_DELETE_ALL_POINTS, callback:(data) => {
+            {id:this, name: this.GlobalConst.AR_DELETE_ALL_POINTS, callback:(data) => {
                     if (data === "undo") {
-                        global.tracking.undo();
+                        this.GlobalTracking.undo();
                         this.pointsCollected.pop();
                         this.state.nodeItems.pop();
-                        this.setState({needsRender: true});
+                        this.lastDropped = null;
+                        this.needsRender();
                     }
                     else {
                         this.pointsCollected = [];
-                        this.setState({nodeItems: [], needsRender: true});
-                        global.tracking.clearAll();
+                        this.lastDropped = null;
+                        this.setState({nodeItems: []});
+                        this.needsRender();
+                        this.GlobalTracking.clearAll();
                     }
 
-                    EventRegister.emit(global.const.AR_UPDATE_HEAT_MAP_ITEMS, null);
+                    EventRegister.emit(this.GlobalConst.AR_UPDATE_HEAT_MAP_ITEMS, null);
                     this.coolDownTimeout();}}
         ]);
 
         // Change the AR objects based on user selected detail
-        this.detailModeListener = EventRegister.addEventListener(global.const.AR_DETAILED_TOGGLE, (data) => {
-            this.setState({detailedMode: data, needsRender:true});
-            global.NodeEvents.emit({name:global.const.AR_NODE_UPDATE});
+        this.detailModeListener = EventRegister.addEventListener(this.GlobalConst.AR_DETAILED_TOGGLE, (data) => {
+            this.setState({detailedMode: data}, () => {
+                global.NodeEvents.emit({name:'AR_UPDATE_NODE_OPTIONS', data: {detailedMode: data}});
+            });
         });
 
         // Toggle the live/manual modes
-        this.addPointListener = EventRegister.addEventListener(global.const.AR_ADD_POINT, (data) => {
+        this.addPointListener = EventRegister.addEventListener(this.GlobalConst.AR_ADD_POINT, (data) => {
             this.coolDownTimeout();
             this.getLatestSignal(
                 this.lastTransform,
@@ -236,34 +219,25 @@ class Scene extends React.Component {
                 true,
                 this.getTransformInformation(this.lastTransform, this.lastPosition));
 
-            /*let randomNumber = [
-                Math.round((Math.random() *30) -40),
-                Math.round((Math.random() *10) -10),
-                Math.round((Math.random() *20) -20)
-            ];
-            let randomNumber2 = Math.round((Math.random() *-30) -65);
-            this.getLatestSignal({cameraTransform:{position:[randomNumber[0],0,randomNumber[2]]}},
-                true,
-                true,
-                this.getTransformInformation({cameraTransform:{position:[randomNumber[0],0,randomNumber[2]]}}, this.lastPosition),
-                {highlight:true, signal:randomNumber2, mapCoords:[]});*/
-            global.tracking.modified = true;
+
+            this.GlobalTracking.modified = true;
         });
 
         // Toggle the live/manual modes
-        this.toggleLiveListener = EventRegister.addEventListener(global.const.AR_TOGGLE_LIVEMODE, (data) => {
+        this.toggleLiveListener = EventRegister.addEventListener(this.GlobalConst.AR_TOGGLE_LIVEMODE, (data) => {
             this.setState({liveMode:data});
         });
 
         // Toggle the live state .. play/pause
-        this.pauseLiveListener = EventRegister.addEventListener(global.const.AR_PAUSE_LIVEMODE, (data) => {
+        this.pauseLiveListener = EventRegister.addEventListener(this.GlobalConst.AR_PAUSE_LIVEMODE, (data) => {
             this.setState({liveModePaused:data});
         });
 
         // Update the detailed node options
-        this.nodeOptionsListener = EventRegister.addEventListener(global.const.AR_NODE_OPTIONS, (data) => {
-            this.setState({nodeOptions:data, needsRender:true});
-            global.NodeEvents.emit({name:global.const.AR_NODE_UPDATE});
+        this.nodeOptionsListener = EventRegister.addEventListener(this.GlobalConst.AR_NODE_OPTIONS, (data) => {
+            this.setState({nodeOptions:data}, () => {
+                global.NodeEvents.emit({name:'AR_UPDATE_NODE_OPTIONS', data: {nodeOptions:data}});
+            });
         });
     }
 
@@ -291,24 +265,7 @@ class Scene extends React.Component {
         // Set a polling interval for wifi details
         this.wifiNetworkUpdateInterval = setInterval(() => {
             this.updateConnectionDetails();
-        }, 1000);
-
-
-        // Register the AR Animated Image properties
-        /*ViroAnimations.registerAnimations({
-            scale_up:{properties:{positionY:0.4},
-                easing:"Bounce",
-                duration: 250},
-            scale_down:{properties:{positionY:"+=0.1"},
-                easing:"Bounce",
-                duration: 500},
-            bounce_image:[
-                ["scale_up", "scale_down"]
-            ]
-        });*/
-
-        // Create the animated image for the nodes
-        this.wifi_animated_icon = this.getAnimatedWifiIcon();
+        }, 2000);
     }
 
     // View about to unmount
@@ -335,12 +292,12 @@ class Scene extends React.Component {
      * @returns {boolean}
      */
     shouldComponentUpdate(nextProps, nextState) {
-        if (!this.state.needsRender) {
-            return false;
+        if (this.needsRendering) {
+            this.needsRendering = false;
+            return true;
         }
         else {
-            this.setState({needsRender: false});
-            return true;
+            return false;
         }
     }
 
@@ -456,7 +413,7 @@ class Scene extends React.Component {
                
               }
             // AR is not tracking
-          
+
            // global.AREvents.emit({name:global.const.AR_TRACKING, data: global.const.AR_TRACKING_TYPE_NONE});
         }
         else if (state === ViroConstants.TRACKING_LIMITED) {
@@ -466,7 +423,7 @@ class Scene extends React.Component {
             this.setState({
                 tracking: global.const.AR_TRACKING_TYPE_NONE
             });
-            
+
         }
     }
 
@@ -477,14 +434,14 @@ class Scene extends React.Component {
      * @private
      */
     onTransformed(transform) {
-   
+
         global.tracking.moving = (distance(transform, this.lastTransform) > 0) ? 1 : 0
         //if (this.wifi_animated_icon == null) return;
 
         // Check the rendering order and
         // update the latest transform
         this.checkLatestTransform(transform);
-        global.tracking.current = transform.cameraTransform.position;
+        this.GlobalTracking.current = transform.cameraTransform.position;
         //global.tracking.currentCamera = transform.cameraTransform;
 
         // Update the signal strength information
@@ -492,7 +449,7 @@ class Scene extends React.Component {
             this.ssUpdated = true;
             this.wifi.getCurrentSignalStrength((level) => {
                 let currentSignal = this.getSignalStyle(level);
-                global.AREvents.emit({name:global.const.AR_WIFI_DETAILS_HEADER, data:{
+                global.AREvents.emit({name:this.GlobalConst.AR_WIFI_DETAILS_HEADER, data:{
                         name: this.state.ssid,
                         signal: level.toString(),
                         color: currentSignal,
@@ -507,7 +464,7 @@ class Scene extends React.Component {
                 // Get latest link speed
                 this.wifi.getLinkSpeed((speed) => {
                     this.setState({linkSpeed: speed.toString()});
-                    EventRegister.emit(global.const.AR_WIFI_LINK_SPEED, speed);
+                    EventRegister.emit(this.GlobalConst.AR_WIFI_LINK_SPEED, speed);
                 });
 
                 // Launch timer to wait for next request
@@ -578,6 +535,9 @@ class Scene extends React.Component {
         let y = Number(this.configuration.points.position[1]);
         let z = Number(this.configuration.points.position[2]);
         transformInformation.thresholds = [x, y, z];
+
+        this.GlobalTracking.current = transform.cameraTransform.position;
+        this.GlobalTracking.currentCamera = transform.cameraTransform;
 
         return transformInformation;
     }
@@ -685,52 +645,57 @@ class Scene extends React.Component {
             });
         }
 
-        try {
-            let pointType = global.system.Pins.get.name;
+            try {
+                let pointType = global.system.Pins.get.name;
 
-            // Update the last geolocation from tracking
-            this.lastPosition = global.tracking.location;
+                // Update the last geolocation from tracking
+                this.lastPosition = this.GlobalTracking.location;
 
-            // Adjust the location of the node's Y axis
-            if (transform) transform.cameraTransform.position[1] -= Number(this.configuration.points.y_offset);
+                // Adjust the location of the node's Y axis
+                if (transform) transform.cameraTransform.position[1] -= Number(this.configuration.points.y_offset);
+                transform.cameraTransform.position[1] += 2;
 
             // Get the node style information
             let node = this.getSignalStyle(Number(iParams.signal ? iParams.signal : this.state.lastSignal));
             let ID = global.functions.generateGuid();
 
-            // Generate some child keys for the child elements
-            let children_keys = [];
-            for (let i=0;i<5;i++) {
-                children_keys.push(global.functions.generateGuid());
-            }
+                // Generate some child keys for the child elements
+                let children_keys = [];
+                for (let i=0;i<5;i++) {
+                    children_keys.push(global.functions.generateGuid());
+                }
 
-            let pin = global.system.Pins.get;
-            if((global.state.ARMode === global.const.AR_WORKFLOW_MODE && this.state.nodeItems.length === 0) || (iParams.type && iParams.type === "router")) {
-                pointType = "router";
-                node.material = ["simple_bg_router"];
-            }
+                let pin = global.system.Pins.get;
+                if((global.state.ARMode === global.const.AR_WORKFLOW_MODE && this.state.nodeItems.length === 0) || (iParams.type && iParams.type === "router")) {
+                    pointType = "router";
+                    node.material = ["simple_bg_router"];
+                }
 
-            // Populate the nodeInformation object
-            let collectedInformation = {
-                key_value: ID,
-                level: this.state.lastSignal,
-                freq: this.state.freq ? (this.state.freq < 2500 ? this.translation["2.4"] : this.translation["5.0"]) : "",
-                ssid: this.state.ssid ? this.state.ssid.toString() : "",
-                bssid: this.state.bssid ? this.state.bssid.toString() : "",
-                percent: this.convertSignalToPercent(iParams.signal ? iParams.signal.toString() : this.state.lastSignal).toString(),
-                linkspeed: this.state.linkSpeed,
-                interference: this.state.lastInterference,
-                position: transform.cameraTransform.position,
-                camera: transform.cameraTransform,
-                pinType: pin,
-                pointType: pointType,
-                show: showpoint,
-                node: node,
-                child_keys: children_keys,
-                marker: iParams.mapCoords  && iParams.mapCoords.length >= 1 ? iParams.mapCoords : global.tracking.heatmapNode,
-                highlight: iParams.highlight ? iParams.highlight : false
-            };
-            let nodeInformation = Object.assign({}, node, collectedInformation);
+                // Populate the nodeInformation object
+                let collectedInformation = {
+                    updateTime: ((this.state.nodeItems.length+1)*100)+(this.state.nodeItems.length+1)+300,
+                    key_value: ID,
+                    nodeOptions: this.state.nodeOptions,
+                    detailedMode: this.state.detailedMode,
+                    pinNaming: global.state.ARMode === global.const.AR_WORKFLOW_MODE ? this.guidedPinNaming : this.state.locationPinNaming,
+                    level: this.state.lastSignal,
+                    freq: this.state.freq ? (this.state.freq < 2500 ? this.translation["2.4"] : this.translation["5.0"]) : "",
+                    ssid: this.state.ssid ? this.state.ssid.toString() : "",
+                    bssid: this.state.bssid ? this.state.bssid.toString() : "",
+                    percent: this.convertSignalToPercent(this.state.lastSignal).toString(),
+                    linkspeed: this.state.linkSpeed,
+                    interference: this.state.lastInterference,
+                    position: transform.cameraTransform.position,
+                    camera: transform.cameraTransform,
+                    pinType: pin,
+                    pointType: pointType,
+                    show: showpoint,
+                    node: node,
+                    child_keys: children_keys,
+                    marker: this.GlobalTracking.heatmapNode,
+                    highlight: false
+                };
+                let nodeInformation = Object.assign({}, node, collectedInformation);
 
             // Push the node object to the array
             this.setState({
@@ -747,28 +712,35 @@ class Scene extends React.Component {
             // Update the header
             EventRegister.emit(global.const.AR_WIFI_DETAILS_HEADER_UPDATE, this.state.lastSignal);
 
-            // Update the global map item positioning for the mapping
-            if (transformInformation) {
-                transformInformation.ID = ID;
-                transformInformation.heatmapCoords = iParams.mapCoords  && iParams.mapCoords.length >= 1 ? iParams.mapCoords : global.tracking.heatmapNode;
-                transformInformation.style = nodeInformation.color;
-                transformInformation.pathStyle = nodeInformation.pathColor;
-                this.pointsCollected.push(transformInformation);
+                // Update the global map item positioning for the mapping
+                if (transformInformation) {
+                    transformInformation.ID = ID;
+                    transformInformation.heatmapCoords = this.GlobalTracking.heatmapNode;
+                    transformInformation.style = nodeInformation.color;
+                    transformInformation.pathStyle = nodeInformation.pathColor;
+                    let maximumPins=global.configuration.get("maximumPins");
+                    if(this.pointsCollected.length<maximumPins){
+                        this.pointsCollected.push(transformInformation);
+                        let allNodes = global.tracking.allNodeData;
+                        allNodes.push({time: global.functions.getCurrentTimeStamp(), data: nodeInformation, transform: transformInformation});
+                        global.tracking.allNodeData = allNodes;
 
-                // Send the point information to the tracking global class to be accessed later when upload the work order
-                let allNodes = global.tracking.allNodeData;
-                allNodes.push({time: global.functions.getCurrentTimeStamp(), data: nodeInformation, transform: transformInformation});
-                global.tracking.allNodeData = allNodes;
+                    }
+                    this.GlobalTracking.mapItems = this.pointsCollected.slice(0);
+                }
+
+                this.setState({nodeItems: this.state.nodeItems.concat({key: ID, order: -1, details: nodeInformation, node:
+                            global.state.ARMode === global.const.AR_WORKFLOW_MODE ?
+                                <SimpleNode index={this.state.nodeItems.length} key={global.functions.generateGuid()} keyIndex={ID} controller={this} wifiNode={nodeInformation} link {...this.props}/> :
+                                <Node index={this.state.nodeItems.length} key={global.functions.generateGuid()} keyIndex={ID} controller={this}
+                                      wifiNode={nodeInformation} link {...this.props}/>})}, () => {
+                    EventRegister.emit(this.GlobalConst.AR_UPDATE_HEAT_MAP_ITEMS);
+                    this.needsRender();
+                });
+                // Cool down the manager
+                this.coolDownTimeout();
             }
-
-            // Put the latest map tracking items into the global tracking class
-            global.tracking.mapItems = this.pointsCollected.slice(0);
-            EventRegister.emit(global.const.AR_UPDATE_HEAT_MAP_ITEMS);
-
-            // Cool down the manager
-            this.coolDownTimeout();
-        }
-        catch(error) {this.coolDownTimeout();}
+            catch(error) {this.coolDownTimeout();}
     }
 
     /**
@@ -975,22 +947,6 @@ class Scene extends React.Component {
     }
 
     /**
-     * Get the animated WIFI icon
-     * @returns {*}
-     */
-    getAnimatedWifiIcon() {
-        return (
-            <ViroAnimatedImage
-                height={0.6}
-                width={0.8}
-                source={require('../../res/animations/wifi_animated_icon_button.gif')}
-                animation={{name:'bounce_image',
-                    run:true, loop:true}}
-            />
-        )
-    }
-
-    /**
      * Get the wifi icon that matches the level
      * @param level
      * @returns {*}
@@ -1091,21 +1047,27 @@ class Scene extends React.Component {
     }
 
     /**
+     * Update the rendering
+     */
+    needsRender() {
+        if (!this.needsRendering) {
+            this.needsRendering = true;
+        }
+    }
+
+    /**
      * Main renderer
      * @returns {*}
      */
     render() {
         return (
-            <ViroARScene ref="AR_SCENE" onClick={this.onScreenSelected} onTrackingUpdated={this.onInitialized} onCameraTransformUpdate={this.onTransformed}>
-                {this.state.nodeItems.map((wifiNode) => {
-                    return(wifiNode.node)
-                })}
+            <ViroARScene onClick={this.onScreenSelected} onTrackingUpdated={this.onInitialized} onCameraTransformUpdate={this.onTransformed}>
+                <>{this.state.nodeItems.map(item => item.node)}</>
             </ViroARScene>
         );
     }
 }
 
 // Load AR Styles
-const styles = new Style().get("ARSCENE");
-
+const styles = new Style().get();
 module.exports = Scene;

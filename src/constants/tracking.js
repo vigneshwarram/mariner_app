@@ -5,7 +5,7 @@
 //import * as Location from "expo-location";
 //import {accelerometer, magnetometer, SensorTypes, setUpdateIntervalForType} from "react-native-sensors";
 
-import {Canvas} from 'react-three-fiber';
+//import {Canvas} from 'react-three-fiber';
 
 // Distance
 const distance = require('euclidean-distance');

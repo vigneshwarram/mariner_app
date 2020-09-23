@@ -18,6 +18,19 @@ export default class AnimatedStackView extends React.Component {
     // Set up the listeners
     constructor(props) {
         super(props);
+    }
+
+    // Remove the listeners
+    componentWillUnmount() {
+        EventRegister.removeEventListener(this.popupBubbleTimer);
+    }
+
+    // Disable the back button
+    componentDidMount(){
+        new Style().get(null, (style) => {
+            styles = style;
+            this.forceUpdate();
+        });
 
         this.springValue = new Animated.Value(0.6);
         this.popListener = EventRegister.addEventListener('APPLICATION_INTERNAL_POPUP_BUBBLE', (data) => {
@@ -34,20 +47,6 @@ export default class AnimatedStackView extends React.Component {
                 }, data.timeout);
             }
         });
-    }
-
-    // Remove the listeners
-    componentWillUnmount() {
-        BackHandler.removeEventListener('hardwareBackPress', () => {return true});
-        EventRegister.removeEventListener(this.popupBubbleTimer);
-    }
-
-    // Disable the back button
-    componentDidMount(){
-        styles = new Style().get();
-
-        // Disable the back button for all views
-        BackHandler.addEventListener('hardwareBackPress', () => {return true});
     }
 
     render() {

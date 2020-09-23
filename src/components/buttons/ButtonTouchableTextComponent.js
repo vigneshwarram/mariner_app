@@ -27,9 +27,10 @@ class ButtonTouchableTextComponent extends React.Component {
 
     onPress() {
         this.scale();
-        requestAnimationFrame(() => {
+        this.props.onPress();
+        /*requestAnimationFrame(() => {
             this.props.onPress();
-        });
+        });*/
     }
 
     render() {

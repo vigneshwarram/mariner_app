@@ -33,15 +33,26 @@ export default class _Styles {
     /**
      * Get stylesheet
      * @param style
+     * @param callback
      */
-    get(style=null) {
+    get(style=null, callback=null) {
         if (style) {
             let currentStyle = this._style;
             this._style = Object.assign({}, currentStyle, this._files[style].style);
-            return StyleSheet.create(this._style);
+            if (callback) {
+                callback(StyleSheet.create(this._style));
+            }
+            else {
+                return StyleSheet.create(this._style);
+            }
         }
         else {
-            return StyleSheet.create(this._style);
+            if (callback) {
+                callback(StyleSheet.create(this._style));
+            }
+            else {
+                return StyleSheet.create(this._style);
+            }
         }
     }
 }

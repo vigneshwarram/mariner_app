@@ -12,7 +12,10 @@ export default class NavigationButtons extends React.Component {
     Global = Global_State.getInstance();
 
     componentDidMount() {
-        styles = new Style().get("NAVIGATION_BUTTONS");
+        new Style().get("NAVIGATION_BUTTONS", (style) => {
+            styles = style;
+            this.forceUpdate();
+        });
     }
 
     /**
@@ -164,4 +167,4 @@ export default class NavigationButtons extends React.Component {
     }
 }
 // Load styles for Navigation Buttons
-let styles = new Style().get("NAVIGATION_BUTTONS");
+let styles = new Style().get();

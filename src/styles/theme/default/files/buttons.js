@@ -5,6 +5,7 @@ export const style = {
         borderWidth: 1,
         backgroundColor: '#253C78',
         borderColor: '#253C78',
+        borderRadius: 50,
     },
     button_text: {
         fontFamily: Platform.OS  === 'ios' ? 'Verdana' : 'sans-serif-condensed',

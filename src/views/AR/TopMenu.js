@@ -39,9 +39,8 @@ export default class TopMenuComponent extends React.Component {
         wifiDetails: {
             signal: 0,
             color: {
-              style:null
+                style: null
             },
-            textColor:'#0093f6',
             signal_label: '',
             signal_type: 0,
             name: '',
@@ -264,16 +263,19 @@ export default class TopMenuComponent extends React.Component {
     renderSignalStrengthIcon(resize=false, min=false) {
         let iconImage = global.ARimageResources.get('wifi-excellent');
         switch(this.state.wifiDetails.signal_type) {
+
             // Red
             case 3: {
                 iconImage = global.ARimageResources.get('wifi-poor');
                 break;
             }
+
             // Yellow
             case 2: {
                 iconImage = global.ARimageResources.get('wifi-good');
                 break;
             }
+
             // Green
             case 1: {
                 iconImage = global.ARimageResources.get('wifi-ok');
@@ -304,19 +306,14 @@ export default class TopMenuComponent extends React.Component {
         switch(this.state.interference.type) {
 
             // Red
-            case 3: {
+            case 2: {
                 iconImage = global.ARimageResources.get('speed-poor');
                 break;
             }
 
             // Yellow
-            case 2: {
+            case 1: {
                 iconImage = global.ARimageResources.get('speed-good');
-                break;
-            }
-             // Yellow
-             case 1: {
-                iconImage = global.ARimageResources.get('speed-excellent');
                 break;
             }
         }
@@ -342,19 +339,16 @@ export default class TopMenuComponent extends React.Component {
 
         let iconImage = global.ARimageResources.get('interference-excellent');
         switch(this.state.wifiDetails.signal_type) {
+
             // Red
-            case 3: {
+            case 2: {
                 iconImage = global.ARimageResources.get('interference-poor');
                 break;
             }
+
             // Yellow
-            case 2: {
+            case 1: {
                 iconImage = global.ARimageResources.get('interference-good');
-                break;
-            }
-              // green
-              case 1: {
-                iconImage = global.ARimageResources.get('interference-excellent');
                 break;
             }
         }

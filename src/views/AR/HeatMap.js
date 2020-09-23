@@ -4,7 +4,7 @@
 
 import React, {useRef} from "react";
 import {
-    Animated, TouchableOpacity
+    Animated
 } from 'react-native';
 
 import {
@@ -26,10 +26,6 @@ import FPC from './heatmap/FPC';
 
 // Event Listener
 import { EventRegister } from 'react-native-event-listeners';
-
-// Import Font Awesome
-import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
-import {faExpandArrows, faCompressAlt} from '@fortawesome/pro-solid-svg-icons';
 
 export default class HeatMap extends React.Component {
 
@@ -107,7 +103,7 @@ export default class HeatMap extends React.Component {
      * @param nextContext
      * @returns {boolean}
      */
-    componentDidUpdate(nextProps, nextState, nextContext) {
+    componentWillUpdate(nextProps, nextState, nextContext) {
 
         // Only update the map if a new item was added
         if (this.state.update) {
@@ -252,9 +248,9 @@ export default class HeatMap extends React.Component {
 
                                             {this.getPoints()}
                                             {global.tracking.mapItems.map((node, i) => {
-                                                return (<group><pointLight intensity={0.5} position={node.heatmapCoords} color={node.style}/><mesh key={i}
+                                                return (<group key={i}><pointLight intensity={0.5} position={node.heatmapCoords} color={node.style}/><mesh key={i}
                                                                                                                                                    position={node.heatmapCoords}
-                                                                                                                                                   scale={global.state.ARMode === "simple" && i===0? [1.5, 1.5, 1.5] : [1, 1, 1]}>
+                                                                                                                                                   scale={[1, 1, 1]}>
                                                     <sphereBufferGeometry attach="geometry" args={[3]}/>
                                                     <meshBasicMaterial attach="material" color={node.style}/>
                                                 </mesh></group>)
@@ -267,21 +263,6 @@ export default class HeatMap extends React.Component {
                         </RotationGestureHandler>
                     </Animated.View>
                 </PanGestureHandler>
-                {global.state.ARMode !== global.const.AR_WORKFLOW_MODE && <TouchableOpacity onPress={() => {
-                    this.props.controller.toggleMapZoom();
-                }} style={{
-                    position: 'absolute',
-                    bottom: -5,
-                    left: -5,
-                    width: 50,
-                    height: 50,
-                    textAlign: 'center',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    opacity: 0.5,
-                }}>
-                    <FontAwesomeIcon active size={this.props.controller.state.heatmap.style.top === 50 ? 20 : 25} color={'lightgray'} icon={this.props.controller.state.heatmap.style.top === 50 ? faExpandArrows : faCompressAlt}/>
-                </TouchableOpacity>}
             </GestureRecognizer>
         )
     }

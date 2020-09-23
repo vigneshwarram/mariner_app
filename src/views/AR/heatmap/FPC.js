@@ -1,5 +1,5 @@
 import React, {useRef, useEffect} from "react";
-import {useFrame, useThree, useLoader} from 'react-three-fiber';
+import {useFrame, useThree} from 'react-three-fiber';
 import * as THREE from 'three';
 
 //import mapIndicatorImage from '../../../res/AR/heatmap_man_sprite.png';
@@ -58,19 +58,9 @@ function FPC() {
         rotationOnLoad = global.tracking.mapRotationOnLoad;
 
         //let rotateAngle = Math.PI / 2 * delta;
-        let rotation_matrix = new THREE.Matrix4().identity();
+        //let rotation_matrix = new THREE.Matrix4().identity();
         ref.current.rotateOnAxis(new THREE.Vector3(0, 1, 0), rotationOnLoad);
     });
-
-    function Sprite({ url, ...props }) {
-        const texture = null;//useLoader(THREE.TextureLoader, url, loader => {
-        //});
-        return (
-            <sprite {...props}>
-                <spriteMaterial attach="material" map={texture} />
-            </sprite>
-        )
-    }
 
     return (
         <group>

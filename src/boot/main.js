@@ -1,6 +1,6 @@
 import React from "react";
 import { Root } from "native-base";
-import {Dimensions} from 'react-native';
+import {BackHandler, Dimensions} from 'react-native';
 import {createDrawerNavigator, createStackNavigator, createAppContainer} from 'react-navigation';
 
 // Imported Views
@@ -25,28 +25,16 @@ import GuidedView from '../views/GuidedView';
 
 // Imported Side Menu
 import SideMenu from '../views/SideMenu';
+BackHandler.addEventListener('hardwareBackPress', () => {return true});
 
-// Main
-const theme = {
-    dark: false,
-    colors: {
-        primary: 'rgb(255, 255, 255)',
-        background: 'rgb(255, 255, 255)',
-        card: 'rgb(255, 255, 255)',
-        text: 'rgb(28, 28, 30)',
-        border: 'rgb(199, 199, 204)',
-    },
-};
 
 // Setup the Navigations
 const SlideNavigator = createDrawerNavigator({
     Item1: {
         screen:
             createStackNavigator({
-              
             SplashScreen: {screen: SplashScreen, navigationOptions: {header: null}},
             Register: {screen: RegisterView},
-            AR: {screen: ARSceneView},
             GuidedView: {screen: GuidedView},
             Home: {screen: HomeView},
             NetworkSetup: {screen: NetworkSetupView},
@@ -60,9 +48,9 @@ const SlideNavigator = createDrawerNavigator({
             CertificationSummary: {screen: SummaryView},
             GatewaySetup: {screen: GatewaySetupView},
             About: {screen: AboutView},
-           
             AlternateSpeedtest: {screen: AlternateSpeedtestView},
-            History: {screen: HistoryView}
+            History: {screen: HistoryView},
+            AR: {screen: ARSceneView},
         })
     },
 }, {
@@ -73,6 +61,6 @@ const SlideNavigator = createDrawerNavigator({
 const App = createAppContainer(SlideNavigator);
 
 export default () =>
-    <Root theme={theme}>
-        <App theme={theme}/>
+    <Root>
+        <App/>
     </Root>;

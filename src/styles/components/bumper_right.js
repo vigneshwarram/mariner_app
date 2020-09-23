@@ -22,7 +22,8 @@ export default class BumperRight extends React.Component {
                 this.animatedMargin = new Animated.Value(200);
                 Animated.timing(this.animatedMargin, {
                     toValue: 0,
-                    duration: 1000
+                    duration: 1000,
+                    useNativeDriver: true
                 }).start();
             }
             this.forceUpdate();
@@ -30,7 +31,10 @@ export default class BumperRight extends React.Component {
     }
 
     componentDidMount(){
-        styles = new Style().get("BUMPERS");
+        new Style().get("BUMPERS", (style) => {
+            styles = style;
+            this.forceUpdate();
+        });
     }
 
     componentWillUnmount() {
@@ -53,4 +57,4 @@ export default class BumperRight extends React.Component {
         else return null;
     }
 }
-let styles = new Style().get("BUMPERS");
+let styles = new Style().get();

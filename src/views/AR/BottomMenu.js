@@ -16,7 +16,6 @@ import {faCog, faToggleOn, faToggleOff} from '@fortawesome/pro-light-svg-icons';
 
 // Event Listener
 import { EventRegister } from 'react-native-event-listeners';
-
 // Style sheet
 import Style from '../../styles/base/index';
 
@@ -28,7 +27,7 @@ import StackedButtonTouchableIconComponent from '../../components/buttons/Stacke
 
 export default class BottomMenuComponent extends React.Component {
 
-    // Event listeners
+    // Event listeners   
     toggleLiveListener;
     pauseLiveListener;
 
@@ -58,8 +57,8 @@ export default class BottomMenuComponent extends React.Component {
     };
 
     // Create the bindings
-    constructor() {
-        super();
+    constructor(props) {
+        super(props);
 
         this.onAddPoint = this.onAddPoint.bind(this);
         this.onLiveMode = this.onLiveMode.bind(this);
@@ -135,6 +134,7 @@ export default class BottomMenuComponent extends React.Component {
                         source={global.ARimageResources.get('signal-button')}
                         onPress={this.onAddPoint}
                         onLongPress={this.onBigButton}
+                        dropPinButtonDisable={this.props.controller.state.dropPinButtonDisable}
                         style={{
                             width: 95,
                             height: 95,
@@ -164,6 +164,7 @@ export default class BottomMenuComponent extends React.Component {
                         source={global.ARimageResources.get('router-button')}
                         onPress={this.onAddPoint}
                         onLongPress={this.onBigButton}
+                        dropPinButtonDisable={this.props.controller.state.dropPinButtonDisable}
                         style={{
                             width: 95,
                             height: 95,
@@ -193,6 +194,7 @@ export default class BottomMenuComponent extends React.Component {
                         source={global.ARimageResources.get('mesh-button')}
                         onPress={this.onAddPoint}
                         onLongPress={this.onBigButton}
+                        dropPinButtonDisable={this.props.controller.state.dropPinButtonDisable}
                         style={{
                             width: 95,
                             height: 95,
@@ -222,6 +224,7 @@ export default class BottomMenuComponent extends React.Component {
                         source={global.ARimageResources.get('tv-button')}
                         onPress={this.onAddPoint}
                         onLongPress={this.onBigButton}
+                        dropPinButtonDisable={this.props.controller.state.dropPinButtonDisable}
                         style={{
                             width: 95,
                             height: 95,
@@ -388,7 +391,7 @@ export default class BottomMenuComponent extends React.Component {
                         label={"dBm"}
                         size={25}
                         opacity={1}
-                        iconColor={this.props.controller.state.measurement === 'dBm' ? styles.selected.color : 'white'}
+                        iconColor={this.props.controller.state.nodeOptions.measurement === 'dBm' ? styles.selected.color : 'white'}
                         style={{
                             width: 50,
                             height: 50,
@@ -407,7 +410,7 @@ export default class BottomMenuComponent extends React.Component {
                         text={global.t.get$('AR.SIGNAL_LEVEL_UNITS')}
                         size={25}
                         opacity={1}
-                        iconColor={this.props.controller.state.measurement === '%' ? styles.selected.color : 'white'}
+                        iconColor={this.props.controller.state.nodeOptions.measurement === '%' ? styles.selected.color : 'white'}
                         style={{
                             width: 50,
                             height: 50,
@@ -466,6 +469,7 @@ export default class BottomMenuComponent extends React.Component {
                         source={this.props.controller.pinType}
                         onPress={this.onAddPoint}
                         onLongPress={this.onBigButton}
+                        dropPinButtonDisable={this.props.controller.state.dropPinButtonDisable}
                         style={{
                             width: 75,
                             height: 95,
@@ -482,6 +486,7 @@ export default class BottomMenuComponent extends React.Component {
                         source={this.props.controller.pinType}
                         onPress={this.onAddPoint}
                         onLongPress={this.onBigButton}
+                        dropPinButtonDisable={this.props.controller.state.dropPinButtonDisable}
                         style={{
                             width: 75,
                             height: 95,
@@ -582,7 +587,7 @@ export default class BottomMenuComponent extends React.Component {
     /**
      * Add point to the AR scene
      */
-    onAddPoint() {
+    onAddPoint() {      
         global.state.processing = true;
         global.TouchEvents.emit({name:global.const.AR_TOUCH});
         this.props.controller.addPoint();
@@ -633,3 +638,25 @@ const styles = new Style().get("AR");
                     </ButtonTouchableIconComponent>}
                 </View>
  */
+
+/*
+
+                {this.props.controller.state.settingsVisible && !this.props.controller.state.liveMode &&
+                <View key="auto_naming_container" style={{flex:1, zIndex: 1000, position: 'absolute', flexDirection:'row', justifyContent: 'center', alignItems: 'center', width:58, height: 58, top:0, bottom:0, transform: [{'translate': [-45, -200, 0]}]}}>
+                    <ButtonTouchableIconComponent
+                        source ={this.props.controller.state.locationPinNaming ? faToggleOn : faToggleOff}
+                        onPress={()=>{
+                            this.props.controller.toggleLocationNaming();
+                        }}
+                        text={this.props.controller.state.locationPinNaming ? this.translations.promptPinDetails[0] : this.translations.promptPinDetails[1]}
+                        size={25}
+                        iconColor={this.props.controller.state.locationPinNaming ? styles.selected.color : 'white'}
+                        opacity={1}
+                        style={{
+                            width: 50,
+                            height: 50,
+                            resizeMode: 'stretch'}}
+                    >
+                    </ButtonTouchableIconComponent>
+                </View>}
+                */

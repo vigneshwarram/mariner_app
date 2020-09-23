@@ -75,7 +75,10 @@
         "SETTINGS": "Settings",
         "TEST_CONNECTION": "Test",
         "SHARE_RESULTS": "Share My Results",
-        "SHOW_REF_CODE": "Show Ref Code"
+        "NEED_MORE_HELP": "I need more Help",
+        "SHOW_REF_CODE": "Show Ref Code",
+        "VIEW_ROUTER_LOCAION":"View new router location",
+        "OPTIMIZE_WIFI":"Optimize My WiFi "
     },
     "AUTHENTICATION": {
         "AZURE": "This service provider requires authentication against Microsoft Azure.",
@@ -121,7 +124,9 @@
         "HERE_IS_CODE": "Please write down or take a screenshot of this reference code, you can give this reference code to your service provider so they can see your results and help you further investigate your problems.",
         "ERROR_UPLOADING": "Could not upload data at this time, please try again later",
         "ALREADY_UPLOADED": "You have already uploaded your results, your reference code is: ",
-        "MIN_AMOUNT_POINTS": "Not enough dropped pins, a minimum amount of {0} pins must be dropped before uploading."
+        "MIN_AMOUNT_POINTS": "Not enough dropped pins, a minimum amount of {0} pins must be dropped before uploading.",
+        "HELP_SUMMARY_DESC":"To better assist you,  your signal coverage test results and recomendations can be shared with your service provider so they so they can be viewed when you contact them. This will speed up the time to resolve your issue. Don’t worry, only the wifi signal data will be sent, no video or pictures of your home or any of your private information."
+
     },
     "CLOSE_OUT_REASON": {
       "NO_REASON_SELECTED": "Nothing selected",
@@ -148,6 +153,7 @@
         "BEST_CHOICE": "Best Choice",
         "BEST_LOCATION": "Best Location",
         "CHANGE_SERVICE_PROVIDER": "Change Service Provider",
+        "MAXIMUM_PINS_HEADER":"Maximum Pins Dropped",
         "CONFIG_VERSION": "Config Version",
         "DEVICE_INFO": "Device Information",
         "TEST_TYPE": "Network Type",

@@ -33,8 +33,8 @@ export default class BottomSimpleMenuComponent extends React.Component {
     };
 
     // Create the bindings
-    constructor() {
-        super();
+    constructor(props) {
+        super(props);
 
         this.onAddPoint = this.onAddPoint.bind(this);
         this.onLiveMode = this.onLiveMode.bind(this);
@@ -128,6 +128,7 @@ export default class BottomSimpleMenuComponent extends React.Component {
                     <ButtonTouchableComponent
                         source={global.ARimageResources.get('signal-button')}
                         onPress={this.onAddPoint}
+                        dropPinButtonDisable={this.props.controller.state.dropPinButtonDisable}
                         style={{
                             width: 70,
                             height: 95,
@@ -140,6 +141,7 @@ export default class BottomSimpleMenuComponent extends React.Component {
                     <ButtonTouchableComponent
                         source={global.ARimageResources.get('router-button')}
                         onPress={this.onAddPoint}
+                        dropPinButtonDisable={this.props.controller.state.dropPinButtonDisable}
                         style={{
                             width: 70,
                             height: 95,

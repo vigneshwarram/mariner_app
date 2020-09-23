@@ -47,7 +47,10 @@ export default class GuideView extends React.Component {
 
     // View mounted and ready
     componentDidMount(){
-        styles = new Style().get("FLOWS");
+        new Style().get("FLOWS", (style) => {
+            styles = style;
+            this.forceUpdate();
+        });
     }
 
     // View about to unmount
@@ -111,4 +114,4 @@ export default class GuideView extends React.Component {
     }
 }
 // Load default styles
-let styles = new Style().get("FLOWS");
+let styles = new Style().get();

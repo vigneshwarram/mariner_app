@@ -11,9 +11,14 @@ import {
     Image, View, TouchableWithoutFeedback, Dimensions
 } from 'react-native';
 
+//import ModelView from 'react-native-gl-model-view';
+const height=Dimensions.get('window').height
+const width=Dimensions.get('window').width
+import {Button} from 'native-base';
+
 // Import AR
 import {
-    ViroARSceneNavigator
+    ViroARSceneNavigator, ViroMaterials, ViroAnimations
 } from 'react-viro';
 
 // Default style sheet
@@ -26,12 +31,15 @@ import Global_State from '../constants/global';
 import AppPermissions from '../boot/permissions';
 import OverlayView from '../styles/components/flow_header';
 import AnimatedStackView from '../styles/components/stack_view';
+import TrackingView from './AR/Tracking';
+import IndoorTrackingView from './AR/IndoorTrack';
 
 // Event Listener
 import { EventRegister } from 'react-native-event-listeners';
 
 // Get the AR Scene for the navigator
 let InitialScene = require('./AR/Scene');
+let PlacementScene = require('./AR/PlacementScene');
 
 // AR Child Component Views
 import TopMenuComponent from './AR/TopMenu';
@@ -105,15 +113,15 @@ export default class ARSceneView extends React.Component {
         settingsVisible: false,
         detailedMode: true,
         expandedMode: false,
-        measurement: 'dBm',
 
         menuActive: false,
         liveMode: false,
         liveModeState: false,
         locationPinNaming: false,
         liveModePaused: false,
-
+        arTrackingMode: false,
         nodeOptions: {
+            measurement: 'dBm',
             wifi: true,
             speed: false,
             interference: false
@@ -126,18 +134,88 @@ export default class ARSceneView extends React.Component {
         },
 
         // Flow Requirements
-        router: false,
+        router: null,
 
         // Pin type selection
-        pinTypeSelected: []
-
-
-
+        pinTypeSelected: [],
+        guidedPinNaming: false,
+        dropPinButtonDisable: false,
+        platform: Platform.OS,
+        placementItems: null,
+        placements: {}
     };
 
     // Constructor
     constructor(props) {
         super(props);
+
+        // Create the AR Materials needed for the billboard
+        ViroMaterials.createMaterials({
+            bg_excellent: {
+                diffuseTexture: require('../res/AR/background_excellent.png')
+            },
+            bg_green: {
+                diffuseTexture: require('../res/AR/background_green.png')
+            },
+            bg_yellow: {
+                diffuseTexture: require('../res/AR/background_yellow.png')
+            },
+            bg_red: {
+                diffuseTexture: require('../res/AR/background_red.png')
+            },
+            simple_bg_router: {
+                diffuseTexture: require('../assets/pins/router_point.png')
+            },
+            simple_bg_mesh: {
+                diffuseTexture: require('../assets/pins/mesh_point.png')
+            },
+            simple_bg_tv: {
+                diffuseTexture: require('../assets/pins/tv_point.png')
+            },
+            simple_bg_excellent: {
+                diffuseTexture: require('../assets/pins/excellent_point.png')
+            },
+            simple_bg_green: {
+                diffuseTexture: require('../assets/pins/green_point.png')
+            },
+            simple_bg_yellow: {
+                diffuseTexture: require('../assets/pins/yellow_point.png')
+            },
+            simple_bg_red: {
+                diffuseTexture: require('../assets/pins/red_point.png')
+            },
+
+            wifi_poor: {
+                diffuseTexture: require('../assets/images/wifi/poor.png')
+            },
+            wifi_good: {
+                diffuseTexture: require('../assets/images/wifi/good.png')
+            },
+            wifi_ok: {
+                diffuseTexture: require('../assets/images/wifi/ok.png')
+            },
+            wifi_excellent: {
+                diffuseTexture: require('../assets/images/wifi/excellent.png')
+            },
+            wifi_mesh: {
+                diffuseTexture: require('../assets/toppers/mesh.png')
+            },
+            wifi_router: {
+                diffuseTexture: require('../assets/toppers/router.png')
+            },
+            wifi_tv: {
+                diffuseTexture: require('../assets/toppers/tv.png')
+            }
+
+        });
+        ViroAnimations.registerAnimations({
+            jump:{properties:{positionY:"+=2"}, easing:"Bounce", duration: 500},
+            land:{properties:{positionY:"-=2"}, easing:"Bounce", duration:500},
+            stay:{properties:{positionY:"-=2"}, easing:"Linear", duration: 100},
+            jumpAndLand:[
+                ["land"]
+            ]
+        });
 
         // Load all the images required for AR
         global.ARimageResources.load([
@@ -241,7 +319,7 @@ export default class ARSceneView extends React.Component {
                     this.setState({expandedMode: !this.state.expandedMode});
                     global.tracking.loaded = !this.state.menuOptionsVisible;}},
 
-                    {id:this, name: global.const.OPTIMIZE_EXECPTION, callback:(data) => {                  
+                    {id:this, name: global.const.OPTIMIZE_EXECPTION, callback:(data) => {
                         EventRegister.emit("APPLICATION_INTERNAL_BUBBLE", [
                             {
                               "type": "callout",
@@ -264,10 +342,34 @@ export default class ARSceneView extends React.Component {
             {id:this, name: global.const.AR_SETTINGS_TOGGLE, callback:() => {
                     this.setState({settingsVisible: !this.state.settingsVisible});}},
 
+            {id:this, name: global.const.HIDE_ARROW, callback:() => {
+                    this.setState({ArVisible: true})}},
+
+            // Change the AR navigation scene
+            {id:this, name: "AR_CHANGE_SCENE", callback:(data) => {
+                    if (data) {
+                        // Placement scene variables
+                        if (data.scene === "placement") {
+                            this.setState({placements: data.result});
+                            this.setState({arTrackingMode: true}, () => {
+                                global.state.set("loadedOptimization", true);
+                                EventRegister.emit("APPLICATION_INTERNAL_BUMP_LEFT", "in");
+                            });
+                            this.navigateToScene(PlacementScene, data.result);
+                        }
+                    }
+                    else {
+                        this.navigateToScene(InitialScene);
+                        this.setState({arTrackingMode: false});
+                    }
+                }},
+
             // Resets
             {id:this, name: global.const.AR_RESET_STATES, callback:() => {
-                    this.setState({router: null});
-                    global.state.setBumperNext(false);}},
+                    this.setState({router: null, liveMode: false, liveModeState: false}, () => {
+                        EventRegister.emit(this.CONST.toggleLiveMode, false);
+                    });
+                    global.state.setBumperNext(false);}}
         ]);
 
         // Touch Events
@@ -295,7 +397,7 @@ export default class ARSceneView extends React.Component {
                 };
 
                 this.Http.post(submitUrl, woHeaders, woPayload, (response) => {
-                    console.log(response);
+
                     if (response != null && response.status === 200) {
 
                         if (response.url != null && response.url.indexOf("login") > -1) {
@@ -329,8 +431,11 @@ export default class ARSceneView extends React.Component {
 
     // View mounted and ready
     componentDidMount(){
-        styles = new Style().get("AR");
-        
+        new Style().get("AR", (style) => {
+            styles = style;
+            this.forceUpdate();
+        });
+
         // Set the AR Mode
         if (global.state.ARMode == null || global.state.ARMode === this.CONST.flowMode) {
            this.setupSimpleMode();
@@ -344,8 +449,6 @@ export default class ARSceneView extends React.Component {
     // View about to unmount
     componentWillUnmount() {
 
-        // Unload the AR view
-        this.setState({loadComplete: false});
         KeepAwake.deactivate();
         // Remove listeners
         global.Events.remove(this);
@@ -358,7 +461,6 @@ export default class ARSceneView extends React.Component {
 
     // View has been updated
     componentDidUpdate(){
-        styles = new Style().get("AR");
     }
 
     /**
@@ -372,9 +474,29 @@ export default class ARSceneView extends React.Component {
         });
     }
 
-    // Set the AR Navigator
+    /**
+     * Set up a reference to the ARNavigator
+     * @param ARNavigator
+     */
     setARNavigatorRef(ARNavigator){
         this.arNavigator = ARNavigator;
+    }
+
+    /**
+     * Change the AR scene
+     * @param scene
+     */
+    navigateToScene(scene, data=null) {
+        let navigator = global.state.get("AR_NAVIGATOR");
+        if (navigator) {
+            if(data) {
+                navigator.replace({scene: scene, passProps: {data: data}});
+            }
+            else {
+                //could alert the user here that the optimization call failed
+                navigator.replace({scene: scene});
+            }
+        }
     }
 
     /**
@@ -391,6 +513,10 @@ export default class ARSceneView extends React.Component {
                 this.configuration.liveMode = !ARConfiguration.init.startInManualMode;
             }
         }
+
+        this.setState({
+            guidedPinNaming:global.configuration.get("guidedPinNaming")
+        });
     }
 
 
@@ -415,8 +541,9 @@ export default class ARSceneView extends React.Component {
                 {text: translated[5], onPress: () => {
                         global.system.Pins.change("signal");
                         let currentLiveState = this.state.liveMode;
-                        this.setState({liveMode: !currentLiveState, liveModeState: !currentLiveState});
-                        EventRegister.emit(this.CONST.toggleLiveMode, !currentLiveState);
+                        this.setState({liveMode: !currentLiveState, liveModeState: !currentLiveState}, () => {
+                            EventRegister.emit(this.CONST.toggleLiveMode, !currentLiveState);
+                        });
                     }},
             ],
         );
@@ -429,15 +556,18 @@ export default class ARSceneView extends React.Component {
         let currentState = this.state.locationPinNaming;
         let currentLiveState = this.state.liveMode;
         this.setState({locationPinNaming: !currentState});
+        global.AREvents.emit({name:'AR_CHANGE_STATE_OPTIONS', data: {locationPinNaming: !currentState}});
 
         if (currentState && currentLiveState) {
-            this.setState({liveMode: false, liveModeState: currentLiveState});
-            EventRegister.emit(this.CONST.toggleLiveMode, false);
+            this.setState({liveMode: false, liveModeState: currentLiveState}, () => {
+                EventRegister.emit(this.CONST.toggleLiveMode, false);
+            });
         }
         else {
             let currentLiveState = this.state.liveModeState;
-            this.setState({liveMode: currentLiveState});
-            EventRegister.emit(this.CONST.toggleLiveMode, currentLiveState);
+            this.setState({liveMode: currentLiveState}, () => {
+                EventRegister.emit(this.CONST.toggleLiveMode, currentLiveState);
+            });
         }
     }
 
@@ -445,8 +575,9 @@ export default class ARSceneView extends React.Component {
      * Pause the live drop mode
      */
     pauseLiveMode() {
-        this.setState({liveModePaused: !this.state.liveModePaused});
-        EventRegister.emit(this.CONST.pauseLiveMode, this.state.liveModePaused);
+        this.setState({liveModePaused: !this.state.liveModePaused}, () => {
+            EventRegister.emit(this.CONST.pauseLiveMode, this.state.liveModePaused);
+        });
     }
 
     /**
@@ -504,9 +635,11 @@ export default class ARSceneView extends React.Component {
      * Cycle through the measurement units
      */
     changeStrengthUnits(unit) {
-        this.setState({measurement:unit});
-        global.AREvents.emit({name:global.const.AR_SCENE_STATE_UPDATE, data: {measurement: this.state.measurement}});
-        global.NodeEvents.emit({name:global.const.AR_NODE_UPDATE});
+        this.state.nodeOptions.measurement = unit;
+        this.forceUpdate();
+
+        // Send the update to the AR scene
+        EventRegister.emit(this.CONST.nodeOptions, this.state.nodeOptions);
     }
 
     /**
@@ -529,36 +662,38 @@ export default class ARSceneView extends React.Component {
      * Add new point to the screen
      */
     addPoint() {
-        global.TouchEvents.emit({name:global.const.AR_TOUCH});
-        if (global.state.ARMode === this.CONST.flowMode) {
-            if (global.state.flowId === "ar-flow-page-2") {
-                if (!this.state.router) {
-                    EventRegister.emit(this.CONST.addPoint);
-                    this.setState({router: global.tracking.mapItems[0]});
+        this.setState({dropPinButtonDisable: true}, () => {
+            if (global.state.ARMode === this.CONST.flowMode) {
+                if (global.state.flowId === "ar-flow-page-2" || global.state.flowId === "tipsOption" || global.state.flowId === "ar-flow-page-seeTips3") {
+                    if (!this.state.router) {
+                        EventRegister.emit(this.CONST.addPoint);
+                        this.setState({router: global.tracking.mapItems[0]}, () => {
+                            global.state.setBumperNext(true);
+                            setTimeout(()=>{this.setState({dropPinButtonDisable: false})}, 2000);
+                        });
+                    } else {
+                        global.state.setBumperNext(true);
+                        setTimeout(()=>{this.setState({dropPinButtonDisable: false})}, 2000);
+                    }
                 }
-                global.state.setBumperNext(true);
-
+                else if (global.state.flowId !== "ar-flow-page-2") {
+                    EventRegister.emit(this.CONST.addPoint);
+                    global.state.setBumperNext(true);
+                    setTimeout(()=>{this.setState({dropPinButtonDisable: false})}, 2000);
+                }
+                EventRegister.emit("APPLICATION_INTERNAL_BUBBLE", "next");
             }
-            else if (global.state.flowId !== "ar-flow-page-2") {
+            else {
                 EventRegister.emit(this.CONST.addPoint);
-                global.state.setBumperNext(true);
+                setTimeout(()=>{this.setState({dropPinButtonDisable: false})}, 2000);
             }
-            EventRegister.emit("APPLICATION_INTERNAL_BUBBLE", "next");
-        }
-        else {
-            EventRegister.emit(this.CONST.addPoint);
-            if (this.state.locationPinNaming) {
-                global.Events.emit({name:global.const.SELECTOR, data:'show'});
-                this.forceUpdate();
-            }
-        }
+        });
     }
 
     /**
      * Delete all nodes on in the AR view
      */
     deleteAllNodes() {
-        global.TouchEvents.emit({name:global.const.AR_TOUCH});
         Alert.alert(
             global.t.get$("AR.DELETE_ALL_POINTS_HEADER"),
             global.t.get$("AR.DELETE_ALL_POINTS_TEXT"),
@@ -569,8 +704,9 @@ export default class ARSceneView extends React.Component {
                     global.ButtonEvents.emit({name:global.const.AR_DELETE_ALL_POINTS});
 
                     if (global.state.ARMode === this.CONST.flowMode) {
-                        this.setState({router: null});
-                        EventRegister.emit("APPLICATION_INTERNAL_FLOW_BUMP", {switch: "ar-flow-page-2"});
+                        this.setState({router: null}, () => {
+                            EventRegister.emit("APPLICATION_INTERNAL_FLOW_BUMP", {switch: "ar-flow-page-2"});
+                        });
                     }
                 }},
             ],
@@ -649,13 +785,10 @@ export default class ARSceneView extends React.Component {
         global.Flow("toolbox-workflow");
     }
 
-
-
-
     // Render view components
     render() {
         console.disableYellowBox = true;
-        
+
         //const {navigate} = this.props.navigation;
         if (this.state.loadComplete) {
             return (
@@ -663,29 +796,47 @@ export default class ARSceneView extends React.Component {
                     <StatusBar hidden={this.isiOS13}/>
                     <ViroARSceneNavigator
                         style={styles.arView}
-                        debug={true} 
                         apiKey={global.const.API_KEY}
                         initialScene={{scene: InitialScene}}
                         ref={this.setARNavigatorRef}
                         viroAppProps={this.state.ARAppProps}/>
+                    {this.state.arTrackingMode &&
+                         <IndoorTrackingView style={{
+                            position: 'absolute',
+                            top: 150,
+                            left: 0,
+                            right: 0,
+                            width: '100%',
+                            height: 140,
+                            flexDirection: 'column',
+                            justifyContent: 'space-between',
+                            alignItems: 'center'
+                        }}/>
+                    }
+
                     {global.state.ARMode === this.CONST.flowMode && <BumperLeft bumpers={global.state.bumpers} link {...this.props}/>}
-                    {global.state.ARMode === this.CONST.flowMode && this.state.router && <BumperRight bumpers={global.state.bumpers} link {...this.props}/>}
+                    {global.state.ARMode === this.CONST.flowMode && this.state.router != null && <BumperRight bumpers={global.state.bumpers} link {...this.props}/>}
+
                     <TopMenuComponent controller={this} link {...this.props}/>
                     {global.state.ARMode === this.CONST.flowMode && <BottomSimpleMenuComponent controller={this} link {...this.props}/>}
                     {global.state.flow == null && global.state.ARMode !== this.CONST.flowMode && <BottomMenuComponent controller={this} link {...this.props}/>}
-                    <TouchableWithoutFeedback onPress={() => {
-                        this.toggleMapZoom();
-                    }}>
-                        <View style={[this.state.heatmap.style, {
-                            position: 'absolute',
-                            opacity: this.state.expandedMode ? 1 : 0
-                        }]}>
-                        <HeatMap controller={this} link {...this.props}/>
-                        </View>
-                    </TouchableWithoutFeedback>
+
+                    {Platform.OS === "android" &&
+                        <TouchableWithoutFeedback onPress={() => {
+                            this.toggleMapZoom();
+                        }}>
+                            <View style={[this.state.heatmap.style, {
+                                position: 'absolute',
+                                opacity: this.state.expandedMode ? 1 : 0
+                            }]}>
+                                <HeatMap controller={this} link {...this.props}/>
+                            </View>
+                        </TouchableWithoutFeedback>
+                    }
 
                     <OverlayView link {...this.props}/>
-                    <SelectorComponent title={global.t.get$('TITLE.LOCATION_SELECTOR_TITLE')} data={global.configuration.get('locations')}  link {...this.props}/>
+                    <SelectorComponent title={global.t.get$('TITLE.LOCATION_SELECTOR_TITLE')} data={global.configuration.get('locations')} controller={this} link {...this.props}/>
+
                 </AnimatedStackView>
             );
         }
@@ -703,5 +854,22 @@ export default class ARSceneView extends React.Component {
     }
 }
 
+/*
+<ModelView
+                        model={{
+                            uri: 'pointer.obj'
+                        }}
+                        texture={{
+                            uri: 'HAND_C.jpg'
+                        }}
+
+                        translateZ={-2}
+                        rotateZ={270}
+                        scale={1}
+
+                        style={{flex: 8}}
+                    />
+ */
+
 // Load default styles
-let styles = new Style().get("AR");
+let styles = new Style().get();

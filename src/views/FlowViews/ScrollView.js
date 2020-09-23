@@ -49,7 +49,10 @@ export default class ScrollableView extends React.Component {
 
     // View mounted and ready
     componentDidMount(){
-        styles = new Style().get("FLOWS");
+        new Style().get("FLOWS", (style) => {
+            styles = style;
+            this.forceUpdate();
+        });
 
         // Make space for the action buttons if needed
         for (let i=0;i<this.props.info.actionButtons.length;i++) {
@@ -119,4 +122,4 @@ export default class ScrollableView extends React.Component {
     }
 }
 // Load default styles
-let styles = new Style().get("FLOWS");
+let styles = new Style().get();

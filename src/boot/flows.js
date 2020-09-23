@@ -15,7 +15,8 @@ import ADHOCSummaryView from '../views/FlowViews/ADHOCSummaryView';
 import ARView from '../views/FlowViews/ARView';
 import GuideView from '../views/FlowViews/GuideView';
 import CodeView from '../views/FlowViews/CodeView';
-
+import Help from '../views/FlowViews/Help';
+import Optimize from '../views/FlowViews/OptimizeView'
 export default class OverlayViews {
 
     /**
@@ -55,6 +56,12 @@ export default class OverlayViews {
             }
             case 'code': {
                 return <CodeView key={info.idx} id={info.idx} info={info.view} controller={info.controller} link {...info.props}/>;
+            }
+            case 'help' :{
+                return <Help key={info.idx} id={info.idx} info={info.view} controller={info.controller} link {...info.props}/>;
+            }
+            case 'optimize' :{
+                return <Optimize key={info.idx} id={info.idx} info={info.view} controller={info.controller} link {...info.props}/>;
             }
             default: {
                 return <DefaultView key={info.idx} id={info.idx} info={info.view} controller={info.controller} link {...info.props}/>;

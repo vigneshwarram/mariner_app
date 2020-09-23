@@ -30,7 +30,9 @@ let _global = {
 
     language: 'en',
 
-    AR_ONLY: false
+    AR_ONLY: false,
+    loadedOptimization: false,
+    AR_NAVIGATOR: null
 };
 
 // Work order management
@@ -48,10 +50,14 @@ let _flow = null;
 let _overlayActive = false;
 let _bumpers = null;
 let _AR_MODE = null;
+let _pointsDistance=[];
+let _direction=['0deg','0deg','0deg'];
 
 // Application processing events
 let _processing = false;
 
+//button disable
+let _arPinDropButtonDisable=false;
 
 /**
  * Check to see if the key exists
@@ -99,7 +105,21 @@ export default class Global_State extends React.Component {
     get processing() {
         return _processing;
     }
+ /**
+     * Get loaded
+     * @returns {boolean}
+     */
+    get arPinDropButtonDisable() {
+        return _arPinDropButtonDisable;
+    }
 
+       /**
+     * Set loaded
+     * @param value
+     */
+    set arPinDropButtonDisable(value) {
+        _arPinDropButtonDisable = value;
+    }
     /**
      * Get the flow
      * @returns {*}
@@ -149,7 +169,28 @@ export default class Global_State extends React.Component {
         _overlayActive = value;
         this.performUpdate();
     }
+    get pointsDistance() {
+        return _pointsDistance;
+    }
 
+  /**
+     * Set the AR Node Items (for mapping)
+     * @param value
+     */
+    set pointsDistance(value) {
+        _pointsDistance = value;
+    }
+    get direction() {
+        return _direction;
+    }
+
+    /**
+     * Set the AR Node Items (for mapping)
+     * @param value
+     */
+    set direction(value) {
+        _direction = value;
+    }
     /**
      * Get the bumpers
      * @returns {*}

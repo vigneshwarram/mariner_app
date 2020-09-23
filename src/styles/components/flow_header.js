@@ -2,7 +2,7 @@
  * Flow header needs to be added to Views that support overlays
  */
 import React from "react";
-import {View, Animated, Dimensions, TouchableWithoutFeedback, Text} from "react-native";
+import {View, Animated, Dimensions, TouchableWithoutFeedback, Text,Alert} from "react-native";
 
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { faTimes, faQuestionCircle } from '@fortawesome/pro-light-svg-icons';
@@ -39,9 +39,6 @@ export default class OverlayView extends React.Component {
     // Set up the listeners
     constructor(props) {
         super(props);
-
-        // Clear the state if reloaded
-        this.clearStateOnLoad();
 
         // Set up the animations
         this.springValue = new Animated.Value(0.6);
@@ -108,7 +105,7 @@ export default class OverlayView extends React.Component {
                         }
                         if(!data[i].popupVisibleStatus){
                             bubbles.push({idx: i, callout: data[i], timer: data[i].timerMS, location: bubble_location, style: point_location});
-                        }                     
+                        }
                     }
                     this.setState({bubbles: bubbles});
                 }
@@ -131,21 +128,6 @@ export default class OverlayView extends React.Component {
                     this.jumpIntoFlow(global.state.bumpers.next.switch);
                 }
             }
-        });
-    }
-
-    /**
-     * Clear current state if constructor is called again
-     */
-    clearStateOnLoad() {
-        this.setState({
-            height: 0,
-            pop: null,
-            flow: null,
-            bubbles: [],
-            bubble: null,
-            index: 0,
-            bubbleIndex: 0
         });
     }
 
@@ -217,7 +199,10 @@ export default class OverlayView extends React.Component {
 
     // Get the device height
     componentDidMount() {
-        styles = new Style().get("FLOW_HEADER");
+        new Style().get("FLOW_HEADER", (style) => {
+            styles = style;
+            this.forceUpdate();
+        });
         this.setState({height: Math.round(Dimensions.get('window').height)});
         this.animatedLeftMargin = new Animated.Value(-60);
     }
@@ -237,7 +222,8 @@ export default class OverlayView extends React.Component {
         this.animatedLeftMargin = new Animated.Value(-100);
         Animated.timing(this.animatedLeftMargin, {
             toValue: -5,
-            duration: 300
+            duration: 300,
+            useNativeDriver: true
         }).start();
     }
 
@@ -248,7 +234,8 @@ export default class OverlayView extends React.Component {
         this.animatedMargin = new Animated.Value(-100);
         Animated.timing(this.animatedMargin, {
             toValue: -15,
-            duration: 300
+            duration: 300,
+            useNativeDriver: true
         }).start();
     }
 
@@ -326,7 +313,7 @@ export default class OverlayView extends React.Component {
                         <Badge style={[{opacity: 1, borderColor: 'white', borderWidth: 1, borderStyle: 'solid', backgroundColor: styles.callout.backgroundColor, paddingHorizontal: 5}, this.state.bubble.callout.size]}>
                            {this.state.bubble.callout.popupVisibleStatus?null:<Button rounded style={[styles.circle_icon, {position: 'absolute', bottom: -7, left: -7}]}>
                                 <FontAwesomeIcon active size={20} color={'white'} icon={faQuestionCircle}/>
-                            </Button>} 
+                            </Button>}
                             <Text style={[{alignSelf: 'center', fontSize: 16, marginTop: 10, marginRight: 15, marginLeft: 5, color: styles.callout.color}]}>{this.state.bubble.callout.text + '\n'}</Text>
                             {this.state.bubble.callout.popupVisibleStatus && this.state.bubble.callout.text===global.t.$.AR.CALIBRATING?null: <Button onPress={() => this.jumpIntoFlow(this.state.bubble.callout.switch ? this.state.bubble.callout.switch : null)} rounded style={[styles.circle_icon, {position: 'absolute', top: 3, right: 3}]}>
                                 <FontAwesomeIcon active size={20} color={'white'} icon={faTimes}/>
@@ -357,7 +344,7 @@ export default class OverlayView extends React.Component {
     }
 }
 // Load default styles
-let styles = new Style().get("FLOW_HEADER");
+let styles = new Style().get();
 
 /*
 {this.state.bubble.callout.switch !== 'next' && this.state.bubble.callout.switch !== 'previous' &&

@@ -71,7 +71,7 @@ export default class Style extends _Style  {
                 fontWeight: '800'
             },
             textStyleImage: {
-                paddingTop: .5,
+                marginLeft: .5,
                 flex: 0,
                 alignItems:'center',
                 justifyContent:'center',

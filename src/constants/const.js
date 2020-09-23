@@ -44,9 +44,12 @@ export const AR_SETTINGS_TOGGLE= "_ar_toggle_settings_mode";
 export const AR_UPLOAD_DATA= "_ar_upload_visit_data";
 export const AR_RESET_STATES= "_ar_reset_states";
 export const AR_TOUCH= "_ar_touch";
-
+export const AR_START_PLACEMENT_MODE = "ar_start_placement_mode";
+export const AR_STOP_PLACEMENT_MODE = "ar_stop_placement_mode";
+export const AR_PLACEMENT_TRACK="AR_PLACEMENT_TRACK";
 export const AR_WORKFLOW_MODE = "ar_workflow";
 
+export const AR_DISTACE_UPDATING="AR_DISTACE_UPDATING";
 // Storage Keys
 export const STORAGE_KEY_FLOW=  "flow_configuration";
 export const STORAGE_KEY_CONFIG =  "configuration";

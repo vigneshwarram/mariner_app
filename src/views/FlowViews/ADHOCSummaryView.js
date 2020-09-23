@@ -8,7 +8,6 @@ import {
     StatusBar,
     View,
     Image,
-    Alert,
     Text,
     ActivityIndicator
 } from 'react-native';
@@ -84,6 +83,15 @@ export default class ADHOCSummaryView extends React.Component {
 
         this.uploadSiteVisitComplete = this.uploadSiteVisitComplete.bind(this);
 
+    }
+
+    // View mounted and ready
+    componentDidMount(){
+        new Style().get("FLOWS", (style) => {
+            styles = style;
+            this.forceUpdate();
+        });
+
         let modified = global.upload_tracker.hasBeenModified();
         if(modified) {
             let woDetails = this.WorkOrderBuilder.build();
@@ -124,7 +132,6 @@ export default class ADHOCSummaryView extends React.Component {
             this.poor = data.poor;
             this.coverage = data.coverage;
             this.woid = data.ref;
-            this.setState({excellent: this.excellent, good: this.good, fair: this.fair, poor: this.poor, coverage: this.coverage});
         }
 
         // Make space for the action buttons if needed
@@ -137,11 +144,7 @@ export default class ADHOCSummaryView extends React.Component {
                 this.setState({scrollMargin:55});
             }
         }
-    }
 
-    // View mounted and ready
-    componentDidMount(){
-        styles = new Style().get("FLOWS");
         this.setState({excellent: this.excellent, good: this.good, fair: this.fair, poor: this.poor, coverage: this.coverage, uploaded: this.uploaded});
         if (global.tracking.mapItems != null && global.tracking.mapItems.length > 0) {
             this.setState({dropPoints: this.getDropPointInformation()});
@@ -340,4 +343,4 @@ export default class ADHOCSummaryView extends React.Component {
     }
 }
 // Load default styles
-let styles = new Style().get("FLOWS");
+let styles = new Style().get();

@@ -40,9 +40,11 @@ import Certification from '../../app_code/certifications/certification';
 import Device from '../../app_code/diagnostics/deviceinfo';
 import WifiDetails from '../../app_code/wifi/wifidetails';
 import Thresholds from '../../app_code/certifications/thresholds';
+import Triggers from "../../app_code/flows/triggers";
 
 import WorkOrderBuilder from '../../app_code/workorders/workorder_builder';
-import UploadResults from "../../app_code/workorders/upload_results";
+import UploadResults from '../../app_code/workorders/upload_results';
+
 
 export default class SummaryView extends React.Component {
 
@@ -76,14 +78,23 @@ export default class SummaryView extends React.Component {
         poor: 0,
         coverage: false,
         uploaded: false,
-        scrollMargin:0
+        scrollMargin:0,
+        loadedOptimization: global.state.get("loadedOptimization")
     };
 
-    // Constructor
-    constructor(props) {
+     // Constructor
+     constructor(props) {
         super(props);
 
         this.uploadSiteVisitComplete = this.uploadSiteVisitComplete.bind(this);
+    }
+
+    // View mounted and ready
+    componentDidMount(){
+        new Style().get("FLOWS", (style) => {
+            styles = style;
+            this.forceUpdate();
+        });
 
         let modified = global.upload_tracker.hasBeenModified();
         if(modified) {
@@ -127,7 +138,6 @@ export default class SummaryView extends React.Component {
             this.poor = data.poor;
             this.coverage = data.coverage;
             this.woid = data.ref;
-            this.setState({excellent: this.excellent, good: this.good, fair: this.fair, poor: this.poor, coverage: this.coverage});
         }
 
         // Make space for the action buttons if needed
@@ -140,11 +150,6 @@ export default class SummaryView extends React.Component {
                 this.setState({scrollMargin:55});
             }
         }
-    }
-
-    // View mounted and ready
-    componentDidMount(){
-        styles = new Style().get("FLOWS");
         this.setState({excellent: this.excellent, good: this.good, fair: this.fair, poor: this.poor, coverage: this.coverage, uploaded: this.uploaded});
     }
 
@@ -189,11 +194,28 @@ export default class SummaryView extends React.Component {
         }
     }
 
+    recommendationReturned(result) {
+        Alert.alert(
+            "Recommendation",
+            JSON.stringify(result),
+            [
+                {text: 'ok', onPress: () => {}},
+            ]
+        );
+    }
+
     /**
      * Upload a site visit
      */
     uploadSiteVisit() {
         new UploadResults().upload(this.wo, this.uploadSiteVisitComplete);
+    }
+
+    /*
+     * Get recommendations from optimize service
+     */
+    getRecommendations(algorithmType) {
+        new UploadResults().getRecommendation(algorithmType, this.recommendationReturned);
     }
 
     showRefCode() {
@@ -204,6 +226,25 @@ export default class SummaryView extends React.Component {
                 {text: 'ok', onPress: () => {}},
             ],
         );
+    }
+
+    /**
+     * Start the work flow over again using the AR scene
+     */
+    startOver() {
+        global.AREvents.emit({name: "AR_CHANGE_SCENE"});
+
+        global.ButtonEvents.emit({name:global.const.AR_DELETE_ALL_POINTS});
+        global.AREvents.emit({name:global.const.AR_RESET_STATES});
+
+        this.props.controller.changeViewById("ar-flow-page-2");
+        /*global.state.exitFlows(() => {
+            global.state.ARMode = global.const.AR_WORKFLOW_MODE;
+
+            global.ButtonEvents.emit({name:global.const.AR_DELETE_ALL_POINTS});
+            global.AREvents.emit({name:global.const.AR_RESET_STATES});
+            global.Flow('ar-workflow');
+        });*/
     }
 
 
@@ -273,13 +314,13 @@ export default class SummaryView extends React.Component {
                             <Label style={[{flex: 8, paddingLeft: 10, paddingRight: 10, width:'100%', textAlign:'left', alignItems:'center'}]}>{global.t.get$(this.props.info.description_fail)}</Label>
                         </ScrollView>
                     }
-                    <CustomButtons navigation={this.props.navigation} parent={this.props.controller} create={this.props.info.actionButtons} inject={[
-                        {position: 2, label: global.t.get$("ACTION.SHARE_RESULTS"), route: () => (this.state.uploaded ? this.showRefCode() : this.uploadSiteVisit())}
-                    ]} />
+                    <CustomButtons navigation={this.props.navigation} trigger={new Triggers(this)} parent={this.props.controller} create={this.props.info.actionButtons}  inject={this.state.loadedOptimization ? [
+                        {position: 1, label: "Start Over", route: () => this.startOver()}
+                    ] : []} />
                 </View>
             </AnimatedStackView>
         );
     }
 }
 // Load default styles
-let styles = new Style().get("FLOWS");
+let styles = new Style().get();

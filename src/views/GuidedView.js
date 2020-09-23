@@ -61,4 +61,4 @@ export default class TemplateView extends React.Component {
     }
 }
 // Load default styles
-const styles = new Style().get("SPLASH");
+const styles = new Style().get();

@@ -5,13 +5,15 @@
 import React from "react";
 import { PermissionsAndroid } from "react-native";
 
-// Event Listener
-import { EventRegister } from 'react-native-event-listeners';
 
 export default class AppPermissions extends React.Component {
 
     componentDidMount() {
         this.requestCameraPermission();
+    }
+
+    shouldComponentUpdate(nextProps, nextState) {
+        return false;
     }
 
     /**
