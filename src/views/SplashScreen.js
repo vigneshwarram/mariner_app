@@ -10,7 +10,9 @@ import {
     StatusBar,
     Linking,
     Alert,
-    Platform
+    Platform,
+    AsyncStorage,
+    AppState
 } from 'react-native';
 
 // Get the device information
@@ -64,40 +66,220 @@ export default class SplashScreen extends React.Component {
     constructor(props) {
         super(props);
     }
+    state = {
+        appState: AppState.currentState
+      }
 
-    // View mounted and ready
-    componentDidMount() {
-        service_value=global.t.get$("HEADER.CHANGE_SERVICE_PROVIDER")
-        service_message=global.t.get$("STATUS.CHANGE_INTERNET_SERVICE_PROVIDER")
-        Linking.addEventListener('url', this.handleUrl);
-        Linking.getInitialURL().then(url => {
-            if (url !== null) {
-                this.navigate(url);
-            } else {
-                // Check the local storage
+    BasicFlow(){
+     // Check the local storage
+     global.storage.getData(global.const.STORAGE_KEY_CONFIG, value => {
+        if (this.Configuration.isValidConfig(value)) {
+            global.storage.getData(global.const.STORAGE_KEY_APP_VERSION, (build_version) => {
+                if (this.DeviceInfo.buildVersion === build_version) {
+                    global.storage.getData(global.const.STORAGE_KEY_REG_CODE, (reg_code) => {
+                        this.Http.getWithTimeout(this.Register.generate(reg_code), 5000).then((initialResponse) => initialResponse.json()).then((response) => {
+                            if (response != null && response.responseCode === 200 && response.configuration != null) {
+                                if (this.Register.isLicensed(response.configuration)) {
+                                    this.Configuration.merge(response.configuration);
+                                    this.Workflows.update();
+                                    global.storage.storeData(global.const.STORAGE_KEY_CONFIG, JSON.stringify(response.configuration));
+                                    this.props.navigation.dispatch(this.Global.resetNavigation("GuidedView"));
+                                }
+                                else {
+                                    this.Message.sendAlert('Registration', global.t.get$('STATUS.REGISTRATION_ERROR'), 'OK');
+                                    this.props.navigation.dispatch(this.Global.resetNavigation('Register'));
+                                }
+                            } else {
+                                this.failedRegistration(value);
+                            }
+                        }).catch(() => {
+                            this.failedRegistration(value);
+                        });
+
+                        global.storage.getData(global.const.STORAGE_KEY_TECHID, (id) => {
+                            this.Global.set("tech_id", id);
+                        });
+                        global.storage.getData(global.const.STORAGE_KEY_REG_CODE, (code) => {
+                            this.Global.set("registration_code", code);
+                        });
+                        global.storage.getData(global.const.STORAGE_KEY_LANGUAGE, (lang) => {
+                            this.Global.set("language", lang);
+                            let languageUrl = global.configuration.get("wsbLanguageUrl");
+                            if (languageUrl) {
+                                global.t.$load(global.functions.replace("{0}{1}.json", [languageUrl, lang]))
+                            }
+                        });
+                    });
+                } else {
+                    this.props.navigation.dispatch(this.Global.resetNavigation('Register'));
+                }
+            });
+        }
+        else {
+            this.props.navigation.dispatch(this.Global.resetNavigation('Register'));
+        }
+    });
+
+    }
+    _handleAppStateChange = (nextAppState) => {
+        if (nextAppState === 'active') {
+            //this.props.navigation.dispatch(this.Global.resetNavigation('Register'));
+            Linking.getInitialURL().then(url => {
+                if(url!=null){
+                    // Clear the global options
+                    global.state.clearWorkOrders();
+                    global.configuration.reset();
+                    global.storage.multiClear([
+                        global.const.STORAGE_KEY_CONFIG,
+                        global.const.STORAGE_KEY_REG_CODE,
+                        global.const.STORAGE_KEY_TECHID,
+                        global.const.STORAGE_KEY_LANGUAGE,
+                        global.const.STORAGE_KEY_APP_VERSION,
+                        global.const.STORAGE_KEY_BUILD_NUMBER
+                    ]);
+                   this.DeepLinikNavigate(url)
+                }        
+            })
+          
+      }
+    }
+    //launch first time
+    InitialLaunchDeepLink =()=>{
+        this.Http.getQuery(global.configuration.get("wsbretriveUrl"),(data)=>{
+            if(data!='' && data!=undefined && data!=null){
+                global.state.clearWorkOrders();
+                global.configuration.reset();
+                global.storage.multiClear([
+                    global.const.STORAGE_KEY_CONFIG,
+                    global.const.STORAGE_KEY_REG_CODE,
+                    global.const.STORAGE_KEY_TECHID,
+                    global.const.STORAGE_KEY_LANGUAGE,
+                    global.const.STORAGE_KEY_APP_VERSION,
+                    global.const.STORAGE_KEY_BUILD_NUMBER
+                ]); 
+                let createarray=data.split('&')   
+                let modifiedArray=[];
+                let modifiedObject={}
+                createarray.map((item)=>{
+                    modifiedObject[item.split('=')[0]]=item.split('=')[1];
+                    modifiedArray.splice(0,createarray.length-1,modifiedObject)
+                })    
+                const getLinkValue=modifiedArray[0];
+                AsyncStorage.setItem('registerFirstTime', JSON.stringify(getLinkValue));
+                this.urlLaunch(getLinkValue)
+                console.log('data',getLinkValue)
+            }
+            else{
+                Linking.getInitialURL().then(url => {
+                    if (url !== null) {
+                        this.DeepLinikNavigate(url);
+                    } else {
+                        // Check the local storage
+                       this.BasicFlow();
+                    }
+        
+                });
+        
+            }
+            })
+     
+    }
+    urlLaunch(params){
+        if(params.w != null && params.w !== ""){
+            console.log('params.w',params.w)
+            //store the w value for refrenece code
+            global.storage.storeData(global.const.STORAGE_KEY_W,params.w)
+        }
+        if(params.c != null && params.c !== ""){
+            console.log('params.w',params.w)
+            //store the w value for refrenece code
+            global.storage.storeData(global.const.STORAGE_KEY_C,params.c)
+        }
+        if (params.s != null && params.s !== "") {
+            let regOptions = [];
+            for (let i = 0; i < this.ispList.length; i++) {
+                regOptions.push(
+                    this.ispList[i].regCode
+                );
+            }
+            // Checking , is URL s value present in ISP network List
+           
+            if (regOptions.includes(params.s)) {
+
                 global.storage.getData(global.const.STORAGE_KEY_CONFIG, value => {
                     if (this.Configuration.isValidConfig(value)) {
                         global.storage.getData(global.const.STORAGE_KEY_APP_VERSION, (build_version) => {
                             if (this.DeviceInfo.buildVersion === build_version) {
                                 global.storage.getData(global.const.STORAGE_KEY_REG_CODE, (reg_code) => {
-                                    this.Http.getWithTimeout(this.Register.generate(reg_code), 5000).then((initialResponse) => initialResponse.json()).then((response) => {
-                                        if (response != null && response.responseCode === 200 && response.configuration != null) {
-                                            if (this.Register.isLicensed(response.configuration)) {
-                                                this.Configuration.merge(response.configuration);
-                                                this.Workflows.update();
-                                                global.storage.storeData(global.const.STORAGE_KEY_CONFIG, JSON.stringify(response.configuration));
-                                                this.props.navigation.dispatch(this.Global.resetNavigation("GuidedView"));
+                                    if (reg_code === params.s) {
+                                        // Clear the global options
+                                        global.state.clearWorkOrders();
+                                        global.configuration.reset();
+                                        global.storage.multiClear([
+                                            global.const.STORAGE_KEY_CONFIG,
+                                            global.const.STORAGE_KEY_REG_CODE,
+                                            global.const.STORAGE_KEY_TECHID,
+                                            global.const.STORAGE_KEY_LANGUAGE,
+                                            global.const.STORAGE_KEY_APP_VERSION,
+                                            global.const.STORAGE_KEY_BUILD_NUMBER
+                                        ]);
+                                        this.Http.get(this.Register.generate(reg_code), (response) => {
+                                            if (response != null && response.responseCode === 200 && response.configuration != null) {
+                                                console.log("response.configuration-->", response.configuration)
+                                                if (this.Register.isLicensed(response.configuration)) {
+                                                    this.Configuration.merge(response.configuration);
+                                                    this.Workflows.update();
+                                                    this.Global.set("tech_id", this.DeviceInfo.uuid);
+                                                    this.Global.set("registration_code", reg_code);
+                                                    this.Global.set("language", "en");
+                                                    // Store information
+                                                    global.storage.storeData(global.const.STORAGE_KEY_CONFIG, JSON.stringify(response.configuration));
+                                                    global.storage.storeData(global.const.STORAGE_KEY_REG_CODE, reg_code);
+                                                    //global.storage.storeData(global.const.STORAGE_KEY_TECHID, this.state.tech_id);
+                                                    //if we don't store something this will cause problems when trying to do a site upload
+                                                    global.storage.storeData(global.const.STORAGE_KEY_TECHID, this.DeviceInfo.uuid);
+                                                    global.storage.storeData(global.const.STORAGE_KEY_LANGUAGE, "en");
+                                                    global.storage.storeData(global.const.STORAGE_KEY_APP_VERSION, this.DeviceInfo.buildVersion);
+
+
+                                                    // Check for AR configuration
+
+                                                    let flowList = response.configuration.flows.map(function (item) {
+                                                        return item['id'];
+                                                    });
+
+                                                    if (flowList.includes(params.v)) {
+                                                        if (params.v === "ar-workflow") {
+        
+                                                            global.state.ARMode = "PLAYGROUND_MODE";
+                                                            global.state.exitFlows(() => {
+                                                                this.props.navigation.dispatch(this.Global.resetNavigation('AR'));
+                                                                global.ButtonEvents.emit({ name: global.const.AR_DELETE_ALL_POINTS });
+                                                            });
+                                                        } else if (params.v === "welcome-workflow") {
+                                                            console.log('welcome-workflow')
+                                                            this.props.navigation.dispatch(this.Global.resetNavigation('GuidedView'));
+                                                        }
+                                                    } else {
+                                                        this.props.navigation.dispatch(this.Global.resetNavigation('Register'));
+
+                                                    }
+
+                                                }
+                                                else {
+                                                    this.setState({ form_submitted: false });
+                                                    this.Message.sendAlert('Registration', global.t.get$('STATUS.VT_REGISTRATION_ERROR'), 'OK');
+                                                }
                                             }
                                             else {
-                                                this.Message.sendAlert('Registration', global.t.get$('STATUS.REGISTRATION_ERROR'), 'OK');
-                                                this.props.navigation.dispatch(this.Global.resetNavigation('Register'));
+                                                this.setState({ form_submitted: false });
+                                                this.Message.sendAlert('Registration', global.t.get$('STATUS', 'VT_REGISTRATION_COMMUNICATION_ERROR'), 'OK');
                                             }
-                                        } else {
-                                            this.failedRegistration(value);
-                                        }
-                                    }).catch((e) => {
-                                        this.failedRegistration(value);
-                                    });
+                                        });
+                                    } else {
+                                        // show dialog of network change
+                                        this.clearAllWorkOrders(params)
+                                    }
 
                                     global.storage.getData(global.const.STORAGE_KEY_TECHID, (id) => {
                                         this.Global.set("tech_id", id);
@@ -119,14 +301,96 @@ export default class SplashScreen extends React.Component {
                         });
                     }
                     else {
-                        this.props.navigation.dispatch(this.Global.resetNavigation('Register'));
+                        this.Http.get(this.Register.generate(params.s), (response) => {
+
+                            if (response != null && response.responseCode === 200 && response.configuration != null) {
+                                if (this.Register.isLicensed(response.configuration)) {
+                                    this.Configuration.merge(response.configuration);
+                                    this.Workflows.update();
+
+                                    this.Global.set("tech_id", this.DeviceInfo.uuid);
+                                    this.Global.set("registration_code", params.s);
+                                    this.Global.set("language", "en");
+
+                                    // Store information
+                                    global.storage.storeData(global.const.STORAGE_KEY_CONFIG, JSON.stringify(response.configuration));
+                                    global.storage.storeData(global.const.STORAGE_KEY_REG_CODE, params.s);
+                                    //global.storage.storeData(global.const.STORAGE_KEY_TECHID, this.state.tech_id);
+                                    //if we don't store something this will cause problems when trying to do a site upload
+                                    global.storage.storeData(global.const.STORAGE_KEY_TECHID, this.DeviceInfo.uuid);
+                                    global.storage.storeData(global.const.STORAGE_KEY_LANGUAGE, "en");
+                                    global.storage.storeData(global.const.STORAGE_KEY_APP_VERSION, this.DeviceInfo.buildVersion);
+
+                                    // Check for AR configuration
+                                    let flowList = response.configuration.flows.map(function (item) {
+                                        return item['id'];
+                                    });
+
+                                    if (flowList.includes(params.v)) {
+                                        if (params.v === "ar-workflow") {
+                                            //this.props.navigation.dispatch(this.Global.resetNavigation('AR'));
+                                            global.state.ARMode = "PLAYGROUND_MODE";
+                                            global.state.exitFlows(() => {
+                                                this.props.navigation.dispatch(this.Global.resetNavigation('AR'));
+                                                global.ButtonEvents.emit({ name: global.const.AR_DELETE_ALL_POINTS });
+                                            });
+                                        } else if (params.v === "welcome-workflow") {
+                                            this.props.navigation.dispatch(this.Global.resetNavigation('GuidedView'));
+                                        }
+                                    } else {
+                                        this.props.navigation.dispatch(this.Global.resetNavigation('Register'));
+
+                                    }
+                                }
+                                else {
+                                    this.setState({ form_submitted: false });
+                                    this.Message.sendAlert('Registration', global.t.get$('STATUS.VT_REGISTRATION_ERROR'), 'OK');
+                                }
+                            }
+                            else {
+                                this.setState({ form_submitted: false });
+                                this.Message.sendAlert('Registration', global.t.get('STATUS', 'VT_REGISTRATION_COMMUNICATION_ERROR'), 'OK');
+                            }
+                        });
                     }
                 });
+
+            } else {
+                // Checking is value Not present in ISP network List
+                this.BasicFlow()
             }
+        }
 
-        });
-
-
+    }
+    // View mounted and ready
+  async  componentDidMount() {
+    AppState.addEventListener('change', this._handleAppStateChange);
+  
+    Linking.addEventListener('url', event => {
+        this.DeepLinikNavigate(event.url)
+    })
+   // Linking.addEventListener('url', this.handleUrl);
+        service_value=global.t.get$("HEADER.CHANGE_SERVICE_PROVIDER")
+        service_message=global.t.get$("STATUS.CHANGE_INTERNET_SERVICE_PROVIDER");
+      let alreadyLaunchedPage=await AsyncStorage.getItem('registerFirstTime');
+      console.log('alreadyLaunchedPage',alreadyLaunchedPage)
+        if(alreadyLaunchedPage===null || alreadyLaunchedPage==='' || alreadyLaunchedPage==='null' || alreadyLaunchedPage===undefined){           
+            this.InitialLaunchDeepLink();        
+        }
+        else{
+          
+            Linking.getInitialURL().then(url => {
+                if (url !== null) {
+                    this.DeepLinikNavigate(url);
+                } else {
+                    // Check the local storage
+                   this.BasicFlow();
+                }
+    
+            });
+    
+        }
+       
         global.storage.getData(global.const.STORAGE_KEY_LANGUAGE, (language_id) => {
             let languageUrl = global.configuration.get("wsbLanguageUrl");
             global.t.$load(languageUrl ? global.functions.replace("{0}{1}.json", [languageUrl, language_id]) : language_id);
@@ -134,27 +398,22 @@ export default class SplashScreen extends React.Component {
 
     }
 
-    handleUrl({ url }) {
-        //alert(url)
-    }
-    navigate = (url) => {
-        console.log('url---',url)
-        const { navigate } = this.props.navigation;
+   
+    DeepLinikNavigate = (url) => { 
         var regex = /[?&]([^=#]+)=([^&#]*)/g,
             params = {},
             match;
         while (match = regex.exec(url)) {
             params[match[1]] = match[2];
         }
-        console.log(params);
-        console.log("svvalue", params.s)
+       
         if(params.w != null && params.w !== ""){
-            console.log('params.w',params.w)
+           
             //store the w value for refrenece code
             global.storage.storeData(global.const.STORAGE_KEY_W,params.w)
         }
         if(params.c != null && params.c !== ""){
-            console.log('params.w',params.w)
+           
             //store the w value for refrenece code
             global.storage.storeData(global.const.STORAGE_KEY_C,params.c)
         }
@@ -233,7 +492,7 @@ export default class SplashScreen extends React.Component {
                                                             this.props.navigation.dispatch(this.Global.resetNavigation('GuidedView'));
                                                         }
                                                     } else {
-                                                        alert("No flow")
+                                                        this.props.navigation.dispatch(this.Global.resetNavigation('Register'));
 
                                                     }
 
@@ -312,7 +571,7 @@ export default class SplashScreen extends React.Component {
                                             this.props.navigation.dispatch(this.Global.resetNavigation('GuidedView'));
                                         }
                                     } else {
-                                        alert("No flow")
+                                        this.props.navigation.dispatch(this.Global.resetNavigation('Register'));
 
                                     }
                                 }
@@ -331,60 +590,11 @@ export default class SplashScreen extends React.Component {
 
             } else {
                 // Checking is value Not present in ISP network List
-                global.storage.getData(global.const.STORAGE_KEY_CONFIG, value => {
-                    if (this.Configuration.isValidConfig(value)) {
-                        global.storage.getData(global.const.STORAGE_KEY_APP_VERSION, (build_version) => {
-                            if (this.DeviceInfo.buildVersion === build_version) {
-                                global.storage.getData(global.const.STORAGE_KEY_REG_CODE, (reg_code) => {
-                                    this.Http.getWithTimeout(this.Register.generate(reg_code), 5000).then((initialResponse) => initialResponse.json()).then((response) => {
-                                        if (response != null && response.responseCode === 200 && response.configuration != null) {
-                                            if (this.Register.isLicensed(response.configuration)) {
-                                                this.Configuration.merge(response.configuration);
-                                                this.Workflows.update();
-                                                global.storage.storeData(global.const.STORAGE_KEY_CONFIG, JSON.stringify(response.configuration));
-                                                this.props.navigation.dispatch(this.Global.resetNavigation("GuidedView"));
-                                            }
-                                            else {
-                                                this.Message.sendAlert('Registration', global.t.get$('STATUS.REGISTRATION_ERROR'), 'OK');
-                                                this.props.navigation.dispatch(this.Global.resetNavigation('Register'));
-                                            }
-                                        } else {
-                                            this.failedRegistration(value);
-                                        }
-                                    }).catch((e) => {
-                                        this.failedRegistration(value);
-                                    });
-
-                                    global.storage.getData(global.const.STORAGE_KEY_TECHID, (id) => {
-                                        this.Global.set("tech_id", id);
-                                    });
-                                    global.storage.getData(global.const.STORAGE_KEY_REG_CODE, (code) => {
-                                        this.Global.set("registration_code", code);
-                                    });
-                                    global.storage.getData(global.const.STORAGE_KEY_LANGUAGE, (lang) => {
-                                        this.Global.set("language", lang);
-                                        let languageUrl = global.configuration.get("wsbLanguageUrl");
-                                        if (languageUrl) {
-                                            global.t.$load(global.functions.replace("{0}{1}.json", [languageUrl, lang]))
-                                        }
-                                    });
-                                });
-                            } else {
-                                this.props.navigation.dispatch(this.Global.resetNavigation('Register'));
-                            }
-                        });
-                    }
-                    else {
-                        this.props.navigation.dispatch(this.Global.resetNavigation('Register'));
-                    }
-                });
+                this.BasicFlow();
             }
-
         }
 
-
     }
-
 
     //Show if found already registerd any network
     clearAllWorkOrders = (params) => {
@@ -432,7 +642,7 @@ export default class SplashScreen extends React.Component {
                                 } else {
                                     this.failedRegistration(value);
                                 }
-                            }).catch((e) => {
+                            }).catch(() => {
                                 this.failedRegistration(value);
                             });
 
@@ -460,9 +670,7 @@ export default class SplashScreen extends React.Component {
             }
         });
 
-
     }
-
     // Load URL s value Network
     loadDeepLinkNetwork = (params) => {
 
@@ -507,10 +715,9 @@ export default class SplashScreen extends React.Component {
                             this.props.navigation.dispatch(this.Global.resetNavigation('GuidedView'));
                         }
                     } else {
-                        alert("No flow")
+                        this.props.navigation.dispatch(this.Global.resetNavigation('Register'));
 
                     }
-
 
                 }
                 else {
@@ -525,18 +732,7 @@ export default class SplashScreen extends React.Component {
         });
     }
 
-    callRegCodeIsSame = (params) => {
-        //  // Clear the global options
-//                                         global.state.clearWorkOrders();
-//                                         global.configuration.reset();
-//                                         global.storage.multiClear([
-//                                             global.const.STORAGE_KEY_CONFIG,
-//                                             global.const.STORAGE_KEY_REG_CODE,
-//                                             global.const.STORAGE_KEY_TECHID,
-//                                             global.const.STORAGE_KEY_LANGUAGE,
-//                                             global.const.STORAGE_KEY_APP_VERSION,
-//                                             global.const.STORAGE_KEY_BUILD_NUMBER
-//                                         ]);
+    callRegCodeIsSame = (params) => { 
         global.storage.getData(global.const.STORAGE_KEY_CONFIG, value => {
             if (this.Configuration.isValidConfig(value)) {
                 global.storage.getData(global.const.STORAGE_KEY_APP_VERSION, (build_version) => {
@@ -548,9 +744,6 @@ export default class SplashScreen extends React.Component {
                                         this.Configuration.merge(response.configuration);
                                         this.Workflows.update();
                                         global.storage.storeData(global.const.STORAGE_KEY_CONFIG, JSON.stringify(response.configuration));
-
-                                        //this.props.navigation.dispatch(this.Global.resetNavigation("GuidedView"));
-
                                         let flowList = response.configuration.flows.map(function (item) {
                                             return item['id'];
                                         });
@@ -566,7 +759,7 @@ export default class SplashScreen extends React.Component {
                                                 this.props.navigation.dispatch(this.Global.resetNavigation('GuidedView'));
                                             }
                                         } else {
-                                            alert("No flow")
+                                            this.props.navigation.dispatch(this.Global.resetNavigation('Register'));
 
                                         }
                                     }
@@ -577,7 +770,7 @@ export default class SplashScreen extends React.Component {
                                 } else {
                                     this.failedRegistration(value);
                                 }
-                            }).catch((e) => {
+                            }).catch(() => {
                                 this.failedRegistration(value);
                             });
 
@@ -606,15 +799,6 @@ export default class SplashScreen extends React.Component {
         });
     }
 
-    // View about to unmount
-    componentWillUnmount() {
-        //Linking.removeEventListener('url', this.handleOpenURL);
-    }
-
-    // View has been updated
-    componentDidUpdate() {
-    }
-
     failedRegistration(value) {
         this.Message.showToastMessage(global.t.get$('STATUS.REGISTRATION_COMMUNICATION_ERROR'), 'danger');
         this.Configuration.merge(JSON.parse(value));
@@ -640,4 +824,3 @@ export default class SplashScreen extends React.Component {
     }
 }
 // Load default styles
-const styles = new Style().get();

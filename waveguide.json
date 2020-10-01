@@ -70,7 +70,7 @@
         }
       ]
     },
-    
+
     "waveguide_gateway_models": [
       {
         "gateway_name": "XB6",
@@ -288,6 +288,7 @@
     },
     "showGateway": true,
     "showMesh": false,
+    "guidedPinNaming": true,
     "AR": {
       "points": {
         "position": [1.5,1.5,1.5],
@@ -304,9 +305,11 @@
       "critical": 0,
       "major": 0
     },
-    "maximumPins":19,
     "signalStrengthMethod": "OS",
+    "maximumPins": 16,
     "scanDetailsIntervalMs": 2000,
+    "routerCoverageRadius": 10.0,
+    "meshPodCoverageRadius": 5.0,
     "welcome-workflow" : {
       "id": "welcome-workflow",
       "views": [
@@ -386,7 +389,7 @@
               "direction": "left"
             }
           ]
-        }    
+        }
       ]
     },
     "ar-workflow": {
@@ -440,15 +443,16 @@
         {
           "type": "ar",
           "note": "DO NOT CHANGE THIS ID",
-          "id": "ar-flow-page-skip_instructions",
+          "id": "ar-flow-page-2",
           "image": "https://online.alvernia.edu/wp-content/uploads/2019/02/800x440-201804-EmployeeOnboarding-header-ALV.png",
-          "title": "Just  a few more things",
-          "description": "On the next step, we will be using augmented.\n\nreality technology, This technology use your\n\n camera to show your Wi-dead-spotsin your home.there are few importants tips to \n\n know your ahead of time before we jump in.",
+          "title": "Find Your WiFi Router",
+          "description": "First, I need you to find your router, so we can mark it's location on the map.\n\n\nWhen you've found it, let me know!",
+          "bumpers": {"previous": {"label": "Previous Step", "switch": "ar-flow-page-2", "enabled": true}, "next": {"label": "I'm Done", "switch": "ar-flow-page-3", "enabled": false}},
           "actionButtons": [
             {
               "position": 4,
-              "label": "See Tips",
-              "switch": "ar-flow-page-seeTips1",
+              "label": "What is a router?",
+              "switch": "ar-flow-page-1",
               "direction": "right"
             },
             {
@@ -459,7 +463,7 @@
             },
             {
               "position": 2,
-              "label": "Skip Tips",
+              "label": "I Found It",
               "direction": "right",
               "switch": [
                 {
@@ -505,7 +509,7 @@
           "image": "https://online.alvernia.edu/wp-content/uploads/2019/02/800x440-201804-EmployeeOnboarding-header-ALV.png",
           "title": "Test your signal levels",
           "description": "Let's keep building the map!\n\n\nNow let's see how good your signal is where you use WiFi",
-          "bumpers": {"previous": {"label": "Previous Step", "switch": "ar-flow-page-3", "enabled": true}, "next": {"label": "Results", "switch": "5", "enabled": false}},
+          "bumpers": {"previous": {"label": "Previous Step", "switch": "ar-flow-page-3", "enabled": true}, "next": {"label": "Results", "switch": "summaryView", "enabled": false}},
           "actionButtons": [
             {
               "position": 1,
@@ -543,7 +547,7 @@
         },
         {
           "type": "summary",
-          "id": "5",
+          "id": "summaryView",
           "title": "Results",
           "image": "image6",
           "description_pass": "TEXT.RESULTS_SUMMARY_PASS",
@@ -554,6 +558,18 @@
               "position": 1,
               "label": "Back",
               "switch": "ar-flow-page-3"
+            },
+            {
+              "position": 2,
+              "label": "I need more help",
+              "switch": "Help",
+              "direction": "right"
+            },
+            {
+              "position": 4,
+              "label": "Optimize my WiFi",
+              "switch": "WifiOptimize",
+              "direction": "right"
             },
             {
               "position": 4,
@@ -663,11 +679,11 @@
     },
     "wifi-optimize":[
       {
-        "type": "Help",
+        "type": "help",
         "id": "Help",
         "title": "More Help",
         "image": "imageTemp",
-        "description": "To better assist you,  your signal coverage test results and recomendations can be shared with your service provider so they so they can be viewed when you contact them. This will speed up the time to resolve your issue.\n\nDon’t worry, only the wifi signal data will be sent, no video or pictures of your home or any of your private information.",
+        "description": "To better assist you, your signal coverage test results and recommendations can be shared with your service provider so they so they can be viewed when you contact them. This will speed up the time to resolve your issue.\n\nDon’t worry, only the wifi signal data will be sent, no video or pictures of your home or any of your private information.",
         "actionButtons": [
             {
                 "position": 1,
@@ -682,7 +698,6 @@
                 "direction": "right"
             }
         ]
-        
       },
       {
         "id": "WifiOptimize",
@@ -711,12 +726,12 @@
                 "switch": "addingWifimesh",
                 "direction": "right"
             }
-            
+
         ]
       },
       {
         "id": "routerOptimize",
-        "type": "routeroptimize",
+        "type": "optimize",
         "title": "Router Optimization",
         "image": "imageTemp",
         "getOptimization": true,
@@ -745,7 +760,7 @@
             {
               "position": 6,
               "label": "View Router Location",
-              "switch": "ViewWifimesh",
+              "switch": "ViewWifiRouter",
               "direction": "right"
             }
         ]
@@ -767,21 +782,9 @@
                 "direction": "left"
             },
             {
-                "position": 6,
+                "position": 2,
                 "label": "View mesh location",
                 "switch": "ViewWifimesh",
-                "direction": "right"
-            },
-            {
-                "position": 4,
-                "label": "order mesh",
-                "switch": "",
-                "direction": "right"
-            },
-            {
-                "position": 2,
-                "label": "I need more help",
-                "switch": "Help",
                 "direction": "right"
             }
           ]
@@ -789,26 +792,26 @@
         {
           "id": "ViewWifimesh",
           "type": "ar",
-          "title": "show mesh",
-          "image": "imageTemp",
-          "description": "click the button below to see your wifi optimization",
-          "bumpers": {"previous": {"label": "Previous Step", "switch": "hideArrow", "enabled": true}},
+          "title": "Show optimization",
+          "image": "https://waveguide.mpicorp.ca/virtualtech/images/OptimizationPreview.PNG",
+          "description": "Tap the button below to see your wifi optimization",
+          "bumpers": {"previous": {"label": "Previous Step", "switch": "ViewWifimesh", "enabled": true}},
           "actionButtons": [
             {
               "position": 1,
-              "label": "back",
+              "label": "Back",
               "direction": "left",
               "switch": "addingWifimesh"
             },
             {
               "position": 2,
-              "label": "show",
+              "label": "Show",
               "direction": "right",
               "switch": [
                 {
                   "type": "callout",
                   "text": "follow the arrows to see where the best spots are for Wifi mesh",
-                  "position": {"left": 40 , "bottom": 80},
+                  "position": {"left": 40, "bottom": 80},
                   "size": {"width": 240, "height": "100%"},
                   "backgroundColor": "#4dbdea",
                   "textColor": "white",
@@ -819,44 +822,13 @@
             }
           ]
         },
-
         {
-          "type": "default",
-          "note": "DO NOT CHANGE THIS ID",
-          "id": "ar-flow-page-2",
-          "image": "https://online.alvernia.edu/wp-content/uploads/2019/02/800x440-201804-EmployeeOnboarding-header-ALV.png",
-          "title": "Find Your WiFi Router",
-          "description": "First, I need you to find your router, so we can mark it's location on the map.\n\n\nWhen you've found it, let me know!",
-          "bumpers": {"previous": {"label": "Previous Step", "switch": "ar-flow-page-2", "enabled": true}, "next": {"label": "I'm Done", "switch": "ar-flow-page-3", "enabled": false}},
-          "actionButtons": [
-            {
-              "position": 4,
-              "label": "What is a router?",
-              "switch": "ar-flow-page-1",
-              "direction": "right"
-            },
-            {
-              "position": 1,
-              "label": "Previous Step",
-              "direction": "left",
-              "switch": "ar-flow-page-1"
-            },
-            {
-              "position": 2,
-              "label": "I Found It",
-              "direction": "right",
-              "switch": "ar-flow-page-skip_instructions"
-            }
-          ]
-        },
-        {
+          "id": "ViewWifiRouter",
           "type": "ar",
-          "note": "DO NOT CHANGE THIS ID",
-          "id": "ar-flow-page-skip_instructions",
-          "image": "intro",
-          "title": "Just  a few more things",
-          "bumpers": {"previous": {"label": "Previous Step", "switch": "ar-flow-page-skip_instructions", "enabled": true}, "next": {"label": "Results", "switch": "5", "enabled": false}},
-          "description": "On the next step we will be using Augmented Reality technology. This technology uses your camera to show your Wi-Fi dead spots in your home. There are a few important tips to know ahead of time before we jump in.",
+          "title": "Show optimization",
+          "image": "https://waveguide.mpicorp.ca/virtualtech/images/OptimizationPreview.PNG",
+          "description": "Tap the button below to see your wifi optimization",
+          "bumpers": {"previous": {"label": "Previous Step", "switch": "ViewWifiRouter", "enabled": true}},
           "actionButtons": [
             {
               "position": 4,
@@ -866,148 +838,35 @@
             },
             {
               "position": 1,
-              "label": "Previous Step",
+              "label": "Back",
               "direction": "left",
-              "switch": "ar-flow-page-2"
+              "switch": "routerOptimize"
             },
             {
               "position": 2,
-              "label": "Skip Tips",
+              "label": "Show",
               "direction": "right",
               "switch": [
                 {
                   "type": "callout",
-                  "text": "Hold your phone at least 1 foot from your router and tap here",
-                  "position": {"right": 20, "bottom": 135},
-                  "size": {"width": 225, "height": "100%"},
+                  "text": "follow the arrows to see the best spot for your router",
+                  "position": {"left": 40, "bottom": 80},
+                  "size": {"width": 240, "height": "100%"},
                   "backgroundColor": "#4dbdea",
                   "textColor": "white",
-                  "point": {"bottom": "right"},
-                  "switch": "close"
-                },
-                {
-                  "type": "callout",
-                  "text": "Got it!\nTap here if you would like to remove the router's location pin and retry",
-                  "position": {"right": 80, "bottom": 80},
-                  "size": {"width": 250, "height": "100%"},
-                  "backgroundColor": "#4dbdea",
-                  "textColor": "white",
-                  "point": {"bottom": "right"},
-                  "switch": "close",
-                  "timerMS": 4000
-                },
-                {
-                  "type": "callout",
-                  "text": "Tap here to proceed to the next step when ready",
-                  "position": {"right": 60, "center": 5},
-                  "size": {"width": 250, "height": "100%"},
-                  "backgroundColor": "#4dbdea",
-                  "textColor": "white",
-                  "point": {"side": "right"},
+                  "point": {"bottom": "center"},
                   "switch": "close"
                 }
               ]
-
-            }
-          ]
-        }, 
-        {
-          "type": "default",
-          "id": "ar-flow-page-seeTips1",
-          "title": "Turn On Lights",
-          "image": "dark",
-          "description": "             The areas you walk to must be lit.",
-          "actionButtons": [
-            {
-              "position": 1,
-              "label": "Back",
-              "switch": "ar-flow-page-skip_instructions",
-              "direction": "left"
-            },
-            {
-              "position": 2,
-              "label": "Next Tip",
-              "switch": "ar-flow-page-seeTips2",
-              "direction": "right"
-            }
-          ]
-        },
-        {
-          "type": "default",
-          "id": "ar-flow-page-seeTips2",
-          "title": "Move Phone Slowly",
-          "image": "fss",
-          "description": "           Try to move the phone slowly, especially  when turning around.",
-          "actionButtons": [
-            {
-              "position": 1,
-              "label": "Back",
-              "switch": "ar-flow-page-seeTips1",
-              "direction": "left"
-            },
-            {
-              "position": 2,
-              "label": "Next Tip",
-              "switch": "ar-flow-page-seeTips3",
-              "direction": "right"
-            }
-          ]
-        },
-        {
-          "type": "ar",
-          "id": "ar-flow-page-seeTips3",
-          "title": "Keep Distance",
-          "image": "sensor_tips",
-          "bumpers": {"previous": {"label": "Previous Step", "switch": "ar-flow-page-skip_instructions", "enabled": true}, "next": {"label": "Results", "switch": "5", "enabled": false}},
-          "description": "         Keep the phone a couple of feet away from all objects. Try not to cover the camera lens with a finger or set it down during the process.",
-          "actionButtons": [
-            {
-              "position": 1,
-              "label": "Back",
-              "switch": "ar-flow-page-seeTips2",
-              "direction": "left"
-            },
-            {
-              "position": 2,
-              "label": "Let's begin",
-              "direction": "right",
-              "switch": [
-                {
-                  "type": "callout",
-                  "text": "Hold your phone at least 1 foot from your router and tap here",
-                  "position": {"right": 20, "bottom": 135},
-                  "size": {"width": 225, "height": "100%"},
-                  "backgroundColor": "#4dbdea",
-                  "textColor": "white",
-                  "point": {"bottom": "right"},
-                  "switch": "close"
-                },
-                {
-                  "type": "callout",
-                  "text": "Got it!\nTap here if you would like to remove the router's location pin and retry",
-                  "position": {"right": 80, "bottom": 80},
-                  "size": {"width": 250, "height": "100%"},
-                  "backgroundColor": "#4dbdea",
-                  "textColor": "white",
-                  "point": {"bottom": "right"},
-                  "switch": "close",
-                  "timerMS": 4000
-                },
-                {
-                  "type": "callout",
-                  "text": "Tap here to proceed to the next step when ready",
-                  "position": {"right": 60, "center": 5},
-                  "size": {"width": 250, "height": "100%"},
-                  "backgroundColor": "#4dbdea",
-                  "textColor": "white",
-                  "point": {"side": "right"},
-                  "switch": "close"
-                }
-              ]
-
             }
           ]
         }
-    ]
-  }
+      ],
+      "tips_Description":{
+        "dark_exxception":"Too dark to scan. Try turning on the lights or moving to a well-lit area.",
+        "move_exception":"Device moving too fast. Try moving more slowly.",
+        "sensor_block":"Looks like the sensor is blocked. Try moving your finger or adjusting the device’s position.."
+
+      }
+    }
 }

@@ -36,7 +36,6 @@ import Device from '../../app_code/diagnostics/deviceinfo';
 import Thresholds from '../../app_code/certifications/thresholds';
 
 import WorkOrderBuilder from '../../app_code/workorders/workorder_builder';
-import UploadResults from "../../app_code/workorders/upload_results";
 import Triggers from "../../app_code/flows/triggers";
 import {SwipeListView} from "react-native-swipe-list-view";
 

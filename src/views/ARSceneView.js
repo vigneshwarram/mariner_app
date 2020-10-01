@@ -8,14 +8,15 @@ import {
     StatusBar,
     Alert,
     ActivityIndicator,
+    DeviceEventEmitter,
+    Text,
     Image, View, TouchableWithoutFeedback, Dimensions
 } from 'react-native';
-
 //import ModelView from 'react-native-gl-model-view';
 const height=Dimensions.get('window').height
 const width=Dimensions.get('window').width
 import {Button} from 'native-base';
-
+import RNSimpleCompass from 'react-native-simple-compass';
 // Import AR
 import {
     ViroARSceneNavigator, ViroMaterials, ViroAnimations
@@ -108,12 +109,14 @@ export default class ARSceneView extends React.Component {
     state = {
         loadComplete: false,
         ARAppProps: {},
+        Observable:'',
         tracking: 'NONE',
+        angle:0,
+        real:'',
         menuOptionsVisible: true,
         settingsVisible: false,
         detailedMode: true,
         expandedMode: false,
-
         menuActive: false,
         liveMode: false,
         liveModeState: false,
@@ -296,7 +299,7 @@ export default class ARSceneView extends React.Component {
             nodeOptions: global.const.AR_NODE_OPTIONS,
             addPoint: global.const.AR_ADD_POINT
         };
-
+     
         // Set up the events
         global.Events.subscribe([
             // Camera permission
@@ -380,6 +383,7 @@ export default class ARSceneView extends React.Component {
                     this.setState({settingsVisible:false});}}
         ]);
 
+
         // Add listener for uploading AR data
         this.uploadARDataListener = EventRegister.addEventListener(global.const.AR_UPLOAD_DATA, () => {
             let woDetails = this.WorkOrderBuilder.build();
@@ -427,12 +431,21 @@ export default class ARSceneView extends React.Component {
         // Reset the heat map onload rotation
         global.tracking.resetmapRotationOnLoad();
     }
-
-
     // View mounted and ready
     componentDidMount(){
+        const degree_update_rate = 3; // Number of degrees changed before the callback is triggered
+RNSimpleCompass.start(degree_update_rate, (degree) => {
+  console.log('You are facing', degree);
+  if(degree===0){
+    degree===360
+  }
+ global.state.angleofNorth = 360-degree;
+ RNSimpleCompass.stop();
+// this.setState({angle:global.state.angleofNorth})
+});
+
         new Style().get("AR", (style) => {
-            styles = style;
+            styles = style; 
             this.forceUpdate();
         });
 
@@ -800,6 +813,7 @@ export default class ARSceneView extends React.Component {
                         initialScene={{scene: InitialScene}}
                         ref={this.setARNavigatorRef}
                         viroAppProps={this.state.ARAppProps}/>
+                     
                     {this.state.arTrackingMode &&
                          <IndoorTrackingView style={{
                             position: 'absolute',

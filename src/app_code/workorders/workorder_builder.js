@@ -4,7 +4,8 @@ import Thresholds from '../certifications/thresholds';
 import Device from '../diagnostics/deviceinfo';
 import WifiDetails from '../wifi/wifidetails';
 import Results from '../certifications/results';
-
+// Event Listener
+import { EventRegister } from 'react-native-event-listeners';
 let workId = '';
 let customer_Id = '';
 export default class WorkorderBuilder {
@@ -31,15 +32,16 @@ export default class WorkorderBuilder {
         let woDetails = global.state.work_orders.get(woid);
         woDetails.displayWhenActive = false;
         //let work_order_id = this.work_order.id;
+  
         let points = global.tracking.allNodeData;
-
+        
         woDetails.addCertification("GATEWAY");
         woDetails.currentCertification.testType = "heatMap";
         woDetails.currentCertification.installedLocation = "Point1";
-        for(let i = 0; i<=points.length-1;i++){
-            let point_location = points[i].transform.location != null && points[i].transform.location.length > 0 ? (points[i].transform.location[0].label === "Other" ? points[i].transform.location[0].text  : points[i].transform.location[0].label) : ("Point" + (i + 1).toString());
+        for (let i = 0; i <= points.length - 1; i++) {
+            let point_location = points[i].transform.location != null && points[i].transform.location.length > 0 ? (points[i].transform.location[0].label === "Other" ? points[i].transform.location[0].text : points[i].transform.location[0].label) : ("Point" + (i + 1).toString());
             woDetails.currentCertification.addLocationTest(point_location, {
-               signalThresholds: this.Thresholds.get('signalThresholds', '')
+                signalThresholds: this.Thresholds.get('signalThresholds', '')
             }, null, null);
             woDetails.currentCertification.currentLocation.updateTimeStamps(points[i].transform.timestamp);
             woDetails.currentCertification.currentLocation.signal = points[i].data.level;
@@ -52,11 +54,21 @@ export default class WorkorderBuilder {
             pointWifiDetails.setBand(points[i].data.freq === "5 GHz" ? "5GHz" : "2.4GHz");
             pointWifiDetails.setSignal(points[i].level);
             woDetails.currentCertification.currentLocation.wifiDetails = pointWifiDetails;
-            let x = points[i].transform._x - points[0].transform._x;
-            let y = points[i].transform._y - points[0].transform._y;
-            let z = points[i].transform._z - points[0].transform._z;
-            woDetails.currentCertification.currentLocation.setCoordinates(x , y, z);
-            woDetails.currentCertification.currentLocation.interferingNetworks = {value: points[i].data.interference.value, type: points[i].data.interference.type};
+            let x = points[i].transform._x 
+            let y = points[i].transform._y 
+            let z = points[i].transform._z           
+                    let angleformNorth=global.state.angleofNorth;
+                  
+                    let radians,XCoordsFromNorth,ZCoordsFromNorth;
+                    radians= this.degrees_to_radians(angleformNorth);
+                 
+                   
+                         XCoordsFromNorth=(x*Math.cos(radians)-(-z)*Math.cos(radians));
+                         ZCoordsFromNorth=-(x*Math.sin(radians)+(-z)*Math.cos(radians));
+                  
+                 
+            woDetails.currentCertification.currentLocation.setCoordinates(XCoordsFromNorth, y, ZCoordsFromNorth);
+            woDetails.currentCertification.currentLocation.interferingNetworks = { value: points[i].data.interference.value, type: points[i].data.interference.type };
             woDetails.currentCertification.currentLocation.linkSpeed = points[i].data.linkspeed;
         }
 
@@ -64,7 +76,14 @@ export default class WorkorderBuilder {
 
         return woDetails;
     }
-
+    /**
+     * Get the latest interference results
+     */
+    degrees_to_radians(degrees)
+    {
+      var pi = Math.PI;
+      return degrees * (pi/180);
+    }
     buildRecommendationPayload(algorithmType) {
         let recommendationPayload = {};
         recommendationPayload["options"] = [
@@ -102,12 +121,20 @@ export default class WorkorderBuilder {
             }
             signalResult = results.getSignalResultWithBand(points[i].data.level, band, null);
             calculatedCoverage = (signalResult.label === "Excellent" || signalResult.label === "Good") ? true : false;
+            let x = points[i].transform._x
+            let y = points[i].transform._y 
+            let z = points[i].transform._z             
+                    let angleformNorth=global.state.angleofNorth;
+                    let radians,XCoordsFromNorth,ZCoordsFromNorth;
+                    radians= this.degrees_to_radians(angleformNorth);
+                        XCoordsFromNorth=x*Math.cos(radians)-(-z)*Math.cos(radians);
+                         ZCoordsFromNorth=-(x*Math.sin(radians)+(-z)*Math.cos(radians));
             uploadLocations[i] = {
-                type: points[i].data.pointType,
+                type: points[i].data.pointType,  
                 position: [
-                    points[i].transform._x,
-                    points[i].transform._y,
-                    points[i].transform._z,
+                    XCoordsFromNorth,
+                    y,
+                    ZCoordsFromNorth,
                 ],
                 coverage: calculatedCoverage
             }

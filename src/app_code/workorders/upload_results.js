@@ -14,6 +14,7 @@ export default class UploadResults {
      * @param callback
      */
     upload(wo, callback) {
+       
         let submitUrl = global.configuration.get("wsbSiteVisitUrl");
         let username = global.configuration.get("wsbUsername");
         let password = global.configuration.get("wsbPassword");

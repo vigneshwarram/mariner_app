@@ -59,6 +59,9 @@ let _processing = false;
 //button disable
 let _arPinDropButtonDisable=false;
 
+//angle changes
+let _angleofNorth=0;
+
 /**
  * Check to see if the key exists
  * @param key
@@ -111,6 +114,18 @@ export default class Global_State extends React.Component {
      */
     get arPinDropButtonDisable() {
         return _arPinDropButtonDisable;
+    }
+
+       /**
+     * Set loaded
+     * @param value
+     */
+    set angleofNorth(value) {
+        _angleofNorth = value;
+    }
+
+    get angleofNorth() {
+        return _angleofNorth;
     }
 
        /**

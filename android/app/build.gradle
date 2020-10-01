@@ -196,6 +196,9 @@ android {
 apply from: '../../node_modules/react-native-unimodules/gradle.groovy'
 
 dependencies {
+    implementation project(':react-native-sensor-manager')
+    implementation project(':@react-native-community_toolbar-android')
+    implementation project(':react-native-simple-compass')
     implementation project(':rn-fetch-blob')
     implementation project(':react-native-keep-awake')
     implementation project(':react-native-device-info')

@@ -218,7 +218,7 @@ export default class Scene extends React.Component {
                 true,
                 true,
                 this.getTransformInformation(this.lastTransform, this.lastPosition));
-
+               
 
             this.GlobalTracking.modified = true;
         });
@@ -393,10 +393,11 @@ export default class Scene extends React.Component {
             // AR is tracking
             global.AREvents.emit({name:global.const.AR_TRACKING, data: global.const.AR_TRACKING_TYPE_NORMAL});
         }
-        else if (state === ViroConstants.TRACKING_UNAVAILABLE) {
+        else if (state === ViroConstants.TRACKING_UNAVAILABLE || state === ViroConstants.TRACKING_LIMITED) {
             this.setState({
                 tracking: global.const.AR_TRACKING_TYPE_NONE
             });
+            global.AREvents.emit({name:global.const.AR_TRACKING, data: global.const.AR_TRACKING_TYPE_NONE});
               if(reason===4){
                 global.AREvents.emit({name:global.const.OPTIMIZE_EXECPTION, data: {value:global.t.$.AR.DARK_EXCEPTION,status:true}});
               }
@@ -407,23 +408,13 @@ export default class Scene extends React.Component {
                 global.AREvents.emit({name:global.const.OPTIMIZE_EXECPTION, data: {value:global.t.$.AR.SENSOR_EXCEPTION,status:true}});
               }
               else{
-                  setTimeout(()=>{
+                 
                     global.AREvents.emit({name:global.const.OPTIMIZE_EXECPTION, data: {value:global.t.$.AR.CALIBRATING,status:true}});
-                  },1000)
-               
+        
               }
             // AR is not tracking
 
            // global.AREvents.emit({name:global.const.AR_TRACKING, data: global.const.AR_TRACKING_TYPE_NONE});
-        }
-        else if (state === ViroConstants.TRACKING_LIMITED) {
-            setTimeout(()=>{
-                global.AREvents.emit({name:global.const.OPTIMIZE_EXECPTION, data: {value:global.t.$.AR.CALIBRATING,status:true}});
-              },1000)
-            this.setState({
-                tracking: global.const.AR_TRACKING_TYPE_NONE
-            });
-
         }
     }
 
@@ -535,7 +526,8 @@ export default class Scene extends React.Component {
         let y = Number(this.configuration.points.position[1]);
         let z = Number(this.configuration.points.position[2]);
         transformInformation.thresholds = [x, y, z];
-
+         
+ 
         this.GlobalTracking.current = transform.cameraTransform.position;
         this.GlobalTracking.currentCamera = transform.cameraTransform;
 
@@ -766,7 +758,14 @@ export default class Scene extends React.Component {
             return -1;
         }
     }
-
+/**
+     * Get the latest interference results
+     */
+     degrees_to_radians(degrees)
+    {
+      var pi = Math.PI;
+      return degrees * (pi/180);
+    }
     /**
      * Get the latest interference results
      */
