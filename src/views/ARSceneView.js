@@ -339,6 +339,14 @@ export default class ARSceneView extends React.Component {
                         }},
             // Tracking
             {id:this, name: global.const.AR_TRACKING, callback:(trackingState) => {
+              	
+                if(trackingState===global.const.AR_TRACKING_TYPE_NONE){		
+                                 		
+                    this.setState({dropPinButtonDisable: true})	
+                }
+                else{
+                    this.setState({dropPinButtonDisable: false})	
+                }
                     this.setState({tracking: trackingState});}},
 
             // Settings toggle
@@ -433,17 +441,8 @@ export default class ARSceneView extends React.Component {
     }
     // View mounted and ready
     componentDidMount(){
-        const degree_update_rate = 3; // Number of degrees changed before the callback is triggered
-RNSimpleCompass.start(degree_update_rate, (degree) => {
-  console.log('You are facing', degree);
-  if(degree===0){
-    degree===360
-  }
- global.state.angleofNorth = 360-degree;
- RNSimpleCompass.stop();
-// this.setState({angle:global.state.angleofNorth})
-});
-
+ 
+        this.getDirection();
         new Style().get("AR", (style) => {
             styles = style; 
             this.forceUpdate();
@@ -494,7 +493,20 @@ RNSimpleCompass.start(degree_update_rate, (degree) => {
     setARNavigatorRef(ARNavigator){
         this.arNavigator = ARNavigator;
     }
-
+  
+    //Get the North direction
+    getDirection(){
+        const degree_update_rate = 3; // Number of degrees changed before the callback is triggered
+        RNSimpleCompass.start(degree_update_rate, (degree) => {
+          console.log('You are facing', degree);
+          if(degree===0){
+            degree===360
+          }
+         global.state.angleofNorth = 360-degree;
+         RNSimpleCompass.stop();
+        // this.setState({angle:global.state.angleofNorth})
+        });
+    }
     /**
      * Change the AR scene
      * @param scene

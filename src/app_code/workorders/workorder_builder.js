@@ -4,8 +4,6 @@ import Thresholds from '../certifications/thresholds';
 import Device from '../diagnostics/deviceinfo';
 import WifiDetails from '../wifi/wifidetails';
 import Results from '../certifications/results';
-// Event Listener
-import { EventRegister } from 'react-native-event-listeners';
 let workId = '';
 let customer_Id = '';
 export default class WorkorderBuilder {
@@ -61,12 +59,10 @@ export default class WorkorderBuilder {
                   
                     let radians,XCoordsFromNorth,ZCoordsFromNorth;
                     radians= this.degrees_to_radians(angleformNorth);
-                 
-                   
+                           
                          XCoordsFromNorth=(x*Math.cos(radians)-(-z)*Math.cos(radians));
                          ZCoordsFromNorth=-(x*Math.sin(radians)+(-z)*Math.cos(radians));
-                  
-                 
+                                     
             woDetails.currentCertification.currentLocation.setCoordinates(XCoordsFromNorth, y, ZCoordsFromNorth);
             woDetails.currentCertification.currentLocation.interferingNetworks = { value: points[i].data.interference.value, type: points[i].data.interference.type };
             woDetails.currentCertification.currentLocation.linkSpeed = points[i].data.linkspeed;
@@ -76,14 +72,16 @@ export default class WorkorderBuilder {
 
         return woDetails;
     }
+
     /**
-     * Get the latest interference results
+     * Get the radians
      */
     degrees_to_radians(degrees)
     {
       var pi = Math.PI;
       return degrees * (pi/180);
     }
+
     buildRecommendationPayload(algorithmType) {
         let recommendationPayload = {};
         recommendationPayload["options"] = [
@@ -124,17 +122,12 @@ export default class WorkorderBuilder {
             let x = points[i].transform._x
             let y = points[i].transform._y 
             let z = points[i].transform._z             
-                    let angleformNorth=global.state.angleofNorth;
-                    let radians,XCoordsFromNorth,ZCoordsFromNorth;
-                    radians= this.degrees_to_radians(angleformNorth);
-                        XCoordsFromNorth=x*Math.cos(radians)-(-z)*Math.cos(radians);
-                         ZCoordsFromNorth=-(x*Math.sin(radians)+(-z)*Math.cos(radians));
             uploadLocations[i] = {
                 type: points[i].data.pointType,  
                 position: [
-                    XCoordsFromNorth,
+                    x,
                     y,
-                    ZCoordsFromNorth,
+                    z,
                 ],
                 coverage: calculatedCoverage
             }
