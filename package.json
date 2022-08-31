@@ -32,7 +32,7 @@
     "expo-three": "^5.4.0",
     "isomer": "^0.2.6",
     "moment": "^2.24.0",
-    "moment-timezone": "^0.5.25",
+    "moment-timezone": "^0.5.35",
     "native-base": "^2.13.8",
     "prop-types": "^15.7.2",
     "react": "16.9.0",
